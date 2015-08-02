@@ -44,3 +44,8 @@ Temporary Items
 *.iml
 .idea/encodings.xml
 *.map
+
+node_modules
+.idea
+build
+*.rt.js

@@ -56,7 +56,7 @@ gulp.task("webpack:build-dev", function (callback) {
 
 
 gulp.task('rt:build', function () {
-    gulp.src('src/app/**/*.rt')
+    gulp.src('src/**/*.rt')
         .pipe(rt({modules: 'amd'}))
         .pipe(gulp.dest('src'));
 });
