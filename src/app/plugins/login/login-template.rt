@@ -1,0 +1,39 @@
+<div className="container-fluid">
+
+     <span className="row margin-top-10">
+        <span className="col-md-12">
+            <label data-translate>contact.MARKETING_LOG</label>
+        </span>
+     </span>
+
+    <div className="row margin-top-10">
+        <table className="table">
+            <thead>
+            <tr>
+                <th>
+                    <span className="contact-label" data-translate>
+                        common.DATE
+                    </span>
+                </th>
+                <th>
+                    <span className="contact-label" data-translate>
+                        contact.CAMPAIGN
+                    </span>
+                </th>
+                <th>
+                    <span className="contact-label" data-translate>
+                        contact.RESPOND
+                    </span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr rt-repeat="data in [{test:'test'}, {test:'test'}]" key={dataIndex}>
+                <td>{data.test}</td>
+                <td>{data.test}</td>
+                <td>{data.test}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
