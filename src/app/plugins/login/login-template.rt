@@ -17,12 +17,12 @@
                 </th>
                 <th>
                     <span className="contact-label" data-translate>
-                        contact.CAMPAIGN
+                        contact.CAMPAIGN11
                     </span>
                 </th>
                 <th>
                     <span className="contact-label" data-translate>
-                        contact.RESPOND
+                        contact.RESPOND1 1
                     </span>
                 </th>
             </tr>

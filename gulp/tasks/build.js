@@ -5,6 +5,7 @@ import gulp from 'gulp';
 import gutil from 'gulp-util';
 import webpackStream from 'webpack-stream';
 import webpack from 'webpack';
+import rt from"gulp-react-templates";
 import webpackConfig from"../../webpack.config.js";
 
 
@@ -54,3 +55,12 @@ gulp.task("webpack:build-dev", function (callback) {
 });
 
 
+gulp.task('rt:build', function () {
+    gulp.src('src/app/**/*.rt')
+        .pipe(rt({modules: 'amd'}))
+        .pipe(gulp.dest('src'));
+});
+
+
+gulp.task("dev:build", ["rt:build", "webpack:build-dev"]);
+gulp.task("prod:build", ["rt:build", "webpack:build"]);

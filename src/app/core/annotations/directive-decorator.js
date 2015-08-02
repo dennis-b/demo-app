@@ -40,7 +40,7 @@ function View(viewOptions) {
 function ReactView(viewOptions) {
     return function decorator(target) {
         let directiveName = viewOptions.selector;
-        @Inject('reactDirective')
+        ReactDirective.$inject = ['reactDirective'];
         function ReactDirective(reactDirective) {
             return reactDirective(target, viewOptions.propsToBind);
         }

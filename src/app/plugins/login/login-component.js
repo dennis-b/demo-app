@@ -1,8 +1,10 @@
 import   '../../../assets/style/login.css'
 import {ReactView} from 'annotations/directive-decorator';
 import React from 'react/addons';
-import templateRt from 'react-templates!./login-template.rt';
+import templateRt from './login-template.rt';
 import AppUtils from '../../core/utils/app-utils';
+
+//var template = require("react-templates!./login-template.rt");
 
 @ReactView({
     selector: 'crm-login-plugin',
