@@ -1,7 +1,7 @@
 # demo-app
 angular + es6/7 + react webpack Starter
 
-Getting Started
+# Getting Started
 Make sure you have Node.js 
 
 ```
