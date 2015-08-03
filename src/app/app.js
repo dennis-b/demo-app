@@ -11,14 +11,16 @@ import 'angular-ui-bootstrap';
 import 'angular-local-storage';
 import 'ngReact';
 
-//----------------app files----------------------------------------------------------------
+// style vendor files
+import "bootstrap-webpack";
+
+//----------------app files-----------------------------------------------------
 import './core/core';
-import PluginLoader from  './plugins/plagins';
-import mainModule from './crm-plugins-module';
+import './components/components';
+import mainModule from './main-module';
 
 
 angular.element(document).ready(function () {
-    PluginLoader.load();
     angular.bootstrap(document, [mainModule.name], {
         strictDi: true
     });

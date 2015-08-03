@@ -1,9 +1,9 @@
 /**
- * Created by denis on 28/07/2015.
+ * Created by dennis on 28/07/2015.
  */
 
 import angular from 'angular';
-import app from '../../crm-plugins-module';
+import app from '../../main-module';
 
 function Run() {
     return function decorator(target, key, descriptor) {

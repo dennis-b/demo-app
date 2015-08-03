@@ -1,15 +1,15 @@
-import   '../../../assets/style/login.css'
+import './style/rt-demo.css'
 import {ReactView} from 'annotations/directive-decorator';
 import React from 'react/addons';
-import templateRt from './login-template.rt';
+import template from './rt-demo-template.rt';
 import AppUtils from '../../core/utils/app-utils';
 
 @ReactView({
-    selector: 'crm-login-plugin',
-    propsToBind: ['marketing']
+    selector: 'rt-component-demo',
+    propsToBind: ['demoItems']
 })
 //
-class LoginPlugin extends React.Component {
+class RtDemo extends React.Component {
     constructor(props) {
         super(props);
         console.log(AppUtils.getService("$window"))
@@ -19,6 +19,6 @@ class LoginPlugin extends React.Component {
     }
 
     render() {
-        return templateRt.apply(this);
+        return template.apply(this);
     }
 }

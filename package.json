@@ -1,11 +1,19 @@
 {
+  "name": "angular-es6-es7-react",
+  "version": "0.0.1",
+  "description": "An demo in using ES6/7 classes and decorators with Angular 1.x",
+  "author": "Denis Borshchevski <dennisborsh@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/dennis-b/demo-app",
+  "main": "index.js",
   "dependencies": {
     "angular": "^1.4.3",
     "angular-animate": "^1.4.3",
     "angular-local-storage": "^0.2.2",
     "angular-messages": "^1.4.3",
     "angular-ui-bootstrap": "^0.13.1",
-    "bootstrap": "^3.3.5",
+    "bootstrap": "~3.3.0",
+    "bootstrap-webpack": "0.0.4",
     "jquery": "^2.1.4",
     "lodash": "^3.10.0",
     "moment": "2.10.3",
@@ -23,11 +31,14 @@
     "conventional-changelog": "0.0.17",
     "css-loader": "^0.15.6",
     "del": "1.2.0",
+    "file-loader": "^0.8.4",
     "gulp": "3.9.0",
     "gulp-react-templates": "0.0.7",
     "gulp-sourcemaps": "1.5.2",
     "gulp-util": "^3.0.6",
     "gulp-webpack-build": "^0.12.1",
+    "less": "^2.5.1",
+    "less-loader": "^2.2.0",
     "pre-commit": "1.0.10",
     "raw-loader": "^0.5.1",
     "react-templates": "0.1.19",
@@ -35,8 +46,16 @@
     "require-dir": "0.3.0",
     "run-sequence": "1.1.1",
     "style-loader": "^0.12.3",
+    "url-loader": "^0.5.6",
     "webpack": "^1.10.5",
     "webpack-config": "^0.7.0",
     "webpack-stream": "^2.0.0"
-  }
+  },
+  "keywords": [
+    "angularjs",
+    "es6",
+    "es7",
+    "react",
+    "webpack"
+  ]
 }

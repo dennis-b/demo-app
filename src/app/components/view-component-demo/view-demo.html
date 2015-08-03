@@ -1,0 +1,32 @@
+<div class="container-fluid">
+    <div class="row margin-top-10">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    <span class="contact-label" data-translate>
+                       Title one
+                    </span>
+                </th>
+                <th>
+                    <span class="contact-label" data-translate>
+                       Title two
+                    </span>
+                </th>
+                <th>
+                    <span class="contact-label" data-translate>
+                       Title three
+                    </span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in vm.items">
+                <td>{{item}}</td>
+                <td>{{item}}</td>
+                <td>{{item}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

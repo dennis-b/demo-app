@@ -1,5 +1,5 @@
 /**
- * Created by denis on 27/07/2015.
+ * Created by dennis on 27/07/2015.
  */
 import './config/app-config';
 //import './helpers/helpers';

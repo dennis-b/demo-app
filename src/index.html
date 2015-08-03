@@ -3,26 +3,28 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Crm Plugins</title>
+    <title>Demo App</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="assets/style/main.css"/>
 </head>
 <body>
 
-<crm-sign-up-plugin></crm-sign-up-plugin>
-<crm-login-plugin></crm-login-plugin>
+<div class="container-fluid">
+    <span class="row">
+       <rt-component-demo></rt-component-demo>
+    </span>
 
+     <span class="row">
+      <view-component-demo></view-component-demo>
+    </span>
 
-<script>
-    CrmWidgetOpt = {
-        brandId: "test",
-        opt2: "test2"
-    }
-</script>
+     <span class="row">
+      <ng-directive-demo></ng-directive-demo>
+    </span>
+</div>
 
-<script src="../build/allPlugins.bundle.js"></script>
-
+<script src="../build/demoApp.bundle.js"></script>
 
 </body>
 </html>

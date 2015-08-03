@@ -3,7 +3,7 @@ var webpack = require("webpack");
 
 module.exports = {
     entry: {
-        allPlugins: "./src/app/app.js"
+        demoApp: "./src/app/app.js"
     },
     output: {
         path: path.join(__dirname, "build"),
@@ -21,24 +21,26 @@ module.exports = {
             {test: /\.rt/, loader: "react-templates-loader"},
             {test: /\.html$/, loader: 'raw'},
             {test: /\.styl$/, loader: 'style!css!stylus'},
-            {test: /\.css$/, loader: "style-loader!css-loader"}
+            {test: /\.css$/, loader: "style-loader!css-loader"},
+            {test: /\.less$/, loader: "style!css!less"},
+
+            {test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery'},
+            {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/font-woff"},
+            {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/font-woff"},
+            {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/octet-stream"},
+            {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file"},
+            {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=image/svg+xml"}
         ]
     },
 
     resolve: {
         alias: {
             annotations: path.join(__dirname, "src/app/core/annotations")
-
         }
     },
 
-    //chunkFilename: "[name].js",
-
     plugins: [
         new webpack.ProvidePlugin({
-            // Automtically detect jQuery and $ as free var in modules
-            // and inject the jquery library
-            // This is required by many jquery plugins
             jQuery: "jquery",
             $: "jquery",
             "window.jQuery": "jquery",
