@@ -2,7 +2,7 @@
 angular + es6/7 + react webpack Starter
 
 # Getting Started
-Make sure you have https://nodejs.org/ 
+Make sure you have [Nodejs](https://nodejs.org/)
 
 ```
 $ git clone gihttps://github.com/dennis-b/demo-app.git # or clone your own fork
