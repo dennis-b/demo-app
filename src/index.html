@@ -1,43 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <base href="../">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Crm Plugins</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="src/assets/style/main.css"/>
+    <link rel="stylesheet" href="assets/style/main.css"/>
 </head>
 <body>
 
-<crm-sign-up></crm-sign-up>
+<crm-sign-up-plugin></crm-sign-up-plugin>
 <crm-login-plugin></crm-login-plugin>
 
 
-
-<!-- build:js(.) scripts/main.min.js -->
-<!-- inject:build:js --><!-- endinject -->
-<!-- endbuild -->
-
-<!-- build:remove -->
-<script src="jspm_packages/system.js"></script>
-<script src="jspm.conf.js"></script>
-<script>
-    System.import('src/app/app')
-            .then(function (val) {
-                console.log(val)
-            })
-            .catch(console.error.bind(console));
-</script>
-<!-- endbuild -->
-
 <script>
     CrmWidgetOpt = {
-        opt1: "test",
+        brandId: "test",
         opt2: "test2"
     }
 </script>
+
+<script src="../build/allPlugins.bundle.js"></script>
+
 
 </body>
 </html>

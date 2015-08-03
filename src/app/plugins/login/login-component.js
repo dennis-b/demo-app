@@ -4,8 +4,6 @@ import React from 'react/addons';
 import templateRt from './login-template.rt';
 import AppUtils from '../../core/utils/app-utils';
 
-//var template = require("react-templates!./login-template.rt");
-
 @ReactView({
     selector: 'crm-login-plugin',
     propsToBind: ['marketing']
