@@ -1,6 +1,15 @@
 # demo-app
 angular + es6/7 + react webpack Starter
 
+Getting Started
+Make sure you have Node.js 
+
+```
+$ git clone gihttps://github.com/dennis-b/demo-app.git # or clone your own fork
+$ cd demo-app
+$ npm install
+$ run on local server
+```
 
 usage : 
 ```
