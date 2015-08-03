@@ -1,7 +1,7 @@
 {
   "name": "angular-es6-es7-react",
   "version": "0.0.1",
-  "description": "An demo in using ES6/7 classes and decorators with Angular 1.x",
+  "description": "demo using ES6/7 classes and decorators with Angular 1.x and react",
   "author": "Denis Borshchevski <dennisborsh@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/dennis-b/demo-app",
