@@ -55,12 +55,12 @@ gulp.task("webpack:build-dev", function (callback) {
 });
 
 
-gulp.task('rt:build', function () {
-    gulp.src('src/**/*.rt')
-        .pipe(rt({modules: 'amd'}))
-        .pipe(gulp.dest('src'));
-});
+//gulp.task('rt:build', function () {
+//    gulp.src('src/**/*.rt')
+//        .pipe(rt({modules: 'amd'}))
+//        .pipe(gulp.dest('src'));
+//});
 
 
-gulp.task("dev:build", ["rt:build", "webpack:build-dev"]);
-gulp.task("prod:build", ["rt:build", "webpack:build"]);
+gulp.task("dev:build", ["webpack:build-dev"]);
+gulp.task("prod:build", ["webpack:build"]);

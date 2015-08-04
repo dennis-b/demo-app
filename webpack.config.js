@@ -18,7 +18,7 @@ module.exports = {
                 exclude: [/app\/lib/, /jspm_packages/, /.tmp/, /build/, /gulp/, /node_modules/],
                 loader: ['babel-loader'], query: {stage: 0}
             },
-            {test: /\.rt/, loader: "react-templates-loader"},
+            {test: /\.rt$/, loader: 'babel-loader!react-templates-loader'},
             {test: /\.html$/, loader: 'raw'},
             {test: /\.styl$/, loader: 'style!css!stylus'},
             {test: /\.css$/, loader: "style-loader!css-loader"},

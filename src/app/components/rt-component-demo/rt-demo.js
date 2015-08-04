@@ -4,6 +4,8 @@ import React from 'react/addons';
 import template from './rt-demo-template.rt';
 import AppUtils from '../../core/utils/app-utils';
 
+//import templateRt from 'react-templates!./rt-demo-template.rt';
+
 @ReactView({
     selector: 'rt-component-demo',
     propsToBind: ['demoItems']
