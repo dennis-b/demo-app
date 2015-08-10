@@ -3,10 +3,11 @@
  */
 import angular from 'angular';
 
-const crmPlugins = angular.module('crmPlugins', [
+const crmPlugins = angular.module('demoApp', [
     // angular modules
     'ngAnimate',
     'ngMessages',
+    'ui.router',
     'react',
     // 3rd party modules
     'LocalStorageModule'

@@ -2,13 +2,17 @@ import {Config, Inject, Run} from 'annotations/ng-decorator';
 
 class Configuration {
     @Config()
-    @Inject('localStorageServiceProvider')
-    static configFactory(localStorageServiceProvider) {
+    @Inject('localStorageServiceProvider', '$compileProvider', '$httpProvider', '$urlRouterProvider')
+    static configFactory(localStorageServiceProvider, $compileProvider, $httpProvider, $urlRouterProvider) {
         localStorageServiceProvider.setPrefix('crm-plugins');
+        $compileProvider.debugInfoEnabled(false);
+        $httpProvider.useApplyAsync(true);
+        $urlRouterProvider.otherwise('/rtdemo');
+        $urlRouterProvider.when('/', '/rtdemo');
     }
 }
 
-class OnRunTest {
+class OnRun {
     @Run()
     @Inject('localStorageService')
     static runFactory(localStorageService) {

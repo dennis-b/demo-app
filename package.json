@@ -12,6 +12,7 @@
     "angular-local-storage": "^0.2.2",
     "angular-messages": "^1.4.3",
     "angular-ui-bootstrap": "^0.13.1",
+    "angular-ui-router": "^0.2.15",
     "bootstrap": "~3.3.0",
     "bootstrap-webpack": "0.0.4",
     "jquery": "^2.1.4",

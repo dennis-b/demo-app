@@ -7,6 +7,7 @@ import angular from 'angular';
 import 'react/addons';
 import 'angular-animate';
 import 'angular-messages';
+import 'angular-ui-router';
 import 'angular-ui-bootstrap';
 import 'angular-local-storage';
 import 'ngReact';
@@ -16,6 +17,7 @@ import "bootstrap-webpack";
 
 //----------------app files-----------------------------------------------------
 import './core/core';
+import './routes/routes';
 import './components/components';
 import mainModule from './main-module';
 
