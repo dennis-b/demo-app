@@ -11,11 +11,17 @@ class AppUtils {
         AppUtils.$injector = $injector;
     }
 
-    static pascalCaseToCamelCase(str) {
-        return str.charAt(0).toLowerCase() + str.substring(1);
+    static pascalCaseToCamelCase(string) {
+        if (!string) {
+            return '';
+        }
+        return string.charAt(0).toLowerCase() + string.substring(1);
     }
 
     static dashCaseToCamelCase(string) {
+        if (!string) {
+            return '';
+        }
         return string.replace(/-([a-z])/ig, function (all, letter) {
             return letter.toUpperCase();
         });

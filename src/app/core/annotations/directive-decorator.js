@@ -10,7 +10,8 @@ const module = new Module();
 
 function Directive(options) {
     return function decorator(target) {
-        const directiveName = AppUtils.dashCaseToCamelCase(options.selector);
+        const directiveName =
+            AppUtils.dashCaseToCamelCase(viewOptions.selector) || AppUtils.pascalCaseToCamelCase(target.name);
         app.directive(directiveName, module.directiveFactory(target));
     };
 }
@@ -25,8 +26,8 @@ function View(viewOptions) {
         controllerAs: 'vm'
     };
     return function decorator(target) {
-        let directiveName = viewOptions.selector;
-        directiveName = AppUtils.dashCaseToCamelCase(directiveName);
+        const directiveName =
+            AppUtils.dashCaseToCamelCase(viewOptions.selector) || AppUtils.pascalCaseToCamelCase(target.name);
         options = options || (options = {});
         options.bindToController = options.bindToController || options.bind || {};
 
@@ -39,7 +40,8 @@ function View(viewOptions) {
 
 function ReactView(viewOptions) {
     return function decorator(target) {
-        let directiveName = viewOptions.selector;
+        const directiveName =
+            AppUtils.dashCaseToCamelCase(viewOptions.selector) || AppUtils.pascalCaseToCamelCase(target.name);
         ReactDirective.$inject = ['reactDirective'];
         function ReactDirective(reactDirective) {
             return reactDirective(target, viewOptions.propsToBind);

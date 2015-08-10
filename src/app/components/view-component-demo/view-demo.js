@@ -3,7 +3,7 @@ import template from './view-demo.html';
 import {View} from 'annotations/directive-decorator';
 
 @View({
-    selector: 'ng-directive-demo',
+    selector: 'ng-view-demo',
     template: template
 })
 //

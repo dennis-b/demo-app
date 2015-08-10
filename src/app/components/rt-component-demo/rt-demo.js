@@ -4,14 +4,11 @@ import React from 'react/addons';
 import template from './rt-demo-template.rt';
 import AppUtils from '../../core/utils/app-utils';
 
-//import templateRt from 'react-templates!./rt-demo-template.rt';
-
 @ReactView({
-    selector: 'rt-component-demo',
     propsToBind: ['demoItems']
 })
 //
-class RtDemo extends React.Component {
+class RtComponentDemo extends React.Component {
     constructor(props) {
         super(props);
         console.log(AppUtils.getService("$window"))
