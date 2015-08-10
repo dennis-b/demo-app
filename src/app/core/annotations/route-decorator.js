@@ -3,7 +3,7 @@
  */
 
 import angular from 'angular';
-import app from '../../crm-plugins-module';
+import app from '../../main-module';
 
 function RouteConfig(stateName, options) {
     return function decorator(target) {
