@@ -1,6 +1,7 @@
 import template from './main-app.html';
 import {RouteConfig} from 'annotations/route-decorator';
 import './react-demo/react-demo'
+import './view-demo/view-demo'
 
 @RouteConfig('app', {
     url: '',

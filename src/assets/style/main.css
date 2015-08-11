@@ -1,0 +1,32 @@
+
+body {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 13px;
+    color: black;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+ul.nav > li.title {
+    background-color: #d3d3d3;
+}
+
+ul.nav {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.title-text {
+    text-transform: none;
+    padding: 3px 7px;
+    display: block;
+    margin: 0;
+}
+
+.well {
+    border-color: #d3d3d3;
+    padding: 0;
+    margin-bottom: 15px;
+}
