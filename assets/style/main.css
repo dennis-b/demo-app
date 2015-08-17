@@ -80,3 +80,8 @@ ul.nav {
 .color-text {
     color: #008;
 }
+
+.scroll {
+    height: 100%;
+    overflow: auto;
+}
