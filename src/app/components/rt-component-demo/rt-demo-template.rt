@@ -1,32 +1,123 @@
 <div className="container-fluid">
     <div className="row margin-top-10">
-        <table className="table">
-            <thead>
-            <tr>
-                <th>
-                    <span className="contact-label" data-translate>
+        <h2>
+            React example using <a href="https://github.com/davidchang/ngReact">ngReact</a>
+            And <a href="https://github.com/wix/react-templates">react-templates</a>
+        </h2>
+        <hr>
+    </div>
+
+    <div className="row">
+        <div>
+            Create ngReact directive. by default using Class name as Directive name : 'rt-component-demo'.
+            <br>
+            Or you can specify selector in ReactView options
+        </div>
+            <pre className="prettyprint">
+import './style/rt-demo.css'
+import {'{ReactView}'} from 'annotations/directive-decorator';
+import React from 'react/addons';
+import template from './rt-demo-template.rt'; //using react template loader
+import AppUtils from '../../core/utils/app-utils';
+
+//you may add selector:'favorite-selector'
+@ReactView({`{
+    propsToBind: ['demoItems']
+}`})
+
+class RtComponentDemo extends React.Component {`{
+    constructor(props) {
+        super(props);
+        this.state = {
+            items: ['One', 'Two', 'Three']
+        }
+    }
+
+    render() {
+        return template.apply(this);
+    }
+}`}
+         </pre>
+    </div>
+
+    <div className="row">
+        <div>
+            React Template Sample:
+        </div>
+        <pre className="prettyprint lang-html">
+
+&lt;div className="container-fluid"&gt;
+    &lt;div className="row margin-top-10"&gt;
+        &lt;table className="table"&gt;
+            &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;
+                    &lt;span className="contact-label" data-translate&gt;
                        Title one
-                    </span>
-                </th>
-                <th>
-                    <span className="contact-label" data-translate>
+                    &lt;/span&gt;
+                &lt;/th&gt;
+                &lt;th&gt;
+                    &lt;span className="contact-label" data-translate&gt;
                        Title two
-                    </span>
-                </th>
-                <th>
-                    <span className="contact-label" data-translate>
+                    &lt;/span&gt;
+                &lt;/th&gt;
+                &lt;th&gt;
+                    &lt;span className="contact-label" data-translate&gt;
                        Title three
-                    </span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr rt-repeat="data in this.state.items" key={dataIndex}>
-                <td>{data}</td>
-                <td>{data}</td>
-                <td>{data}</td>
-            </tr>
-            </tbody>
-        </table>
+                    &lt;/span&gt;
+                &lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody&gt;
+            &lt;tr rt-repeat="data in this.state.items" key={`{dataIndex}`}&gt;
+                &lt;td&gt;{`{data}`}&lt;/td&gt;
+                &lt;td&gt;{`{data}`}&lt;/td&gt;
+                &lt;td&gt;{`{data}`}&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+        </pre>
+    </div>
+    <div className="row">
+        <div>
+            Rendered Directive:
+        </div>
+        <pre>
+            <div className="container-fluid">
+                <div className="row margin-top-10">
+                    <table className="table">
+                        <thead>
+                        <tr>
+                            <th>
+                        <span className="contact-label" data-translate>
+                           Title one
+                        </span>
+                            </th>
+                            <th>
+                        <span className="contact-label" data-translate>
+                           Title two
+                        </span>
+                            </th>
+                            <th>
+                        <span className="contact-label" data-translate>
+                           Title three
+                        </span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr rt-repeat="data in this.state.items" key={dataIndex}>
+                            <td>{data}</td>
+                            <td>{data}</td>
+                            <td>{data}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+         </pre>
     </div>
 </div>

@@ -14,8 +14,11 @@ class Configuration {
 
 class OnRun {
     @Run()
-    @Inject('localStorageService')
-    static runFactory(localStorageService) {
+    @Inject('localStorageService', '$rootScope')
+    static runFactory(localStorageService, $rootScope) {
         localStorageService.clearAll();
+        $rootScope.$on('$viewContentLoaded', function (event) {
+            prettyPrint();
+        });
     }
 }

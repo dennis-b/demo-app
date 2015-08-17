@@ -1,32 +1,119 @@
 <div class="container-fluid">
     <div class="row margin-top-10">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>
+        <h2>
+            Angular View simple example.
+        </h2>
+        <hr>
+    </div>
+    <div class="row">
+        This is regular angular directive that using: <span class="color-text">bindToController</span> and <span
+            class="color-text">controllerAs</span> syntax
+        <br>
+        The class will be the controller and exposed as vm object on the scope.
+        <hr>
+    </div>
+
+    <div class="row">
+        <div>
+            Create View directive. by default using Class name as Directive name : 'ng-view-demo'
+            <br>
+            Or you can specify selector in View options
+        </div>
+            <pre class="prettyprint">
+import   './style/view-demo.css'
+import template from './view-demo.html';
+import {View} from 'annotations/directive-decorator';
+
+@View({
+    selector: 'ng-view-demo',
+    template: template
+})
+//
+class NgViewDemo {
+    constructor($window) {
+        this.$window = $window;//service injected
+        this.items = ['One', 'Two', 'Three'];//using the object for  directive state
+    }
+}
+
+export default NgViewDemo
+
+         </pre>
+    </div>
+
+    <div class="row">
+        <div>
+            Template Sample:
+        </div>
+        <pre class="prettyprint">
+&lt;div class="container-fluid"&gt;
+    &lt;div class="row margin-top-10"&gt;
+        &lt;table class="table"&gt;
+            &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;
+                    &lt;span class="contact-label" data-translate&gt;
+                       Title one
+                    &lt;/span&gt;
+                &lt;/th&gt;
+                &lt;th&gt;
+                    &lt;span class="contact-label" data-translate&gt;
+                       Title two
+                    &lt;/span&gt;
+                &lt;/th&gt;
+                &lt;th&gt;
+                    &lt;span class="contact-label" data-translate&gt;
+                       Title three
+                    &lt;/span&gt;
+                &lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody&gt;
+            &lt;tr ng-repeat="item in vm.items"&gt;
+                &lt;td&gt;{{'{{item}\}'}}&lt;/td&gt;
+                &lt;td&gt;{{'{{item}\}'}}&lt;/td&gt;
+                &lt;td&gt;{{'{{item}\}'}}&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+        </pre>
+    </div>
+    <div class="row">
+        <div>
+            Rendered Directive:
+        </div>
+        <pre>
+           <table class="table">
+               <thead>
+               <tr>
+                   <th>
                     <span class="contact-label" data-translate>
                        Title one
                     </span>
-                </th>
-                <th>
+                   </th>
+                   <th>
                     <span class="contact-label" data-translate>
                        Title two
                     </span>
-                </th>
-                <th>
+                   </th>
+                   <th>
                     <span class="contact-label" data-translate>
                        Title three
                     </span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="item in vm.items">
-                <td>{{item}}</td>
-                <td>{{item}}</td>
-                <td>{{item}}</td>
-            </tr>
-            </tbody>
-        </table>
+                   </th>
+               </tr>
+               </thead>
+               <tbody>
+               <tr ng-repeat="item in vm.items">
+                   <td>{{item}}</td>
+                   <td>{{item}}</td>
+                   <td>{{item}}</td>
+               </tr>
+               </tbody>
+           </table>
+         </pre>
     </div>
 </div>
