@@ -8,11 +8,12 @@ Make sure you have [Nodejs](https://nodejs.org/)
 $ git clone https://github.com/dennis-b/demo-app.git # or clone your own fork
 $ cd demo-app
 $ npm install
-$ gulp dev:build
-$ run on local server
+$ gulp build
+$ run on local server # you may use gulp webserver task
 ```
 
-usage : 
+# usage :
+ [documentation](http://dennis-b.github.io/demo-app/ "documentation")
 ```
 import './style/rt-demo.css'
 import {ReactView} from 'annotations/directive-decorator';

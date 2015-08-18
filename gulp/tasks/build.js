@@ -63,4 +63,4 @@ gulp.task("webpack:build-dev", function (callback) {
 
 
 gulp.task("dev:build", ["webpack:build-dev"]);
-gulp.task("prod:build", ["webpack:build"]);
+gulp.task("build", ["webpack:build"]);
