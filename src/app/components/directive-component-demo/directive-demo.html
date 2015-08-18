@@ -1,49 +1,51 @@
 <div class="container-fluid">
     <div class="row margin-top-10">
         <h2>
-            Angular View simple example.
+            Angular Directive simple example.
         </h2>
         <hr>
     </div>
     <div class="row">
-        This is regular angular directive that using: <span class="color-text">bindToController</span> and <span
-            class="color-text">controllerAs</span> syntax
+        This is regular angular directive that using: <span class="color-text">@Directive </span>annotation
         <br>
-        The class will be the controller and exposed as vm object on the scope.
+        You can specify link/compile/controller functions
         <hr>
     </div>
 
     <div class="row">
         <div>
-            Create View directive. by default using Class name as Directive name : 'ng-view-demo'
+            Create View directive. by default using Class name as Directive name : 'ng-directive-demo'
             <br>
             Or you can specify selector in View options
         </div>
         <div hljs language="javascript">
-import   './style/view-demo.css'
-import template from './view-demo.html';
-import {View} from 'annotations/directive-decorator';
+            import './style/directive-demo.css'
+            import template from './directive-demo.html';
+            import {Directive} from 'annotations/directive-decorator';
 
-@View({
-    selector: 'ng-view-demo',
-    template: template
-})
-//
-class NgViewDemo {
-    constructor($window) {
-        this.$window = $window;//service injected
-        this.items = ['One', 'Two', 'Three'];//using the object for  directive state
-    }
-}
+            @Directive()
+            class NgDirectiveDemo {
+            constructor($window) {
+            this.restrict = 'EA';
+            this.template = template;
+            this.scope = {
+            items: '='
+            };
+            this.$window = $window; // service injected
+            }
 
-export default NgViewDemo
+            link(scope, element, attrs){
 
+            }
+
+            }
+            export default NgDirectiveDemo
         </div>
     </div>
 
     <div class="row">
         <div>
-            Template Sample:
+            Template Sample (not using vm syntax here):
         </div>
         <div hljs>
             <div class="container-fluid">
@@ -57,14 +59,14 @@ export default NgViewDemo
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="item in vm.items">
+                        <tr ng-repeat="item in items">
                             <td>{{item}}</td>
                             <td>{{item}}</td>
                             <td>{{item}}</td>
                         </tr>
                         </tbody>
                     </table>
-    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -83,7 +85,7 @@ export default NgViewDemo
                </tr>
                </thead>
                <tbody>
-               <tr ng-repeat="item in vm.items">
+               <tr ng-repeat="item in items">
                    <td>{{item}}</td>
                    <td>{{item}}</td>
                    <td>{{item}}</td>

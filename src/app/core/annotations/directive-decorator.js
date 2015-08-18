@@ -10,8 +10,9 @@ const module = new Module();
 
 function Directive(options) {
     return function decorator(target) {
+        options = options || {};
         const directiveName =
-            AppUtils.dashCaseToCamelCase(viewOptions.selector) || AppUtils.pascalCaseToCamelCase(target.name);
+            AppUtils.dashCaseToCamelCase(options.selector) || AppUtils.pascalCaseToCamelCase(target.name);
         app.directive(directiveName, module.directiveFactory(target));
     };
 }

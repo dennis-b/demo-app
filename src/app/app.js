@@ -11,9 +11,7 @@ import 'angular-ui-router';
 import 'angular-ui-bootstrap';
 import 'angular-local-storage';
 import 'ngReact';
-
-// style vendor files
-import "bootstrap-webpack";
+import 'angular-highlightjs';
 
 //----------------app files-----------------------------------------------------
 import './core/core';
@@ -26,5 +24,4 @@ angular.element(document).ready(function () {
     angular.bootstrap(document, [mainModule.name], {
         strictDi: true
     });
-    prettyPrint()
 });

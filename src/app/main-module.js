@@ -9,6 +9,7 @@ const crmPlugins = angular.module('demoApp', [
     'ngMessages',
     'ui.router',
     'react',
+    'hljs',
     // 3rd party modules
     'LocalStorageModule'
 ]);

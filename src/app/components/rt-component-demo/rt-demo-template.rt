@@ -1,3 +1,4 @@
+<rt-require dependency="react-highlight" as="Highlight"/>
 <div className="container-fluid">
     <div className="row margin-top-10">
         <h2>
@@ -13,7 +14,8 @@
             <br>
             Or you can specify selector in ReactView options
         </div>
-            <pre className="prettyprint">
+
+        <Highlight className='javascript'>
 import './style/rt-demo.css'
 import {'{ReactView}'} from 'annotations/directive-decorator';
 import React from 'react/addons';
@@ -37,35 +39,22 @@ class RtComponentDemo extends React.Component {`{
         return template.apply(this);
     }
 }`}
-         </pre>
+        </Highlight>
     </div>
 
     <div className="row">
         <div>
             React Template Sample:
         </div>
-        <pre className="prettyprint lang-html">
-
+        <Highlight>
 &lt;div className="container-fluid"&gt;
     &lt;div className="row margin-top-10"&gt;
         &lt;table className="table"&gt;
             &lt;thead&gt;
             &lt;tr&gt;
-                &lt;th&gt;
-                    &lt;span className="contact-label" data-translate&gt;
-                       Title one
-                    &lt;/span&gt;
-                &lt;/th&gt;
-                &lt;th&gt;
-                    &lt;span className="contact-label" data-translate&gt;
-                       Title two
-                    &lt;/span&gt;
-                &lt;/th&gt;
-                &lt;th&gt;
-                    &lt;span className="contact-label" data-translate&gt;
-                       Title three
-                    &lt;/span&gt;
-                &lt;/th&gt;
+            &lt;th&gt;&lt;span className="contact-label"&gt;Title one&lt;/span&gt;&lt;/th&gt;
+            &lt;th&gt;&lt;span className="contact-label"&gt;Title two&lt;/span&gt;&lt;/th&gt;
+            &lt;th&gt;&lt;span className="contact-label"&gt;Title three&lt;/span&gt;&lt;/th&gt;
             &lt;/tr&gt;
             &lt;/thead&gt;
             &lt;tbody&gt;
@@ -78,8 +67,7 @@ class RtComponentDemo extends React.Component {`{
         &lt;/table&gt;
     &lt;/div&gt;
 &lt;/div&gt;
-
-        </pre>
+        </Highlight>
     </div>
     <div className="row">
         <div>
@@ -91,21 +79,9 @@ class RtComponentDemo extends React.Component {`{
                     <table className="table">
                         <thead>
                         <tr>
-                            <th>
-                        <span className="contact-label" data-translate>
-                           Title one
-                        </span>
-                            </th>
-                            <th>
-                        <span className="contact-label" data-translate>
-                           Title two
-                        </span>
-                            </th>
-                            <th>
-                        <span className="contact-label" data-translate>
-                           Title three
-                        </span>
-                            </th>
+                            <th><span className="contact-label">Title one</span></th>
+                            <th><span className="contact-label">Title two</span></th>
+                            <th><span className="contact-label">Title three</span></th>
                         </tr>
                         </thead>
                         <tbody>
