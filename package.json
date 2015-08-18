@@ -5,7 +5,7 @@
   "author": "Denis Borshchevski <dennisborsh@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/dennis-b/demo-app",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
     "angular": "^1.4.3",
     "angular-animate": "^1.4.3",
@@ -19,7 +19,6 @@
     "moment": "2.10.3",
     "ngreact": "^0.1.7",
     "react": "^0.13.3",
-    "react-highlight": "^0.5.0",
     "restangular": "^1.5.1"
   },
   "devDependencies": {
@@ -46,6 +45,7 @@
     "pre-commit": "1.0.10",
     "raw-loader": "^0.5.1",
     "react-templates": "^0.1.22",
+    "react-highlight": "^0.5.0",
     "react-templates-loader": "^0.1.1",
     "require-dir": "0.3.0",
     "run-sequence": "1.1.1",
