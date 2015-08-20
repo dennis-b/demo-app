@@ -49,45 +49,45 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	__webpack_require__(1);
+	__webpack_require__(3);
 	
-	var _jquery = __webpack_require__(185);
+	var _jquery = __webpack_require__(171);
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
 	
-	var _lodash = __webpack_require__(186);
+	var _lodash = __webpack_require__(172);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _angular = __webpack_require__(188);
+	var _angular = __webpack_require__(174);
 	
 	var _angular2 = _interopRequireDefault(_angular);
 	
-	__webpack_require__(190);
+	__webpack_require__(176);
 	
-	__webpack_require__(362);
+	__webpack_require__(348);
 	
-	__webpack_require__(364);
+	__webpack_require__(350);
 	
-	__webpack_require__(366);
+	__webpack_require__(352);
 	
-	__webpack_require__(367);
+	__webpack_require__(1);
 	
-	__webpack_require__(369);
+	__webpack_require__(353);
 	
-	__webpack_require__(370);
+	__webpack_require__(354);
 	
-	__webpack_require__(372);
+	__webpack_require__(356);
 	
 	//----------------app files-----------------------------------------------------
 	
-	__webpack_require__(505);
+	__webpack_require__(489);
 	
-	__webpack_require__(509);
+	__webpack_require__(493);
 	
-	__webpack_require__(518);
+	__webpack_require__(502);
 	
-	var _mainModule = __webpack_require__(508);
+	var _mainModule = __webpack_require__(492);
 	
 	var _mainModule2 = _interopRequireDefault(_mainModule);
 	
@@ -101,25 +101,5401 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(2);
+	__webpack_require__(2);
+	module.exports = 'ui.bootstrap';
 
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	module.exports = __webpack_require__(3);
-
+	/*
+	 * angular-ui-bootstrap
+	 * http://angular-ui.github.io/bootstrap/
+	
+	 * Version: 0.13.2 - 2015-08-02
+	 * License: MIT
+	 */
+	angular.module("ui.bootstrap", ["ui.bootstrap.tpls", "ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.bindHtml","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.transition","ui.bootstrap.typeahead"]);
+	angular.module("ui.bootstrap.tpls", ["template/accordion/accordion-group.html","template/accordion/accordion.html","template/alert/alert.html","template/carousel/carousel.html","template/carousel/slide.html","template/datepicker/datepicker.html","template/datepicker/day.html","template/datepicker/month.html","template/datepicker/popup.html","template/datepicker/year.html","template/modal/backdrop.html","template/modal/window.html","template/pagination/pager.html","template/pagination/pagination.html","template/tooltip/tooltip-html-popup.html","template/tooltip/tooltip-html-unsafe-popup.html","template/tooltip/tooltip-popup.html","template/tooltip/tooltip-template-popup.html","template/popover/popover-html.html","template/popover/popover-template.html","template/popover/popover.html","template/progressbar/bar.html","template/progressbar/progress.html","template/progressbar/progressbar.html","template/rating/rating.html","template/tabs/tab.html","template/tabs/tabset.html","template/timepicker/timepicker.html","template/typeahead/typeahead-match.html","template/typeahead/typeahead-popup.html"]);
+	angular.module('ui.bootstrap.collapse', [])
+	
+	  .directive('collapse', ['$animate', function ($animate) {
+	
+	    return {
+	      link: function (scope, element, attrs) {
+	        function expand() {
+	          element.removeClass('collapse')
+	            .addClass('collapsing')
+	            .attr('aria-expanded', true)
+	            .attr('aria-hidden', false);
+	
+	          $animate.addClass(element, 'in', {
+	            to: { height: element[0].scrollHeight + 'px' }
+	          }).then(expandDone);
+	        }
+	
+	        function expandDone() {
+	          element.removeClass('collapsing');
+	          element.css({height: 'auto'});
+	        }
+	
+	        function collapse() {
+	          if(! element.hasClass('collapse') && ! element.hasClass('in')) {
+	            return collapseDone();
+	          }
+	
+	          element
+	            // IMPORTANT: The height must be set before adding "collapsing" class.
+	            // Otherwise, the browser attempts to animate from height 0 (in
+	            // collapsing class) to the given height here.
+	            .css({height: element[0].scrollHeight + 'px'})
+	            // initially all panel collapse have the collapse class, this removal
+	            // prevents the animation from jumping to collapsed state
+	            .removeClass('collapse')
+	            .addClass('collapsing')
+	            .attr('aria-expanded', false)
+	            .attr('aria-hidden', true);
+	
+	          $animate.removeClass(element, 'in', {
+	            to: {height: '0'}
+	          }).then(collapseDone);
+	        }
+	
+	        function collapseDone() {
+	          element.css({height: '0'}); // Required so that collapse works when animation is disabled
+	          element.removeClass('collapsing');
+	          element.addClass('collapse');
+	        }
+	
+	        scope.$watch(attrs.collapse, function (shouldCollapse) {
+	          if (shouldCollapse) {
+	            collapse();
+	          } else {
+	            expand();
+	          }
+	        });
+	      }
+	    };
+	  }]);
+	
+	angular.module('ui.bootstrap.accordion', ['ui.bootstrap.collapse'])
+	
+	.constant('accordionConfig', {
+	  closeOthers: true
+	})
+	
+	.controller('AccordionController', ['$scope', '$attrs', 'accordionConfig', function ($scope, $attrs, accordionConfig) {
+	
+	  // This array keeps track of the accordion groups
+	  this.groups = [];
+	
+	  // Ensure that all the groups in this accordion are closed, unless close-others explicitly says not to
+	  this.closeOthers = function(openGroup) {
+	    var closeOthers = angular.isDefined($attrs.closeOthers) ? $scope.$eval($attrs.closeOthers) : accordionConfig.closeOthers;
+	    if ( closeOthers ) {
+	      angular.forEach(this.groups, function (group) {
+	        if ( group !== openGroup ) {
+	          group.isOpen = false;
+	        }
+	      });
+	    }
+	  };
+	
+	  // This is called from the accordion-group directive to add itself to the accordion
+	  this.addGroup = function(groupScope) {
+	    var that = this;
+	    this.groups.push(groupScope);
+	
+	    groupScope.$on('$destroy', function (event) {
+	      that.removeGroup(groupScope);
+	    });
+	  };
+	
+	  // This is called from the accordion-group directive when to remove itself
+	  this.removeGroup = function(group) {
+	    var index = this.groups.indexOf(group);
+	    if ( index !== -1 ) {
+	      this.groups.splice(index, 1);
+	    }
+	  };
+	
+	}])
+	
+	// The accordion directive simply sets up the directive controller
+	// and adds an accordion CSS class to itself element.
+	.directive('accordion', function () {
+	  return {
+	    restrict:'EA',
+	    controller:'AccordionController',
+	    transclude: true,
+	    replace: false,
+	    templateUrl: 'template/accordion/accordion.html'
+	  };
+	})
+	
+	// The accordion-group directive indicates a block of html that will expand and collapse in an accordion
+	.directive('accordionGroup', function() {
+	  return {
+	    require:'^accordion',         // We need this directive to be inside an accordion
+	    restrict:'EA',
+	    transclude:true,              // It transcludes the contents of the directive into the template
+	    replace: true,                // The element containing the directive will be replaced with the template
+	    templateUrl:'template/accordion/accordion-group.html',
+	    scope: {
+	      heading: '@',               // Interpolate the heading attribute onto this scope
+	      isOpen: '=?',
+	      isDisabled: '=?'
+	    },
+	    controller: function() {
+	      this.setHeading = function(element) {
+	        this.heading = element;
+	      };
+	    },
+	    link: function(scope, element, attrs, accordionCtrl) {
+	      accordionCtrl.addGroup(scope);
+	
+	      scope.$watch('isOpen', function(value) {
+	        if ( value ) {
+	          accordionCtrl.closeOthers(scope);
+	        }
+	      });
+	
+	      scope.toggleOpen = function() {
+	        if ( !scope.isDisabled ) {
+	          scope.isOpen = !scope.isOpen;
+	        }
+	      };
+	    }
+	  };
+	})
+	
+	// Use accordion-heading below an accordion-group to provide a heading containing HTML
+	// <accordion-group>
+	//   <accordion-heading>Heading containing HTML - <img src="..."></accordion-heading>
+	// </accordion-group>
+	.directive('accordionHeading', function() {
+	  return {
+	    restrict: 'EA',
+	    transclude: true,   // Grab the contents to be used as the heading
+	    template: '',       // In effect remove this element!
+	    replace: true,
+	    require: '^accordionGroup',
+	    link: function(scope, element, attr, accordionGroupCtrl, transclude) {
+	      // Pass the heading to the accordion-group controller
+	      // so that it can be transcluded into the right place in the template
+	      // [The second parameter to transclude causes the elements to be cloned so that they work in ng-repeat]
+	      accordionGroupCtrl.setHeading(transclude(scope, angular.noop));
+	    }
+	  };
+	})
+	
+	// Use in the accordion-group template to indicate where you want the heading to be transcluded
+	// You must provide the property on the accordion-group controller that will hold the transcluded element
+	// <div class="accordion-group">
+	//   <div class="accordion-heading" ><a ... accordion-transclude="heading">...</a></div>
+	//   ...
+	// </div>
+	.directive('accordionTransclude', function() {
+	  return {
+	    require: '^accordionGroup',
+	    link: function(scope, element, attr, controller) {
+	      scope.$watch(function() { return controller[attr.accordionTransclude]; }, function(heading) {
+	        if ( heading ) {
+	          element.find('span').html('');
+	          element.find('span').append(heading);
+	        }
+	      });
+	    }
+	  };
+	})
+	
+	;
+	
+	angular.module('ui.bootstrap.alert', [])
+	
+	.controller('AlertController', ['$scope', '$attrs', function ($scope, $attrs) {
+	  $scope.closeable = !!$attrs.close;
+	  this.close = $scope.close;
+	}])
+	
+	.directive('alert', function () {
+	  return {
+	    restrict:'EA',
+	    controller:'AlertController',
+	    templateUrl:'template/alert/alert.html',
+	    transclude:true,
+	    replace:true,
+	    scope: {
+	      type: '@',
+	      close: '&'
+	    }
+	  };
+	})
+	
+	.directive('dismissOnTimeout', ['$timeout', function($timeout) {
+	  return {
+	    require: 'alert',
+	    link: function(scope, element, attrs, alertCtrl) {
+	      $timeout(function(){
+	        alertCtrl.close();
+	      }, parseInt(attrs.dismissOnTimeout, 10));
+	    }
+	  };
+	}]);
+	
+	angular.module('ui.bootstrap.bindHtml', [])
+	
+	  .value('$bindHtmlUnsafeSuppressDeprecated', false)
+	
+	  .directive('bindHtmlUnsafe', ['$log', '$bindHtmlUnsafeSuppressDeprecated', function ($log, $bindHtmlUnsafeSuppressDeprecated) {
+	    return function (scope, element, attr) {
+	      if (!$bindHtmlUnsafeSuppressDeprecated) {
+	        $log.warn('bindHtmlUnsafe is now deprecated. Use ngBindHtml instead');
+	      }
+	      element.addClass('ng-binding').data('$binding', attr.bindHtmlUnsafe);
+	      scope.$watch(attr.bindHtmlUnsafe, function bindHtmlUnsafeWatchAction(value) {
+	        element.html(value || '');
+	      });
+	    };
+	  }]);
+	angular.module('ui.bootstrap.buttons', [])
+	
+	.constant('buttonConfig', {
+	  activeClass: 'active',
+	  toggleEvent: 'click'
+	})
+	
+	.controller('ButtonsController', ['buttonConfig', function(buttonConfig) {
+	  this.activeClass = buttonConfig.activeClass || 'active';
+	  this.toggleEvent = buttonConfig.toggleEvent || 'click';
+	}])
+	
+	.directive('btnRadio', function () {
+	  return {
+	    require: ['btnRadio', 'ngModel'],
+	    controller: 'ButtonsController',
+	    link: function (scope, element, attrs, ctrls) {
+	      var buttonsCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+	
+	      //model -> UI
+	      ngModelCtrl.$render = function () {
+	        element.toggleClass(buttonsCtrl.activeClass, angular.equals(ngModelCtrl.$modelValue, scope.$eval(attrs.btnRadio)));
+	      };
+	
+	      //ui->model
+	      element.bind(buttonsCtrl.toggleEvent, function () {
+	        if ('disabled' in attrs) {
+	          return;
+	        }
+	
+	        var isActive = element.hasClass(buttonsCtrl.activeClass);
+	
+	        if (!isActive || angular.isDefined(attrs.uncheckable)) {
+	          scope.$apply(function () {
+	            ngModelCtrl.$setViewValue(isActive ? null : scope.$eval(attrs.btnRadio));
+	            ngModelCtrl.$render();
+	          });
+	        }
+	      });
+	    }
+	  };
+	})
+	
+	.directive('btnCheckbox', function () {
+	  return {
+	    require: ['btnCheckbox', 'ngModel'],
+	    controller: 'ButtonsController',
+	    link: function (scope, element, attrs, ctrls) {
+	      var buttonsCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+	
+	      function getTrueValue() {
+	        return getCheckboxValue(attrs.btnCheckboxTrue, true);
+	      }
+	
+	      function getFalseValue() {
+	        return getCheckboxValue(attrs.btnCheckboxFalse, false);
+	      }
+	
+	      function getCheckboxValue(attributeValue, defaultValue) {
+	        var val = scope.$eval(attributeValue);
+	        return angular.isDefined(val) ? val : defaultValue;
+	      }
+	
+	      //model -> UI
+	      ngModelCtrl.$render = function () {
+	        element.toggleClass(buttonsCtrl.activeClass, angular.equals(ngModelCtrl.$modelValue, getTrueValue()));
+	      };
+	
+	      //ui->model
+	      element.bind(buttonsCtrl.toggleEvent, function () {
+	        if ('disabled' in attrs) {
+	          return;
+	        }
+	
+	        scope.$apply(function () {
+	          ngModelCtrl.$setViewValue(element.hasClass(buttonsCtrl.activeClass) ? getFalseValue() : getTrueValue());
+	          ngModelCtrl.$render();
+	        });
+	      });
+	    }
+	  };
+	});
+	
+	/**
+	* @ngdoc overview
+	* @name ui.bootstrap.carousel
+	*
+	* @description
+	* AngularJS version of an image carousel.
+	*
+	*/
+	angular.module('ui.bootstrap.carousel', [])
+	.constant('ANIMATE_CSS', angular.version.minor >= 4)
+	.controller('CarouselController', ['$scope', '$element', '$interval', '$animate', 'ANIMATE_CSS', function ($scope, $element, $interval, $animate, ANIMATE_CSS) {
+	  var self = this,
+	    slides = self.slides = $scope.slides = [],
+	    NO_TRANSITION = 'uib-noTransition',
+	    SLIDE_DIRECTION = 'uib-slideDirection',
+	    currentIndex = -1,
+	    currentInterval, isPlaying;
+	  self.currentSlide = null;
+	
+	  var destroyed = false;
+	  /* direction: "prev" or "next" */
+	  self.select = $scope.select = function(nextSlide, direction) {
+	    var nextIndex = self.indexOfSlide(nextSlide);
+	    //Decide direction if it's not given
+	    if (direction === undefined) {
+	      direction = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
+	    }
+	    //Prevent this user-triggered transition from occurring if there is already one in progress
+	    if (nextSlide && nextSlide !== self.currentSlide && !$scope.$currentTransition) {
+	      goNext(nextSlide, nextIndex, direction);
+	    }
+	  };
+	
+	  function goNext(slide, index, direction) {
+	    // Scope has been destroyed, stop here.
+	    if (destroyed) { return; }
+	
+	    angular.extend(slide, {direction: direction, active: true});
+	    angular.extend(self.currentSlide || {}, {direction: direction, active: false});
+	    if ($animate.enabled() && !$scope.noTransition && !$scope.$currentTransition &&
+	      slide.$element) {
+	      slide.$element.data(SLIDE_DIRECTION, slide.direction);
+	      $scope.$currentTransition = true;
+	      if (ANIMATE_CSS) {
+	        $animate.on('addClass', slide.$element, function (element, phase) {
+	          $scope.$currentTransition = null;
+	          if (!$scope.$currentTransition) {
+	            $animate.off('addClass', element);
+	          }
+	        });
+	      } else {
+	        slide.$element.one('$animate:close', function closeFn() {
+	          $scope.$currentTransition = null;
+	        });
+	      }
+	    }
+	
+	    self.currentSlide = slide;
+	    currentIndex = index;
+	
+	    //every time you change slides, reset the timer
+	    restartTimer();
+	  }
+	
+	  $scope.$on('$destroy', function () {
+	    destroyed = true;
+	  });
+	
+	  function getSlideByIndex(index) {
+	    if (angular.isUndefined(slides[index].index)) {
+	      return slides[index];
+	    }
+	    var i, len = slides.length;
+	    for (i = 0; i < slides.length; ++i) {
+	      if (slides[i].index == index) {
+	        return slides[i];
+	      }
+	    }
+	  }
+	
+	  self.getCurrentIndex = function() {
+	    if (self.currentSlide && angular.isDefined(self.currentSlide.index)) {
+	      return +self.currentSlide.index;
+	    }
+	    return currentIndex;
+	  };
+	
+	  /* Allow outside people to call indexOf on slides array */
+	  self.indexOfSlide = function(slide) {
+	    return angular.isDefined(slide.index) ? +slide.index : slides.indexOf(slide);
+	  };
+	
+	  $scope.next = function() {
+	    var newIndex = (self.getCurrentIndex() + 1) % slides.length;
+	
+	    if (newIndex === 0 && $scope.noWrap()) {
+	      $scope.pause();
+	      return;
+	    }
+	
+	    return self.select(getSlideByIndex(newIndex), 'next');
+	  };
+	
+	  $scope.prev = function() {
+	    var newIndex = self.getCurrentIndex() - 1 < 0 ? slides.length - 1 : self.getCurrentIndex() - 1;
+	
+	    if ($scope.noWrap() && newIndex === slides.length - 1){
+	      $scope.pause();
+	      return;
+	    }
+	
+	    return self.select(getSlideByIndex(newIndex), 'prev');
+	  };
+	
+	  $scope.isActive = function(slide) {
+	     return self.currentSlide === slide;
+	  };
+	
+	  $scope.$watch('interval', restartTimer);
+	  $scope.$on('$destroy', resetTimer);
+	
+	  function restartTimer() {
+	    resetTimer();
+	    var interval = +$scope.interval;
+	    if (!isNaN(interval) && interval > 0) {
+	      currentInterval = $interval(timerFn, interval);
+	    }
+	  }
+	
+	  function resetTimer() {
+	    if (currentInterval) {
+	      $interval.cancel(currentInterval);
+	      currentInterval = null;
+	    }
+	  }
+	
+	  function timerFn() {
+	    var interval = +$scope.interval;
+	    if (isPlaying && !isNaN(interval) && interval > 0 && slides.length) {
+	      $scope.next();
+	    } else {
+	      $scope.pause();
+	    }
+	  }
+	
+	  $scope.play = function() {
+	    if (!isPlaying) {
+	      isPlaying = true;
+	      restartTimer();
+	    }
+	  };
+	  $scope.pause = function() {
+	    if (!$scope.noPause) {
+	      isPlaying = false;
+	      resetTimer();
+	    }
+	  };
+	
+	  self.addSlide = function(slide, element) {
+	    // add default direction for initial transition
+	    // necessary for angular 1.4+
+	    if (!slides.length && element) {
+	      element.data(SLIDE_DIRECTION, 'next');
+	    }
+	
+	    slide.$element = element;
+	    slides.push(slide);
+	    //if this is the first slide or the slide is set to active, select it
+	    if(slides.length === 1 || slide.active) {
+	      self.select(slides[slides.length-1]);
+	      if (slides.length == 1) {
+	        $scope.play();
+	      }
+	    } else {
+	      slide.active = false;
+	    }
+	  };
+	
+	  self.removeSlide = function(slide) {
+	    if (angular.isDefined(slide.index)) {
+	      slides.sort(function(a, b) {
+	        return +a.index > +b.index;
+	      });
+	    }
+	    //get the index of the slide inside the carousel
+	    var index = slides.indexOf(slide);
+	    slides.splice(index, 1);
+	    if (slides.length > 0 && slide.active) {
+	      if (index >= slides.length) {
+	        self.select(slides[index-1]);
+	      } else {
+	        self.select(slides[index]);
+	      }
+	    } else if (currentIndex > index) {
+	      currentIndex--;
+	    }
+	    
+	    //clean the currentSlide when no more slide
+	    if (slides.length === 0) {
+	      self.currentSlide = null;
+	    }
+	  };
+	
+	  $scope.$watch('noTransition', function(noTransition) {
+	    $element.data(NO_TRANSITION, noTransition);
+	  });
+	
+	}])
+	
+	/**
+	 * @ngdoc directive
+	 * @name ui.bootstrap.carousel.directive:carousel
+	 * @restrict EA
+	 *
+	 * @description
+	 * Carousel is the outer container for a set of image 'slides' to showcase.
+	 *
+	 * @param {number=} interval The time, in milliseconds, that it will take the carousel to go to the next slide.
+	 * @param {boolean=} noTransition Whether to disable transitions on the carousel.
+	 * @param {boolean=} noPause Whether to disable pausing on the carousel (by default, the carousel interval pauses on hover).
+	 *
+	 * @example
+	<example module="ui.bootstrap">
+	  <file name="index.html">
+	    <carousel>
+	      <slide>
+	        <img src="http://placekitten.com/150/150" style="margin:auto;">
+	        <div class="carousel-caption">
+	          <p>Beautiful!</p>
+	        </div>
+	      </slide>
+	      <slide>
+	        <img src="http://placekitten.com/100/150" style="margin:auto;">
+	        <div class="carousel-caption">
+	          <p>D'aww!</p>
+	        </div>
+	      </slide>
+	    </carousel>
+	  </file>
+	  <file name="demo.css">
+	    .carousel-indicators {
+	      top: auto;
+	      bottom: 15px;
+	    }
+	  </file>
+	</example>
+	 */
+	.directive('carousel', [function() {
+	  return {
+	    restrict: 'EA',
+	    transclude: true,
+	    replace: true,
+	    controller: 'CarouselController',
+	    require: 'carousel',
+	    templateUrl: 'template/carousel/carousel.html',
+	    scope: {
+	      interval: '=',
+	      noTransition: '=',
+	      noPause: '=',
+	      noWrap: '&'
+	    }
+	  };
+	}])
+	
+	/**
+	 * @ngdoc directive
+	 * @name ui.bootstrap.carousel.directive:slide
+	 * @restrict EA
+	 *
+	 * @description
+	 * Creates a slide inside a {@link ui.bootstrap.carousel.directive:carousel carousel}.  Must be placed as a child of a carousel element.
+	 *
+	 * @param {boolean=} active Model binding, whether or not this slide is currently active.
+	 * @param {number=} index The index of the slide. The slides will be sorted by this parameter.
+	 *
+	 * @example
+	<example module="ui.bootstrap">
+	  <file name="index.html">
+	<div ng-controller="CarouselDemoCtrl">
+	  <carousel>
+	    <slide ng-repeat="slide in slides" active="slide.active" index="$index">
+	      <img ng-src="{{slide.image}}" style="margin:auto;">
+	      <div class="carousel-caption">
+	        <h4>Slide {{$index}}</h4>
+	        <p>{{slide.text}}</p>
+	      </div>
+	    </slide>
+	  </carousel>
+	  Interval, in milliseconds: <input type="number" ng-model="myInterval">
+	  <br />Enter a negative number to stop the interval.
+	</div>
+	  </file>
+	  <file name="script.js">
+	function CarouselDemoCtrl($scope) {
+	  $scope.myInterval = 5000;
+	}
+	  </file>
+	  <file name="demo.css">
+	    .carousel-indicators {
+	      top: auto;
+	      bottom: 15px;
+	    }
+	  </file>
+	</example>
+	*/
+	
+	.directive('slide', function() {
+	  return {
+	    require: '^carousel',
+	    restrict: 'EA',
+	    transclude: true,
+	    replace: true,
+	    templateUrl: 'template/carousel/slide.html',
+	    scope: {
+	      active: '=?',
+	      index: '=?'
+	    },
+	    link: function (scope, element, attrs, carouselCtrl) {
+	      carouselCtrl.addSlide(scope, element);
+	      //when the scope is destroyed then remove the slide from the current slides array
+	      scope.$on('$destroy', function() {
+	        carouselCtrl.removeSlide(scope);
+	      });
+	
+	      scope.$watch('active', function(active) {
+	        if (active) {
+	          carouselCtrl.select(scope);
+	        }
+	      });
+	    }
+	  };
+	})
+	
+	.animation('.item', [
+	         '$injector', '$animate', 'ANIMATE_CSS',
+	function ($injector, $animate, ANIMATE_CSS) {
+	  var NO_TRANSITION = 'uib-noTransition',
+	    SLIDE_DIRECTION = 'uib-slideDirection',
+	    $animateCss = ANIMATE_CSS ? $injector.get('$animateCss') : null;
+	
+	  function removeClass(element, className, callback) {
+	    element.removeClass(className);
+	    if (callback) {
+	      callback();
+	    }
+	  }
+	
+	  return {
+	    beforeAddClass: function (element, className, done) {
+	      // Due to transclusion, noTransition property is on parent's scope
+	      if (className == 'active' && element.parent() &&
+	          !element.parent().data(NO_TRANSITION)) {
+	        var stopped = false;
+	        var direction = element.data(SLIDE_DIRECTION);
+	        var directionClass = direction == 'next' ? 'left' : 'right';
+	        var removeClassFn = removeClass.bind(this, element,
+	          directionClass + ' ' + direction, done);
+	        element.addClass(direction);
+	
+	        if ($animateCss) {
+	          $animateCss(element, {addClass: directionClass})
+	            .start()
+	            .done(removeClassFn);
+	        } else {
+	          $animate.addClass(element, directionClass).then(function () {
+	            if (!stopped) {
+	              removeClassFn();
+	            }
+	            done();
+	          });
+	        }
+	
+	        return function () {
+	          stopped = true;
+	        };
+	      }
+	      done();
+	    },
+	    beforeRemoveClass: function (element, className, done) {
+	      // Due to transclusion, noTransition property is on parent's scope
+	      if (className === 'active' && element.parent() &&
+	          !element.parent().data(NO_TRANSITION)) {
+	        var stopped = false;
+	        var direction = element.data(SLIDE_DIRECTION);
+	        var directionClass = direction == 'next' ? 'left' : 'right';
+	        var removeClassFn = removeClass.bind(this, element, directionClass, done);
+	
+	        if ($animateCss) {
+	          $animateCss(element, {addClass: directionClass})
+	            .start()
+	            .done(removeClassFn);
+	        } else {
+	          $animate.addClass(element, directionClass).then(function () {
+	            if (!stopped) {
+	              removeClassFn();
+	            }
+	            done();
+	          });
+	        }
+	        return function () {
+	          stopped = true;
+	        };
+	      }
+	      done();
+	    }
+	  };
+	
+	}])
+	
+	
+	;
+	
+	angular.module('ui.bootstrap.dateparser', [])
+	
+	.service('dateParser', ['$log', '$locale', 'orderByFilter', function($log, $locale, orderByFilter) {
+	  // Pulled from https://github.com/mbostock/d3/blob/master/src/format/requote.js
+	  var SPECIAL_CHARACTERS_REGEXP = /[\\\^\$\*\+\?\|\[\]\(\)\.\{\}]/g;
+	
+	  this.parsers = {};
+	
+	  var formatCodeToRegex = {
+	    'yyyy': {
+	      regex: '\\d{4}',
+	      apply: function(value) { this.year = +value; }
+	    },
+	    'yy': {
+	      regex: '\\d{2}',
+	      apply: function(value) { this.year = +value + 2000; }
+	    },
+	    'y': {
+	      regex: '\\d{1,4}',
+	      apply: function(value) { this.year = +value; }
+	    },
+	    'MMMM': {
+	      regex: $locale.DATETIME_FORMATS.MONTH.join('|'),
+	      apply: function(value) { this.month = $locale.DATETIME_FORMATS.MONTH.indexOf(value); }
+	    },
+	    'MMM': {
+	      regex: $locale.DATETIME_FORMATS.SHORTMONTH.join('|'),
+	      apply: function(value) { this.month = $locale.DATETIME_FORMATS.SHORTMONTH.indexOf(value); }
+	    },
+	    'MM': {
+	      regex: '0[1-9]|1[0-2]',
+	      apply: function(value) { this.month = value - 1; }
+	    },
+	    'M': {
+	      regex: '[1-9]|1[0-2]',
+	      apply: function(value) { this.month = value - 1; }
+	    },
+	    'dd': {
+	      regex: '[0-2][0-9]{1}|3[0-1]{1}',
+	      apply: function(value) { this.date = +value; }
+	    },
+	    'd': {
+	      regex: '[1-2]?[0-9]{1}|3[0-1]{1}',
+	      apply: function(value) { this.date = +value; }
+	    },
+	    'EEEE': {
+	      regex: $locale.DATETIME_FORMATS.DAY.join('|')
+	    },
+	    'EEE': {
+	      regex: $locale.DATETIME_FORMATS.SHORTDAY.join('|')
+	    },
+	    'HH': {
+	      regex: '(?:0|1)[0-9]|2[0-3]',
+	      apply: function(value) { this.hours = +value; }
+	    },
+	    'H': {
+	      regex: '1?[0-9]|2[0-3]',
+	      apply: function(value) { this.hours = +value; }
+	    },
+	    'mm': {
+	      regex: '[0-5][0-9]',
+	      apply: function(value) { this.minutes = +value; }
+	    },
+	    'm': {
+	      regex: '[0-9]|[1-5][0-9]',
+	      apply: function(value) { this.minutes = +value; }
+	    },
+	    'sss': {
+	      regex: '[0-9][0-9][0-9]',
+	      apply: function(value) { this.milliseconds = +value; }
+	    },
+	    'ss': {
+	      regex: '[0-5][0-9]',
+	      apply: function(value) { this.seconds = +value; }
+	    },
+	    's': {
+	      regex: '[0-9]|[1-5][0-9]',
+	      apply: function(value) { this.seconds = +value; }
+	    }
+	  };
+	
+	  function createParser(format) {
+	    var map = [], regex = format.split('');
+	
+	    angular.forEach(formatCodeToRegex, function(data, code) {
+	      var index = format.indexOf(code);
+	
+	      if (index > -1) {
+	        format = format.split('');
+	
+	        regex[index] = '(' + data.regex + ')';
+	        format[index] = '$'; // Custom symbol to define consumed part of format
+	        for (var i = index + 1, n = index + code.length; i < n; i++) {
+	          regex[i] = '';
+	          format[i] = '$';
+	        }
+	        format = format.join('');
+	
+	        map.push({ index: index, apply: data.apply });
+	      }
+	    });
+	
+	    return {
+	      regex: new RegExp('^' + regex.join('') + '$'),
+	      map: orderByFilter(map, 'index')
+	    };
+	  }
+	
+	  this.parse = function(input, format, baseDate) {
+	    if ( !angular.isString(input) || !format ) {
+	      return input;
+	    }
+	
+	    format = $locale.DATETIME_FORMATS[format] || format;
+	    format = format.replace(SPECIAL_CHARACTERS_REGEXP, '\\$&');
+	
+	    if ( !this.parsers[format] ) {
+	      this.parsers[format] = createParser(format);
+	    }
+	
+	    var parser = this.parsers[format],
+	        regex = parser.regex,
+	        map = parser.map,
+	        results = input.match(regex);
+	
+	    if ( results && results.length ) {
+	      var fields, dt;
+	      if (angular.isDate(baseDate) && !isNaN(baseDate.getTime())) {
+	        fields = {
+	          year: baseDate.getFullYear(),
+	          month: baseDate.getMonth(),
+	          date: baseDate.getDate(),
+	          hours: baseDate.getHours(),
+	          minutes: baseDate.getMinutes(),
+	          seconds: baseDate.getSeconds(),
+	          milliseconds: baseDate.getMilliseconds()
+	        };
+	      } else {
+	        if (baseDate) {
+	          $log.warn('dateparser:', 'baseDate is not a valid date');
+	        }
+	        fields = { year: 1900, month: 0, date: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+	      }
+	
+	      for( var i = 1, n = results.length; i < n; i++ ) {
+	        var mapper = map[i-1];
+	        if ( mapper.apply ) {
+	          mapper.apply.call(fields, results[i]);
+	        }
+	      }
+	
+	      if ( isValid(fields.year, fields.month, fields.date) ) {
+	        dt = new Date(fields.year, fields.month, fields.date, fields.hours, fields.minutes, fields.seconds,
+	          fields.milliseconds || 0);
+	      }
+	
+	      return dt;
+	    }
+	  };
+	
+	  // Check if date is valid for specific month (and year for February).
+	  // Month: 0 = Jan, 1 = Feb, etc
+	  function isValid(year, month, date) {
+	    if (date < 1) {
+	      return false;
+	    }
+	
+	    if ( month === 1 && date > 28) {
+	        return date === 29 && ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0);
+	    }
+	
+	    if ( month === 3 || month === 5 || month === 8 || month === 10) {
+	        return date < 31;
+	    }
+	
+	    return true;
+	  }
+	}]);
+	
+	angular.module('ui.bootstrap.position', [])
+	
+	/**
+	 * A set of utility methods that can be use to retrieve position of DOM elements.
+	 * It is meant to be used where we need to absolute-position DOM elements in
+	 * relation to other, existing elements (this is the case for tooltips, popovers,
+	 * typeahead suggestions etc.).
+	 */
+	  .factory('$position', ['$document', '$window', function ($document, $window) {
+	
+	    function getStyle(el, cssprop) {
+	      if (el.currentStyle) { //IE
+	        return el.currentStyle[cssprop];
+	      } else if ($window.getComputedStyle) {
+	        return $window.getComputedStyle(el)[cssprop];
+	      }
+	      // finally try and get inline style
+	      return el.style[cssprop];
+	    }
+	
+	    /**
+	     * Checks if a given element is statically positioned
+	     * @param element - raw DOM element
+	     */
+	    function isStaticPositioned(element) {
+	      return (getStyle(element, 'position') || 'static' ) === 'static';
+	    }
+	
+	    /**
+	     * returns the closest, non-statically positioned parentOffset of a given element
+	     * @param element
+	     */
+	    var parentOffsetEl = function (element) {
+	      var docDomEl = $document[0];
+	      var offsetParent = element.offsetParent || docDomEl;
+	      while (offsetParent && offsetParent !== docDomEl && isStaticPositioned(offsetParent) ) {
+	        offsetParent = offsetParent.offsetParent;
+	      }
+	      return offsetParent || docDomEl;
+	    };
+	
+	    return {
+	      /**
+	       * Provides read-only equivalent of jQuery's position function:
+	       * http://api.jquery.com/position/
+	       */
+	      position: function (element) {
+	        var elBCR = this.offset(element);
+	        var offsetParentBCR = { top: 0, left: 0 };
+	        var offsetParentEl = parentOffsetEl(element[0]);
+	        if (offsetParentEl != $document[0]) {
+	          offsetParentBCR = this.offset(angular.element(offsetParentEl));
+	          offsetParentBCR.top += offsetParentEl.clientTop - offsetParentEl.scrollTop;
+	          offsetParentBCR.left += offsetParentEl.clientLeft - offsetParentEl.scrollLeft;
+	        }
+	
+	        var boundingClientRect = element[0].getBoundingClientRect();
+	        return {
+	          width: boundingClientRect.width || element.prop('offsetWidth'),
+	          height: boundingClientRect.height || element.prop('offsetHeight'),
+	          top: elBCR.top - offsetParentBCR.top,
+	          left: elBCR.left - offsetParentBCR.left
+	        };
+	      },
+	
+	      /**
+	       * Provides read-only equivalent of jQuery's offset function:
+	       * http://api.jquery.com/offset/
+	       */
+	      offset: function (element) {
+	        var boundingClientRect = element[0].getBoundingClientRect();
+	        return {
+	          width: boundingClientRect.width || element.prop('offsetWidth'),
+	          height: boundingClientRect.height || element.prop('offsetHeight'),
+	          top: boundingClientRect.top + ($window.pageYOffset || $document[0].documentElement.scrollTop),
+	          left: boundingClientRect.left + ($window.pageXOffset || $document[0].documentElement.scrollLeft)
+	        };
+	      },
+	
+	      /**
+	       * Provides coordinates for the targetEl in relation to hostEl
+	       */
+	      positionElements: function (hostEl, targetEl, positionStr, appendToBody) {
+	
+	        var positionStrParts = positionStr.split('-');
+	        var pos0 = positionStrParts[0], pos1 = positionStrParts[1] || 'center';
+	
+	        var hostElPos,
+	          targetElWidth,
+	          targetElHeight,
+	          targetElPos;
+	
+	        hostElPos = appendToBody ? this.offset(hostEl) : this.position(hostEl);
+	
+	        targetElWidth = targetEl.prop('offsetWidth');
+	        targetElHeight = targetEl.prop('offsetHeight');
+	
+	        var shiftWidth = {
+	          center: function () {
+	            return hostElPos.left + hostElPos.width / 2 - targetElWidth / 2;
+	          },
+	          left: function () {
+	            return hostElPos.left;
+	          },
+	          right: function () {
+	            return hostElPos.left + hostElPos.width;
+	          }
+	        };
+	
+	        var shiftHeight = {
+	          center: function () {
+	            return hostElPos.top + hostElPos.height / 2 - targetElHeight / 2;
+	          },
+	          top: function () {
+	            return hostElPos.top;
+	          },
+	          bottom: function () {
+	            return hostElPos.top + hostElPos.height;
+	          }
+	        };
+	
+	        switch (pos0) {
+	          case 'right':
+	            targetElPos = {
+	              top: shiftHeight[pos1](),
+	              left: shiftWidth[pos0]()
+	            };
+	            break;
+	          case 'left':
+	            targetElPos = {
+	              top: shiftHeight[pos1](),
+	              left: hostElPos.left - targetElWidth
+	            };
+	            break;
+	          case 'bottom':
+	            targetElPos = {
+	              top: shiftHeight[pos0](),
+	              left: shiftWidth[pos1]()
+	            };
+	            break;
+	          default:
+	            targetElPos = {
+	              top: hostElPos.top - targetElHeight,
+	              left: shiftWidth[pos1]()
+	            };
+	            break;
+	        }
+	
+	        return targetElPos;
+	      }
+	    };
+	  }]);
+	
+	angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootstrap.position'])
+	
+	.constant('datepickerConfig', {
+	  formatDay: 'dd',
+	  formatMonth: 'MMMM',
+	  formatYear: 'yyyy',
+	  formatDayHeader: 'EEE',
+	  formatDayTitle: 'MMMM yyyy',
+	  formatMonthTitle: 'yyyy',
+	  datepickerMode: 'day',
+	  minMode: 'day',
+	  maxMode: 'year',
+	  showWeeks: true,
+	  startingDay: 0,
+	  yearRange: 20,
+	  minDate: null,
+	  maxDate: null,
+	  shortcutPropagation: false
+	})
+	
+	.controller('DatepickerController', ['$scope', '$attrs', '$parse', '$interpolate', '$log', 'dateFilter', 'datepickerConfig', function($scope, $attrs, $parse, $interpolate, $log, dateFilter, datepickerConfig) {
+	  var self = this,
+	      ngModelCtrl = { $setViewValue: angular.noop }; // nullModelCtrl;
+	
+	  // Modes chain
+	  this.modes = ['day', 'month', 'year'];
+	
+	  // Configuration attributes
+	  angular.forEach(['formatDay', 'formatMonth', 'formatYear', 'formatDayHeader', 'formatDayTitle', 'formatMonthTitle',
+	                   'minMode', 'maxMode', 'showWeeks', 'startingDay', 'yearRange', 'shortcutPropagation'], function( key, index ) {
+	    self[key] = angular.isDefined($attrs[key]) ? (index < 8 ? $interpolate($attrs[key])($scope.$parent) : $scope.$parent.$eval($attrs[key])) : datepickerConfig[key];
+	  });
+	
+	  // Watchable date attributes
+	  angular.forEach(['minDate', 'maxDate'], function( key ) {
+	    if ( $attrs[key] ) {
+	      $scope.$parent.$watch($parse($attrs[key]), function(value) {
+	        self[key] = value ? new Date(value) : null;
+	        self.refreshView();
+	      });
+	    } else {
+	      self[key] = datepickerConfig[key] ? new Date(datepickerConfig[key]) : null;
+	    }
+	  });
+	
+	  $scope.datepickerMode = $scope.datepickerMode || datepickerConfig.datepickerMode;
+	  $scope.maxMode = self.maxMode;
+	  $scope.uniqueId = 'datepicker-' + $scope.$id + '-' + Math.floor(Math.random() * 10000);
+	
+	  if(angular.isDefined($attrs.initDate)) {
+	    this.activeDate = $scope.$parent.$eval($attrs.initDate) || new Date();
+	    $scope.$parent.$watch($attrs.initDate, function(initDate){
+	      if(initDate && (ngModelCtrl.$isEmpty(ngModelCtrl.$modelValue) || ngModelCtrl.$invalid)){
+	        self.activeDate = initDate;
+	        self.refreshView();
+	      }
+	    });
+	  } else {
+	    this.activeDate =  new Date();
+	  }
+	
+	  $scope.isActive = function(dateObject) {
+	    if (self.compare(dateObject.date, self.activeDate) === 0) {
+	      $scope.activeDateId = dateObject.uid;
+	      return true;
+	    }
+	    return false;
+	  };
+	
+	  this.init = function( ngModelCtrl_ ) {
+	    ngModelCtrl = ngModelCtrl_;
+	
+	    ngModelCtrl.$render = function() {
+	      self.render();
+	    };
+	  };
+	
+	  this.render = function() {
+	    if ( ngModelCtrl.$viewValue ) {
+	      var date = new Date( ngModelCtrl.$viewValue ),
+	          isValid = !isNaN(date);
+	
+	      if ( isValid ) {
+	        this.activeDate = date;
+	      } else {
+	        $log.error('Datepicker directive: "ng-model" value must be a Date object, a number of milliseconds since 01.01.1970 or a string representing an RFC2822 or ISO 8601 date.');
+	      }
+	    }
+	    this.refreshView();
+	  };
+	
+	  this.refreshView = function() {
+	    if ( this.element ) {
+	      this._refreshView();
+	
+	      var date = ngModelCtrl.$viewValue ? new Date(ngModelCtrl.$viewValue) : null;
+	      ngModelCtrl.$setValidity('date-disabled', !date || (this.element && !this.isDisabled(date)));
+	    }
+	  };
+	
+	  this.createDateObject = function(date, format) {
+	    var model = ngModelCtrl.$viewValue ? new Date(ngModelCtrl.$viewValue) : null;
+	    return {
+	      date: date,
+	      label: dateFilter(date, format),
+	      selected: model && this.compare(date, model) === 0,
+	      disabled: this.isDisabled(date),
+	      current: this.compare(date, new Date()) === 0,
+	      customClass: this.customClass(date)
+	    };
+	  };
+	
+	  this.isDisabled = function( date ) {
+	    return ((this.minDate && this.compare(date, this.minDate) < 0) || (this.maxDate && this.compare(date, this.maxDate) > 0) || ($attrs.dateDisabled && $scope.dateDisabled({date: date, mode: $scope.datepickerMode})));
+	  };
+	
+	    this.customClass = function( date ) {
+	      return $scope.customClass({date: date, mode: $scope.datepickerMode});
+	    };
+	
+	  // Split array into smaller arrays
+	  this.split = function(arr, size) {
+	    var arrays = [];
+	    while (arr.length > 0) {
+	      arrays.push(arr.splice(0, size));
+	    }
+	    return arrays;
+	  };
+	
+	  // Fix a hard-reprodusible bug with timezones
+	  // The bug depends on OS, browser, current timezone and current date
+	  // i.e.
+	  // var date = new Date(2014, 0, 1);
+	  // console.log(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours());
+	  // can result in "2013 11 31 23" because of the bug.
+	  this.fixTimeZone = function(date) {
+	    var hours = date.getHours();
+	    date.setHours(hours === 23 ? hours + 2 : 0);
+	  };
+	
+	  $scope.select = function( date ) {
+	    if ( $scope.datepickerMode === self.minMode ) {
+	      var dt = ngModelCtrl.$viewValue ? new Date( ngModelCtrl.$viewValue ) : new Date(0, 0, 0, 0, 0, 0, 0);
+	      dt.setFullYear( date.getFullYear(), date.getMonth(), date.getDate() );
+	      ngModelCtrl.$setViewValue( dt );
+	      ngModelCtrl.$render();
+	    } else {
+	      self.activeDate = date;
+	      $scope.datepickerMode = self.modes[ self.modes.indexOf( $scope.datepickerMode ) - 1 ];
+	    }
+	  };
+	
+	  $scope.move = function( direction ) {
+	    var year = self.activeDate.getFullYear() + direction * (self.step.years || 0),
+	        month = self.activeDate.getMonth() + direction * (self.step.months || 0);
+	    self.activeDate.setFullYear(year, month, 1);
+	    self.refreshView();
+	  };
+	
+	  $scope.toggleMode = function( direction ) {
+	    direction = direction || 1;
+	
+	    if (($scope.datepickerMode === self.maxMode && direction === 1) || ($scope.datepickerMode === self.minMode && direction === -1)) {
+	      return;
+	    }
+	
+	    $scope.datepickerMode = self.modes[ self.modes.indexOf( $scope.datepickerMode ) + direction ];
+	  };
+	
+	  // Key event mapper
+	  $scope.keys = { 13:'enter', 32:'space', 33:'pageup', 34:'pagedown', 35:'end', 36:'home', 37:'left', 38:'up', 39:'right', 40:'down' };
+	
+	  var focusElement = function() {
+	    self.element[0].focus();
+	  };
+	
+	  // Listen for focus requests from popup directive
+	  $scope.$on('datepicker.focus', focusElement);
+	
+	  $scope.keydown = function( evt ) {
+	    var key = $scope.keys[evt.which];
+	
+	    if ( !key || evt.shiftKey || evt.altKey ) {
+	      return;
+	    }
+	
+	    evt.preventDefault();
+	    if(!self.shortcutPropagation){
+	        evt.stopPropagation();
+	    }
+	
+	    if (key === 'enter' || key === 'space') {
+	      if ( self.isDisabled(self.activeDate)) {
+	        return; // do nothing
+	      }
+	      $scope.select(self.activeDate);
+	      focusElement();
+	    } else if (evt.ctrlKey && (key === 'up' || key === 'down')) {
+	      $scope.toggleMode(key === 'up' ? 1 : -1);
+	      focusElement();
+	    } else {
+	      self.handleKeyDown(key, evt);
+	      self.refreshView();
+	    }
+	  };
+	}])
+	
+	.directive( 'datepicker', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    templateUrl: 'template/datepicker/datepicker.html',
+	    scope: {
+	      datepickerMode: '=?',
+	      dateDisabled: '&',
+	      customClass: '&',
+	      shortcutPropagation: '&?'
+	    },
+	    require: ['datepicker', '?^ngModel'],
+	    controller: 'DatepickerController',
+	    link: function(scope, element, attrs, ctrls) {
+	      var datepickerCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+	
+	      if ( ngModelCtrl ) {
+	        datepickerCtrl.init( ngModelCtrl );
+	      }
+	    }
+	  };
+	})
+	
+	.directive('daypicker', ['dateFilter', function (dateFilter) {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    templateUrl: 'template/datepicker/day.html',
+	    require: '^datepicker',
+	    link: function(scope, element, attrs, ctrl) {
+	      scope.showWeeks = ctrl.showWeeks;
+	
+	      ctrl.step = { months: 1 };
+	      ctrl.element = element;
+	
+	      var DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	      function getDaysInMonth( year, month ) {
+	        return ((month === 1) && (year % 4 === 0) && ((year % 100 !== 0) || (year % 400 === 0))) ? 29 : DAYS_IN_MONTH[month];
+	      }
+	
+	      function getDates(startDate, n) {
+	        var dates = new Array(n), current = new Date(startDate), i = 0, date;
+	        while ( i < n ) {
+	          date = new Date(current);
+	          ctrl.fixTimeZone(date);
+	          dates[i++] = date;
+	          current.setDate( current.getDate() + 1 );
+	        }
+	        return dates;
+	      }
+	
+	      ctrl._refreshView = function() {
+	        var year = ctrl.activeDate.getFullYear(),
+	          month = ctrl.activeDate.getMonth(),
+	          firstDayOfMonth = new Date(year, month, 1),
+	          difference = ctrl.startingDay - firstDayOfMonth.getDay(),
+	          numDisplayedFromPreviousMonth = (difference > 0) ? 7 - difference : - difference,
+	          firstDate = new Date(firstDayOfMonth);
+	
+	        if ( numDisplayedFromPreviousMonth > 0 ) {
+	          firstDate.setDate( - numDisplayedFromPreviousMonth + 1 );
+	        }
+	
+	        // 42 is the number of days on a six-month calendar
+	        var days = getDates(firstDate, 42);
+	        for (var i = 0; i < 42; i ++) {
+	          days[i] = angular.extend(ctrl.createDateObject(days[i], ctrl.formatDay), {
+	            secondary: days[i].getMonth() !== month,
+	            uid: scope.uniqueId + '-' + i
+	          });
+	        }
+	
+	        scope.labels = new Array(7);
+	        for (var j = 0; j < 7; j++) {
+	          scope.labels[j] = {
+	            abbr: dateFilter(days[j].date, ctrl.formatDayHeader),
+	            full: dateFilter(days[j].date, 'EEEE')
+	          };
+	        }
+	
+	        scope.title = dateFilter(ctrl.activeDate, ctrl.formatDayTitle);
+	        scope.rows = ctrl.split(days, 7);
+	
+	        if ( scope.showWeeks ) {
+	          scope.weekNumbers = [];
+	          var thursdayIndex = (4 + 7 - ctrl.startingDay) % 7,
+	              numWeeks = scope.rows.length;
+	          for (var curWeek = 0; curWeek < numWeeks; curWeek++) {
+	            scope.weekNumbers.push(
+	              getISO8601WeekNumber( scope.rows[curWeek][thursdayIndex].date ));
+	          }
+	        }
+	      };
+	
+	      ctrl.compare = function(date1, date2) {
+	        return (new Date( date1.getFullYear(), date1.getMonth(), date1.getDate() ) - new Date( date2.getFullYear(), date2.getMonth(), date2.getDate() ) );
+	      };
+	
+	      function getISO8601WeekNumber(date) {
+	        var checkDate = new Date(date);
+	        checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7)); // Thursday
+	        var time = checkDate.getTime();
+	        checkDate.setMonth(0); // Compare with Jan 1
+	        checkDate.setDate(1);
+	        return Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
+	      }
+	
+	      ctrl.handleKeyDown = function( key, evt ) {
+	        var date = ctrl.activeDate.getDate();
+	
+	        if (key === 'left') {
+	          date = date - 1;   // up
+	        } else if (key === 'up') {
+	          date = date - 7;   // down
+	        } else if (key === 'right') {
+	          date = date + 1;   // down
+	        } else if (key === 'down') {
+	          date = date + 7;
+	        } else if (key === 'pageup' || key === 'pagedown') {
+	          var month = ctrl.activeDate.getMonth() + (key === 'pageup' ? - 1 : 1);
+	          ctrl.activeDate.setMonth(month, 1);
+	          date = Math.min(getDaysInMonth(ctrl.activeDate.getFullYear(), ctrl.activeDate.getMonth()), date);
+	        } else if (key === 'home') {
+	          date = 1;
+	        } else if (key === 'end') {
+	          date = getDaysInMonth(ctrl.activeDate.getFullYear(), ctrl.activeDate.getMonth());
+	        }
+	        ctrl.activeDate.setDate(date);
+	      };
+	
+	      ctrl.refreshView();
+	    }
+	  };
+	}])
+	
+	.directive('monthpicker', ['dateFilter', function (dateFilter) {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    templateUrl: 'template/datepicker/month.html',
+	    require: '^datepicker',
+	    link: function(scope, element, attrs, ctrl) {
+	      ctrl.step = { years: 1 };
+	      ctrl.element = element;
+	
+	      ctrl._refreshView = function() {
+	        var months = new Array(12),
+	            year = ctrl.activeDate.getFullYear(),
+	            date;
+	
+	        for ( var i = 0; i < 12; i++ ) {
+	          date = new Date(year, i, 1);
+	          ctrl.fixTimeZone(date);
+	          months[i] = angular.extend(ctrl.createDateObject(date, ctrl.formatMonth), {
+	            uid: scope.uniqueId + '-' + i
+	          });
+	        }
+	
+	        scope.title = dateFilter(ctrl.activeDate, ctrl.formatMonthTitle);
+	        scope.rows = ctrl.split(months, 3);
+	      };
+	
+	      ctrl.compare = function(date1, date2) {
+	        return new Date( date1.getFullYear(), date1.getMonth() ) - new Date( date2.getFullYear(), date2.getMonth() );
+	      };
+	
+	      ctrl.handleKeyDown = function( key, evt ) {
+	        var date = ctrl.activeDate.getMonth();
+	
+	        if (key === 'left') {
+	          date = date - 1;   // up
+	        } else if (key === 'up') {
+	          date = date - 3;   // down
+	        } else if (key === 'right') {
+	          date = date + 1;   // down
+	        } else if (key === 'down') {
+	          date = date + 3;
+	        } else if (key === 'pageup' || key === 'pagedown') {
+	          var year = ctrl.activeDate.getFullYear() + (key === 'pageup' ? - 1 : 1);
+	          ctrl.activeDate.setFullYear(year);
+	        } else if (key === 'home') {
+	          date = 0;
+	        } else if (key === 'end') {
+	          date = 11;
+	        }
+	        ctrl.activeDate.setMonth(date);
+	      };
+	
+	      ctrl.refreshView();
+	    }
+	  };
+	}])
+	
+	.directive('yearpicker', ['dateFilter', function (dateFilter) {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    templateUrl: 'template/datepicker/year.html',
+	    require: '^datepicker',
+	    link: function(scope, element, attrs, ctrl) {
+	      var range = ctrl.yearRange;
+	
+	      ctrl.step = { years: range };
+	      ctrl.element = element;
+	
+	      function getStartingYear( year ) {
+	        return parseInt((year - 1) / range, 10) * range + 1;
+	      }
+	
+	      ctrl._refreshView = function() {
+	        var years = new Array(range), date;
+	
+	        for ( var i = 0, start = getStartingYear(ctrl.activeDate.getFullYear()); i < range; i++ ) {
+	          date = new Date(start + i, 0, 1);
+	          ctrl.fixTimeZone(date);
+	          years[i] = angular.extend(ctrl.createDateObject(date, ctrl.formatYear), {
+	            uid: scope.uniqueId + '-' + i
+	          });
+	        }
+	
+	        scope.title = [years[0].label, years[range - 1].label].join(' - ');
+	        scope.rows = ctrl.split(years, 5);
+	      };
+	
+	      ctrl.compare = function(date1, date2) {
+	        return date1.getFullYear() - date2.getFullYear();
+	      };
+	
+	      ctrl.handleKeyDown = function( key, evt ) {
+	        var date = ctrl.activeDate.getFullYear();
+	
+	        if (key === 'left') {
+	          date = date - 1;   // up
+	        } else if (key === 'up') {
+	          date = date - 5;   // down
+	        } else if (key === 'right') {
+	          date = date + 1;   // down
+	        } else if (key === 'down') {
+	          date = date + 5;
+	        } else if (key === 'pageup' || key === 'pagedown') {
+	          date += (key === 'pageup' ? - 1 : 1) * ctrl.step.years;
+	        } else if (key === 'home') {
+	          date = getStartingYear( ctrl.activeDate.getFullYear() );
+	        } else if (key === 'end') {
+	          date = getStartingYear( ctrl.activeDate.getFullYear() ) + range - 1;
+	        }
+	        ctrl.activeDate.setFullYear(date);
+	      };
+	
+	      ctrl.refreshView();
+	    }
+	  };
+	}])
+	
+	.constant('datepickerPopupConfig', {
+	  datepickerPopup: 'yyyy-MM-dd',
+	  html5Types: {
+	    date: 'yyyy-MM-dd',
+	    'datetime-local': 'yyyy-MM-ddTHH:mm:ss.sss',
+	    'month': 'yyyy-MM'
+	  },
+	  currentText: 'Today',
+	  clearText: 'Clear',
+	  closeText: 'Done',
+	  closeOnDateSelection: true,
+	  appendToBody: false,
+	  showButtonBar: true
+	})
+	
+	.directive('datepickerPopup', ['$compile', '$parse', '$document', '$position', 'dateFilter', 'dateParser', 'datepickerPopupConfig', '$timeout',
+	function ($compile, $parse, $document, $position, dateFilter, dateParser, datepickerPopupConfig, $timeout) {
+	  return {
+	    restrict: 'EA',
+	    require: 'ngModel',
+	    scope: {
+	      isOpen: '=?',
+	      currentText: '@',
+	      clearText: '@',
+	      closeText: '@',
+	      dateDisabled: '&',
+	      customClass: '&'
+	    },
+	    link: function(scope, element, attrs, ngModel) {
+	      var dateFormat,
+	          closeOnDateSelection = angular.isDefined(attrs.closeOnDateSelection) ? scope.$parent.$eval(attrs.closeOnDateSelection) : datepickerPopupConfig.closeOnDateSelection,
+	          appendToBody = angular.isDefined(attrs.datepickerAppendToBody) ? scope.$parent.$eval(attrs.datepickerAppendToBody) : datepickerPopupConfig.appendToBody;
+	
+	      scope.showButtonBar = angular.isDefined(attrs.showButtonBar) ? scope.$parent.$eval(attrs.showButtonBar) : datepickerPopupConfig.showButtonBar;
+	
+	      scope.getText = function( key ) {
+	        return scope[key + 'Text'] || datepickerPopupConfig[key + 'Text'];
+	      };
+	
+	      var isHtml5DateInput = false;
+	      if (datepickerPopupConfig.html5Types[attrs.type]) {
+	        dateFormat = datepickerPopupConfig.html5Types[attrs.type];
+	        isHtml5DateInput = true;
+	      } else {
+	        dateFormat = attrs.datepickerPopup || datepickerPopupConfig.datepickerPopup;
+	        attrs.$observe('datepickerPopup', function(value, oldValue) {
+	            var newDateFormat = value || datepickerPopupConfig.datepickerPopup;
+	            // Invalidate the $modelValue to ensure that formatters re-run
+	            // FIXME: Refactor when PR is merged: https://github.com/angular/angular.js/pull/10764
+	            if (newDateFormat !== dateFormat) {
+	              dateFormat = newDateFormat;
+	              ngModel.$modelValue = null;
+	
+	              if (!dateFormat) {
+	                throw new Error('datepickerPopup must have a date format specified.');
+	              }
+	            }
+	        });
+	      }
+	
+	      if (!dateFormat) {
+	        throw new Error('datepickerPopup must have a date format specified.');
+	      }
+	
+	      if (isHtml5DateInput && attrs.datepickerPopup) {
+	        throw new Error('HTML5 date input types do not support custom formats.');
+	      }
+	
+	      // popup element used to display calendar
+	      var popupEl = angular.element('<div datepicker-popup-wrap><div datepicker></div></div>');
+	      popupEl.attr({
+	        'ng-model': 'date',
+	        'ng-change': 'dateSelection(date)'
+	      });
+	
+	      function cameltoDash( string ){
+	        return string.replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
+	      }
+	
+	      // datepicker element
+	      var datepickerEl = angular.element(popupEl.children()[0]);
+	      if (isHtml5DateInput) {
+	        if (attrs.type == 'month') {
+	          datepickerEl.attr('datepicker-mode', '"month"');
+	          datepickerEl.attr('min-mode', 'month');
+	        }
+	      }
+	
+	      if ( attrs.datepickerOptions ) {
+	        var options = scope.$parent.$eval(attrs.datepickerOptions);
+	        if(options && options.initDate) {
+	          scope.initDate = options.initDate;
+	          datepickerEl.attr( 'init-date', 'initDate' );
+	          delete options.initDate;
+	        }
+	        angular.forEach(options, function( value, option ) {
+	          datepickerEl.attr( cameltoDash(option), value );
+	        });
+	      }
+	
+	      scope.watchData = {};
+	      angular.forEach(['minDate', 'maxDate', 'datepickerMode', 'initDate', 'shortcutPropagation'], function( key ) {
+	        if ( attrs[key] ) {
+	          var getAttribute = $parse(attrs[key]);
+	          scope.$parent.$watch(getAttribute, function(value){
+	            scope.watchData[key] = value;
+	          });
+	          datepickerEl.attr(cameltoDash(key), 'watchData.' + key);
+	
+	          // Propagate changes from datepicker to outside
+	          if ( key === 'datepickerMode' ) {
+	            var setAttribute = getAttribute.assign;
+	            scope.$watch('watchData.' + key, function(value, oldvalue) {
+	              if ( angular.isFunction(setAttribute) && value !== oldvalue ) {
+	                setAttribute(scope.$parent, value);
+	              }
+	            });
+	          }
+	        }
+	      });
+	      if (attrs.dateDisabled) {
+	        datepickerEl.attr('date-disabled', 'dateDisabled({ date: date, mode: mode })');
+	      }
+	
+	      if (attrs.showWeeks) {
+	        datepickerEl.attr('show-weeks', attrs.showWeeks);
+	      }
+	
+	      if (attrs.customClass){
+	        datepickerEl.attr('custom-class', 'customClass({ date: date, mode: mode })');
+	      }
+	
+	      function parseDate(viewValue) {
+	        if (angular.isNumber(viewValue)) {
+	          // presumably timestamp to date object
+	          viewValue = new Date(viewValue);
+	        }
+	
+	        if (!viewValue) {
+	          return null;
+	        } else if (angular.isDate(viewValue) && !isNaN(viewValue)) {
+	          return viewValue;
+	        } else if (angular.isString(viewValue)) {
+	          var date = dateParser.parse(viewValue, dateFormat, scope.date);
+	          if (isNaN(date)) {
+	            return undefined;
+	          } else {
+	            return date;
+	          }
+	        } else {
+	          return undefined;
+	        }
+	      }
+	
+	      function validator(modelValue, viewValue) {
+	        var value = modelValue || viewValue;
+	
+	        if (!attrs.ngRequired && !value) {
+	          return true;
+	        }
+	
+	        if (angular.isNumber(value)) {
+	          value = new Date(value);
+	        }
+	        if (!value) {
+	          return true;
+	        } else if (angular.isDate(value) && !isNaN(value)) {
+	          return true;
+	        } else if (angular.isString(value)) {
+	          var date = dateParser.parse(value, dateFormat);
+	          return !isNaN(date);
+	        } else {
+	          return false;
+	        }
+	      }
+	
+	      if (!isHtml5DateInput) {
+	        // Internal API to maintain the correct ng-invalid-[key] class
+	        ngModel.$$parserName = 'date';
+	        ngModel.$validators.date = validator;
+	        ngModel.$parsers.unshift(parseDate);
+	        ngModel.$formatters.push(function (value) {
+	          scope.date = value;
+	          return ngModel.$isEmpty(value) ? value : dateFilter(value, dateFormat);
+	        });
+	      }
+	      else {
+	        ngModel.$formatters.push(function (value) {
+	          scope.date = value;
+	          return value;
+	        });
+	      }
+	
+	      // Inner change
+	      scope.dateSelection = function(dt) {
+	        if (angular.isDefined(dt)) {
+	          scope.date = dt;
+	        }
+	        var date = scope.date ? dateFilter(scope.date, dateFormat) : null; // Setting to NULL is necessary for form validators to function
+	        element.val(date);
+	        ngModel.$setViewValue(date);
+	
+	        if ( closeOnDateSelection ) {
+	          scope.isOpen = false;
+	          element[0].focus();
+	        }
+	      };
+	
+	      // Detect changes in the view from the text box
+	      ngModel.$viewChangeListeners.push(function () {
+	        scope.date = dateParser.parse(ngModel.$viewValue, dateFormat, scope.date);
+	      });
+	
+	      var documentClickBind = function(event) {
+	        if (scope.isOpen && !element[0].contains(event.target)) {
+	          scope.$apply(function() {
+	            scope.isOpen = false;
+	          });
+	        }
+	      };
+	
+	      var inputKeydownBind = function(evt) {
+	        if (evt.which === 27 && scope.isOpen) {
+	          evt.preventDefault();
+	          evt.stopPropagation();
+	          scope.$apply(function() {
+	            scope.isOpen = false;
+	          });
+	          element[0].focus();
+	        } else if (evt.which === 40 && !scope.isOpen) {
+	          evt.preventDefault();
+	          evt.stopPropagation();
+	          scope.$apply(function() {
+	            scope.isOpen = true;
+	          });
+	        }
+	      };
+	      element.bind('keydown', inputKeydownBind);
+	
+	      scope.keydown = function(evt) {
+	        if (evt.which === 27) {
+	          scope.isOpen = false;
+	          element[0].focus();
+	        }
+	      };
+	
+	      scope.$watch('isOpen', function(value) {
+	        if (value) {
+	          scope.position = appendToBody ? $position.offset(element) : $position.position(element);
+	          scope.position.top = scope.position.top + element.prop('offsetHeight');
+	
+	          $timeout(function() {
+	            scope.$broadcast('datepicker.focus');
+	            $document.bind('click', documentClickBind);
+	          }, 0, false);
+	        } else {
+	          $document.unbind('click', documentClickBind);
+	        }
+	      });
+	
+	      scope.select = function( date ) {
+	        if (date === 'today') {
+	          var today = new Date();
+	          if (angular.isDate(scope.date)) {
+	            date = new Date(scope.date);
+	            date.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
+	          } else {
+	            date = new Date(today.setHours(0, 0, 0, 0));
+	          }
+	        }
+	        scope.dateSelection( date );
+	      };
+	
+	      scope.close = function() {
+	        scope.isOpen = false;
+	        element[0].focus();
+	      };
+	
+	      var $popup = $compile(popupEl)(scope);
+	      // Prevent jQuery cache memory leak (template is now redundant after linking)
+	      popupEl.remove();
+	
+	      if ( appendToBody ) {
+	        $document.find('body').append($popup);
+	      } else {
+	        element.after($popup);
+	      }
+	
+	      scope.$on('$destroy', function() {
+	        if (scope.isOpen === true) {
+	          scope.$apply(function() {
+	            scope.isOpen = false;
+	          });
+	        }
+	
+	        $popup.remove();
+	        element.unbind('keydown', inputKeydownBind);
+	        $document.unbind('click', documentClickBind);
+	      });
+	    }
+	  };
+	}])
+	
+	.directive('datepickerPopupWrap', function() {
+	  return {
+	    restrict:'EA',
+	    replace: true,
+	    transclude: true,
+	    templateUrl: 'template/datepicker/popup.html'
+	  };
+	});
+	
+	angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.position'])
+	
+	.constant('dropdownConfig', {
+	  openClass: 'open'
+	})
+	
+	.service('dropdownService', ['$document', '$rootScope', function($document, $rootScope) {
+	  var openScope = null;
+	
+	  this.open = function( dropdownScope ) {
+	    if ( !openScope ) {
+	      $document.bind('click', closeDropdown);
+	      $document.bind('keydown', keybindFilter);
+	    }
+	
+	    if ( openScope && openScope !== dropdownScope ) {
+	      openScope.isOpen = false;
+	    }
+	
+	    openScope = dropdownScope;
+	  };
+	
+	  this.close = function( dropdownScope ) {
+	    if ( openScope === dropdownScope ) {
+	      openScope = null;
+	      $document.unbind('click', closeDropdown);
+	      $document.unbind('keydown', keybindFilter);
+	    }
+	  };
+	
+	  var closeDropdown = function( evt ) {
+	    // This method may still be called during the same mouse event that
+	    // unbound this event handler. So check openScope before proceeding.
+	    if (!openScope) { return; }
+	
+	    if( evt && openScope.getAutoClose() === 'disabled' )  { return ; }
+	
+	    var toggleElement = openScope.getToggleElement();
+	    if ( evt && toggleElement && toggleElement[0].contains(evt.target) ) {
+	      return;
+	    }
+	
+	    var dropdownElement = openScope.getDropdownElement();
+	    if (evt && openScope.getAutoClose() === 'outsideClick' &&
+	      dropdownElement && dropdownElement[0].contains(evt.target)) {
+	      return;
+	    }
+	
+	    openScope.isOpen = false;
+	
+	    if (!$rootScope.$$phase) {
+	      openScope.$apply();
+	    }
+	  };
+	
+	  var keybindFilter = function( evt ) {
+	    if ( evt.which === 27 ) {
+	      openScope.focusToggleElement();
+	      closeDropdown();
+	    }
+	    else if ( openScope.isKeynavEnabled() && /(38|40)/.test(evt.which) && openScope.isOpen ) {
+	      evt.preventDefault();
+	      evt.stopPropagation();
+	      openScope.focusDropdownEntry(evt.which);
+	    }
+	  };
+	}])
+	
+	.controller('DropdownController', ['$scope', '$attrs', '$parse', 'dropdownConfig', 'dropdownService', '$animate', '$position', '$document', '$compile', '$templateRequest', function($scope, $attrs, $parse, dropdownConfig, dropdownService, $animate, $position, $document, $compile, $templateRequest) {
+	  var self = this,
+	    scope = $scope.$new(), // create a child scope so we are not polluting original one
+		templateScope,
+	    openClass = dropdownConfig.openClass,
+	    getIsOpen,
+	    setIsOpen = angular.noop,
+	    toggleInvoker = $attrs.onToggle ? $parse($attrs.onToggle) : angular.noop,
+	    appendToBody = false,
+	    keynavEnabled =false,
+	    selectedOption = null;
+	
+	  this.init = function( element ) {
+	    self.$element = element;
+	
+	    if ( $attrs.isOpen ) {
+	      getIsOpen = $parse($attrs.isOpen);
+	      setIsOpen = getIsOpen.assign;
+	
+	      $scope.$watch(getIsOpen, function(value) {
+	        scope.isOpen = !!value;
+	      });
+	    }
+	
+	    appendToBody = angular.isDefined($attrs.dropdownAppendToBody);
+	    keynavEnabled = angular.isDefined($attrs.keyboardNav);
+	
+	    if ( appendToBody && self.dropdownMenu ) {
+	      $document.find('body').append( self.dropdownMenu );
+	      element.on('$destroy', function handleDestroyEvent() {
+	        self.dropdownMenu.remove();
+	      });
+	    }
+	  };
+	
+	  this.toggle = function( open ) {
+	    return scope.isOpen = arguments.length ? !!open : !scope.isOpen;
+	  };
+	
+	  // Allow other directives to watch status
+	  this.isOpen = function() {
+	    return scope.isOpen;
+	  };
+	
+	  scope.getToggleElement = function() {
+	    return self.toggleElement;
+	  };
+	
+	  scope.getAutoClose = function() {
+	    return $attrs.autoClose || 'always'; //or 'outsideClick' or 'disabled'
+	  };
+	
+	  scope.getElement = function() {
+	    return self.$element;
+	  };
+	
+	  scope.isKeynavEnabled = function() {
+	    return keynavEnabled;
+	  };
+	
+	  scope.focusDropdownEntry = function(keyCode) {
+	    var elems = self.dropdownMenu ? //If append to body is used.
+	      (angular.element(self.dropdownMenu).find('a')) :
+	      (angular.element(self.$element).find('ul').eq(0).find('a'));
+	
+	    switch (keyCode) {
+	      case (40): {
+	        if ( !angular.isNumber(self.selectedOption)) {
+	          self.selectedOption = 0;
+	        } else {
+	          self.selectedOption = (self.selectedOption === elems.length -1 ?
+	            self.selectedOption :
+	            self.selectedOption + 1);
+	        }
+	        break;
+	      }
+	      case (38): {
+	        if ( !angular.isNumber(self.selectedOption)) {
+	          return;
+	        } else {
+	          self.selectedOption = (self.selectedOption === 0 ?
+	            0 :
+	            self.selectedOption - 1);
+	        }
+	        break;
+	      }
+	    }
+	    elems[self.selectedOption].focus();
+	  };
+	
+	  scope.getDropdownElement = function() {
+	    return self.dropdownMenu;
+	  };
+	
+	  scope.focusToggleElement = function() {
+	    if ( self.toggleElement ) {
+	      self.toggleElement[0].focus();
+	    }
+	  };
+	
+	  scope.$watch('isOpen', function( isOpen, wasOpen ) {
+	    if (appendToBody && self.dropdownMenu) {
+	        var pos = $position.positionElements(self.$element, self.dropdownMenu, 'bottom-left', true);
+	        var css = {
+	            top: pos.top + 'px',
+	            display: isOpen ? 'block' : 'none'
+	        };
+	
+	        var rightalign = self.dropdownMenu.hasClass('dropdown-menu-right');
+	        if (!rightalign) {
+	            css.left = pos.left + 'px';
+	            css.right = 'auto';
+	        } else {
+	            css.left = 'auto';
+	            css.right = (window.innerWidth - (pos.left + self.$element.prop('offsetWidth'))) + 'px';
+	        }
+	
+	        self.dropdownMenu.css(css);
+	    }
+	
+	    $animate[isOpen ? 'addClass' : 'removeClass'](self.$element, openClass).then(function() {
+	        if (angular.isDefined(isOpen) && isOpen !== wasOpen) {
+	           toggleInvoker($scope, { open: !!isOpen });
+	        }
+	    });
+	
+	    if ( isOpen ) {
+	      if (self.dropdownMenuTemplateUrl) {
+	        $templateRequest(self.dropdownMenuTemplateUrl).then(function(tplContent) {
+	          templateScope = scope.$new();
+	          $compile(tplContent.trim())(templateScope, function(dropdownElement) {
+	            var newEl = dropdownElement;
+	            self.dropdownMenu.replaceWith(newEl);
+	            self.dropdownMenu = newEl;
+	          });
+	        });
+	      }
+	
+	      scope.focusToggleElement();
+	      dropdownService.open( scope );
+	    } else {
+	      if (self.dropdownMenuTemplateUrl) {
+	        if (templateScope) {
+	          templateScope.$destroy();
+	        }
+	        var newEl = angular.element('<ul class="dropdown-menu"></ul>');
+	        self.dropdownMenu.replaceWith(newEl);
+	        self.dropdownMenu = newEl;
+	      }
+	
+	      dropdownService.close( scope );
+	      self.selectedOption = null;
+	    }
+	
+	    if (angular.isFunction(setIsOpen)) {
+	      setIsOpen($scope, isOpen);
+	    }
+	  });
+	
+	  $scope.$on('$locationChangeSuccess', function() {
+	    if (scope.getAutoClose() !== 'disabled') {
+	      scope.isOpen = false;
+	    }
+	  });
+	
+	  $scope.$on('$destroy', function() {
+	    scope.$destroy();
+	  });
+	}])
+	
+	.directive('dropdown', function() {
+	  return {
+	    controller: 'DropdownController',
+	    link: function(scope, element, attrs, dropdownCtrl) {
+	      dropdownCtrl.init( element );
+	      element.addClass('dropdown');
+	    }
+	  };
+	})
+	
+	.directive('dropdownMenu', function() {
+	  return {
+	    restrict: 'AC',
+	    require: '?^dropdown',
+	    link: function(scope, element, attrs, dropdownCtrl) {
+	      if (!dropdownCtrl) {
+	        return;
+	      }
+	      var tplUrl = attrs.templateUrl;
+	      if (tplUrl) {
+	        dropdownCtrl.dropdownMenuTemplateUrl = tplUrl;
+	      }
+	      if (!dropdownCtrl.dropdownMenu) {
+	        dropdownCtrl.dropdownMenu = element;
+	      }
+	    }
+	  };
+	})
+	
+	.directive('keyboardNav', function() {
+	  return {
+	    restrict: 'A',
+	    require: '?^dropdown',
+	    link: function (scope, element, attrs, dropdownCtrl) {
+	
+	      element.bind('keydown', function(e) {
+	
+	        if ([38, 40].indexOf(e.which) !== -1) {
+	
+	          e.preventDefault();
+	          e.stopPropagation();
+	
+	          var elems = angular.element(element).find('a');
+	
+	          switch (e.keyCode) {
+	            case (40): { // Down
+	              if ( !angular.isNumber(dropdownCtrl.selectedOption)) {
+	                dropdownCtrl.selectedOption = 0;
+	              } else {
+	                dropdownCtrl.selectedOption = (dropdownCtrl.selectedOption === elems.length -1 ? dropdownCtrl.selectedOption : dropdownCtrl.selectedOption+1);
+	              }
+	
+	            }
+	            break;
+	            case (38): { // Up
+	              dropdownCtrl.selectedOption = (dropdownCtrl.selectedOption === 0 ? 0 : dropdownCtrl.selectedOption-1);
+	            }
+	            break;
+	          }
+	          elems[dropdownCtrl.selectedOption].focus();
+	        }
+	      });
+	    }
+	
+	  };
+	})
+	
+	.directive('dropdownToggle', function() {
+	  return {
+	    require: '?^dropdown',
+	    link: function(scope, element, attrs, dropdownCtrl) {
+	      if ( !dropdownCtrl ) {
+	        return;
+	      }
+	
+	      element.addClass('dropdown-toggle');
+	
+	      dropdownCtrl.toggleElement = element;
+	
+	      var toggleDropdown = function(event) {
+	        event.preventDefault();
+	
+	        if ( !element.hasClass('disabled') && !attrs.disabled ) {
+	          scope.$apply(function() {
+	            dropdownCtrl.toggle();
+	          });
+	        }
+	      };
+	
+	      element.bind('click', toggleDropdown);
+	
+	      // WAI-ARIA
+	      element.attr({ 'aria-haspopup': true, 'aria-expanded': false });
+	      scope.$watch(dropdownCtrl.isOpen, function( isOpen ) {
+	        element.attr('aria-expanded', !!isOpen);
+	      });
+	
+	      scope.$on('$destroy', function() {
+	        element.unbind('click', toggleDropdown);
+	      });
+	    }
+	  };
+	});
+	
+	angular.module('ui.bootstrap.modal', [])
+	
+	/**
+	 * A helper, internal data structure that acts as a map but also allows getting / removing
+	 * elements in the LIFO order
+	 */
+	  .factory('$$stackedMap', function () {
+	    return {
+	      createNew: function () {
+	        var stack = [];
+	
+	        return {
+	          add: function (key, value) {
+	            stack.push({
+	              key: key,
+	              value: value
+	            });
+	          },
+	          get: function (key) {
+	            for (var i = 0; i < stack.length; i++) {
+	              if (key == stack[i].key) {
+	                return stack[i];
+	              }
+	            }
+	          },
+	          keys: function() {
+	            var keys = [];
+	            for (var i = 0; i < stack.length; i++) {
+	              keys.push(stack[i].key);
+	            }
+	            return keys;
+	          },
+	          top: function () {
+	            return stack[stack.length - 1];
+	          },
+	          remove: function (key) {
+	            var idx = -1;
+	            for (var i = 0; i < stack.length; i++) {
+	              if (key == stack[i].key) {
+	                idx = i;
+	                break;
+	              }
+	            }
+	            return stack.splice(idx, 1)[0];
+	          },
+	          removeTop: function () {
+	            return stack.splice(stack.length - 1, 1)[0];
+	          },
+	          length: function () {
+	            return stack.length;
+	          }
+	        };
+	      }
+	    };
+	  })
+	
+	/**
+	 * A helper directive for the $modal service. It creates a backdrop element.
+	 */
+	  .directive('modalBackdrop', [
+	           '$animate', '$modalStack',
+	  function ($animate ,  $modalStack) {
+	    return {
+	      restrict: 'EA',
+	      replace: true,
+	      templateUrl: 'template/modal/backdrop.html',
+	      compile: function (tElement, tAttrs) {
+	        tElement.addClass(tAttrs.backdropClass);
+	        return linkFn;
+	      }
+	    };
+	
+	    function linkFn(scope, element, attrs) {
+	      if (attrs.modalInClass) {
+	        $animate.addClass(element, attrs.modalInClass);
+	
+	        scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
+	          var done = setIsAsync();
+	          $animate.removeClass(element, attrs.modalInClass).then(done);
+	        });
+	      }
+	    }
+	  }])
+	
+	  .directive('modalWindow', [
+	           '$modalStack', '$q', '$animate',
+	  function ($modalStack ,  $q ,  $animate) {
+	    return {
+	      restrict: 'EA',
+	      scope: {
+	        index: '@'
+	      },
+	      replace: true,
+	      transclude: true,
+	      templateUrl: function(tElement, tAttrs) {
+	        return tAttrs.templateUrl || 'template/modal/window.html';
+	      },
+	      link: function (scope, element, attrs) {
+	        element.addClass(attrs.windowClass || '');
+	        scope.size = attrs.size;
+	
+	        scope.close = function (evt) {
+	          var modal = $modalStack.getTop();
+	          if (modal && modal.value.backdrop && modal.value.backdrop != 'static' && (evt.target === evt.currentTarget)) {
+	            evt.preventDefault();
+	            evt.stopPropagation();
+	            $modalStack.dismiss(modal.key, 'backdrop click');
+	          }
+	        };
+	
+	        // This property is only added to the scope for the purpose of detecting when this directive is rendered.
+	        // We can detect that by using this property in the template associated with this directive and then use
+	        // {@link Attribute#$observe} on it. For more details please see {@link TableColumnResize}.
+	        scope.$isRendered = true;
+	
+	        // Deferred object that will be resolved when this modal is render.
+	        var modalRenderDeferObj = $q.defer();
+	        // Observe function will be called on next digest cycle after compilation, ensuring that the DOM is ready.
+	        // In order to use this way of finding whether DOM is ready, we need to observe a scope property used in modal's template.
+	        attrs.$observe('modalRender', function (value) {
+	          if (value == 'true') {
+	            modalRenderDeferObj.resolve();
+	          }
+	        });
+	
+	        modalRenderDeferObj.promise.then(function () {
+	          if (attrs.modalInClass) {
+	            $animate.addClass(element, attrs.modalInClass);
+	
+	            scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
+	              var done = setIsAsync();
+	              $animate.removeClass(element, attrs.modalInClass).then(done);
+	            });
+	          }
+	
+	          var inputsWithAutofocus = element[0].querySelectorAll('[autofocus]');
+	          /**
+	           * Auto-focusing of a freshly-opened modal element causes any child elements
+	           * with the autofocus attribute to lose focus. This is an issue on touch
+	           * based devices which will show and then hide the onscreen keyboard.
+	           * Attempts to refocus the autofocus element via JavaScript will not reopen
+	           * the onscreen keyboard. Fixed by updated the focusing logic to only autofocus
+	           * the modal element if the modal does not contain an autofocus element.
+	           */
+	          if (inputsWithAutofocus.length) {
+	            inputsWithAutofocus[0].focus();
+	          } else {
+	            element[0].focus();
+	          }
+	
+	          // Notify {@link $modalStack} that modal is rendered.
+	          var modal = $modalStack.getTop();
+	          if (modal) {
+	            $modalStack.modalRendered(modal.key);
+	          }
+	        });
+	      }
+	    };
+	  }])
+	
+	  .directive('modalAnimationClass', [
+	    function () {
+	      return {
+	        compile: function (tElement, tAttrs) {
+	          if (tAttrs.modalAnimation) {
+	            tElement.addClass(tAttrs.modalAnimationClass);
+	          }
+	        }
+	      };
+	    }])
+	
+	  .directive('modalTransclude', function () {
+	    return {
+	      link: function($scope, $element, $attrs, controller, $transclude) {
+	        $transclude($scope.$parent, function(clone) {
+	          $element.empty();
+	          $element.append(clone);
+	        });
+	      }
+	    };
+	  })
+	
+	  .factory('$modalStack', [
+	             '$animate', '$timeout', '$document', '$compile', '$rootScope',
+	             '$q',
+	             '$$stackedMap',
+	    function ($animate ,  $timeout ,  $document ,  $compile ,  $rootScope ,
+	              $q,
+	              $$stackedMap) {
+	
+	      var OPENED_MODAL_CLASS = 'modal-open';
+	
+	      var backdropDomEl, backdropScope;
+	      var openedWindows = $$stackedMap.createNew();
+	      var $modalStack = {
+	        NOW_CLOSING_EVENT: 'modal.stack.now-closing'
+	      };
+	
+	      //Modal focus behavior
+	      var focusableElementList;
+	      var focusIndex = 0;
+	      var tababbleSelector = 'a[href], area[href], input:not([disabled]), ' +
+	        'button:not([disabled]),select:not([disabled]), textarea:not([disabled]), ' +
+	        'iframe, object, embed, *[tabindex], *[contenteditable=true]';
+	
+	      function backdropIndex() {
+	        var topBackdropIndex = -1;
+	        var opened = openedWindows.keys();
+	        for (var i = 0; i < opened.length; i++) {
+	          if (openedWindows.get(opened[i]).value.backdrop) {
+	            topBackdropIndex = i;
+	          }
+	        }
+	        return topBackdropIndex;
+	      }
+	
+	      $rootScope.$watch(backdropIndex, function(newBackdropIndex) {
+	        if (backdropScope) {
+	          backdropScope.index = newBackdropIndex;
+	        }
+	      });
+	
+	      function removeModalWindow(modalInstance, elementToReceiveFocus) {
+	
+	        var body = $document.find('body').eq(0);
+	        var modalWindow = openedWindows.get(modalInstance).value;
+	
+	        //clean up the stack
+	        openedWindows.remove(modalInstance);
+	
+	        removeAfterAnimate(modalWindow.modalDomEl, modalWindow.modalScope, function() {
+	          body.toggleClass(OPENED_MODAL_CLASS, openedWindows.length() > 0);
+	        });
+	        checkRemoveBackdrop();
+	
+	        //move focus to specified element if available, or else to body
+	        if (elementToReceiveFocus && elementToReceiveFocus.focus) {
+	          elementToReceiveFocus.focus();
+	        } else {
+	          body.focus();
+	        }
+	      }
+	
+	      function checkRemoveBackdrop() {
+	          //remove backdrop if no longer needed
+	          if (backdropDomEl && backdropIndex() == -1) {
+	            var backdropScopeRef = backdropScope;
+	            removeAfterAnimate(backdropDomEl, backdropScope, function () {
+	              backdropScopeRef = null;
+	            });
+	            backdropDomEl = undefined;
+	            backdropScope = undefined;
+	          }
+	      }
+	
+	      function removeAfterAnimate(domEl, scope, done) {
+	        var asyncDeferred;
+	        var asyncPromise = null;
+	        var setIsAsync = function () {
+	          if (!asyncDeferred) {
+	            asyncDeferred = $q.defer();
+	            asyncPromise = asyncDeferred.promise;
+	          }
+	
+	          return function asyncDone() {
+	            asyncDeferred.resolve();
+	          };
+	        };
+	        scope.$broadcast($modalStack.NOW_CLOSING_EVENT, setIsAsync);
+	
+	        // Note that it's intentional that asyncPromise might be null.
+	        // That's when setIsAsync has not been called during the
+	        // NOW_CLOSING_EVENT broadcast.
+	        return $q.when(asyncPromise).then(afterAnimating);
+	
+	        function afterAnimating() {
+	          if (afterAnimating.done) {
+	            return;
+	          }
+	          afterAnimating.done = true;
+	
+	          $animate.leave(domEl);
+	          scope.$destroy();
+	          if (done) {
+	            done();
+	          }
+	        }
+	      }
+	
+	      $document.bind('keydown', function (evt) {
+	        var modal = openedWindows.top();
+	        if (modal && modal.value.keyboard) {
+	          switch (evt.which){
+	            case 27: {
+	              evt.preventDefault();
+	              $rootScope.$apply(function () {
+	                $modalStack.dismiss(modal.key, 'escape key press');
+	              });
+	              break;
+	            }
+	            case 9: {
+	              $modalStack.loadFocusElementList(modal);
+	              var focusChanged = false;
+	              if (evt.shiftKey) {
+	                if ($modalStack.isFocusInFirstItem(evt)) {
+	                  focusChanged = $modalStack.focusLastFocusableElement();
+	                }
+	              } else {
+	                if ($modalStack.isFocusInLastItem(evt)) {
+	                  focusChanged = $modalStack.focusFirstFocusableElement();
+	                }
+	              }
+	
+	              if (focusChanged) {
+	                evt.preventDefault();
+	                evt.stopPropagation();
+	              }
+	              break;
+	            }
+	          }
+	        }
+	      });
+	
+	      $modalStack.open = function (modalInstance, modal) {
+	
+	        var modalOpener = $document[0].activeElement;
+	
+	        openedWindows.add(modalInstance, {
+	          deferred: modal.deferred,
+	          renderDeferred: modal.renderDeferred,
+	          modalScope: modal.scope,
+	          backdrop: modal.backdrop,
+	          keyboard: modal.keyboard
+	        });
+	
+	        var body = $document.find('body').eq(0),
+	            currBackdropIndex = backdropIndex();
+	
+	        if (currBackdropIndex >= 0 && !backdropDomEl) {
+	          backdropScope = $rootScope.$new(true);
+	          backdropScope.index = currBackdropIndex;
+	          var angularBackgroundDomEl = angular.element('<div modal-backdrop="modal-backdrop"></div>');
+	          angularBackgroundDomEl.attr('backdrop-class', modal.backdropClass);
+	          if (modal.animation) {
+	            angularBackgroundDomEl.attr('modal-animation', 'true');
+	          }
+	          backdropDomEl = $compile(angularBackgroundDomEl)(backdropScope);
+	          body.append(backdropDomEl);
+	        }
+	
+	        var angularDomEl = angular.element('<div modal-window="modal-window"></div>');
+	        angularDomEl.attr({
+	          'template-url': modal.windowTemplateUrl,
+	          'window-class': modal.windowClass,
+	          'size': modal.size,
+	          'index': openedWindows.length() - 1,
+	          'animate': 'animate'
+	        }).html(modal.content);
+	        if (modal.animation) {
+	          angularDomEl.attr('modal-animation', 'true');
+	        }
+	
+	        var modalDomEl = $compile(angularDomEl)(modal.scope);
+	        openedWindows.top().value.modalDomEl = modalDomEl;
+	        openedWindows.top().value.modalOpener = modalOpener;
+	        body.append(modalDomEl);
+	        body.addClass(OPENED_MODAL_CLASS);
+	        $modalStack.clearFocusListCache();
+	      };
+	
+	      function broadcastClosing(modalWindow, resultOrReason, closing) {
+	          return !modalWindow.value.modalScope.$broadcast('modal.closing', resultOrReason, closing).defaultPrevented;
+	      }
+	
+	      $modalStack.close = function (modalInstance, result) {
+	        var modalWindow = openedWindows.get(modalInstance);
+	        if (modalWindow && broadcastClosing(modalWindow, result, true)) {
+	          modalWindow.value.deferred.resolve(result);
+	          removeModalWindow(modalInstance, modalWindow.value.modalOpener);
+	          return true;
+	        }
+	        return !modalWindow;
+	      };
+	
+	      $modalStack.dismiss = function (modalInstance, reason) {
+	        var modalWindow = openedWindows.get(modalInstance);
+	        if (modalWindow && broadcastClosing(modalWindow, reason, false)) {
+	          modalWindow.value.deferred.reject(reason);
+	          removeModalWindow(modalInstance, modalWindow.value.modalOpener);
+	          return true;
+	        }
+	        return !modalWindow;
+	      };
+	
+	      $modalStack.dismissAll = function (reason) {
+	        var topModal = this.getTop();
+	        while (topModal && this.dismiss(topModal.key, reason)) {
+	          topModal = this.getTop();
+	        }
+	      };
+	
+	      $modalStack.getTop = function () {
+	        return openedWindows.top();
+	      };
+	
+	      $modalStack.modalRendered = function (modalInstance) {
+	        var modalWindow = openedWindows.get(modalInstance);
+	        if (modalWindow) {
+	          modalWindow.value.renderDeferred.resolve();
+	        }
+	      };
+	
+	      $modalStack.focusFirstFocusableElement = function() {
+	        if (focusableElementList.length > 0) {
+	          focusableElementList[0].focus();
+	          return true;
+	        }
+	        return false;
+	      };
+	      $modalStack.focusLastFocusableElement = function() {
+	        if (focusableElementList.length > 0) {
+	          focusableElementList[focusableElementList.length - 1].focus();
+	          return true;
+	        }
+	        return false;
+	      };
+	
+	      $modalStack.isFocusInFirstItem = function(evt) {
+	        if (focusableElementList.length > 0) {
+	          return (evt.target || evt.srcElement) == focusableElementList[0];
+	        }
+	        return false;
+	      };
+	
+	      $modalStack.isFocusInLastItem = function(evt) {
+	        if (focusableElementList.length > 0) {
+	          return (evt.target || evt.srcElement) == focusableElementList[focusableElementList.length - 1];
+	        }
+	        return false;
+	      };
+	
+	      $modalStack.clearFocusListCache = function() {
+	        focusableElementList = [];
+	        focusIndex = 0;
+	      };
+	
+	      $modalStack.loadFocusElementList = function(modalWindow) {
+	        if (focusableElementList === undefined || !focusableElementList.length0) {
+	          if (modalWindow) {
+	            var modalDomE1 = modalWindow.value.modalDomEl;
+	            if (modalDomE1 && modalDomE1.length) {
+	              focusableElementList = modalDomE1[0].querySelectorAll(tababbleSelector);
+	            }
+	          }
+	        }
+	      };
+	
+	      return $modalStack;
+	    }])
+	
+	  .provider('$modal', function () {
+	
+	    var $modalProvider = {
+	      options: {
+	        animation: true,
+	        backdrop: true, //can also be false or 'static'
+	        keyboard: true
+	      },
+	      $get: ['$injector', '$rootScope', '$q', '$templateRequest', '$controller', '$modalStack',
+	        function ($injector, $rootScope, $q, $templateRequest, $controller, $modalStack) {
+	
+	          var $modal = {};
+	
+	          function getTemplatePromise(options) {
+	            return options.template ? $q.when(options.template) :
+	              $templateRequest(angular.isFunction(options.templateUrl) ? (options.templateUrl)() : options.templateUrl);
+	          }
+	
+	          function getResolvePromises(resolves) {
+	            var promisesArr = [];
+	            angular.forEach(resolves, function (value) {
+	              if (angular.isFunction(value) || angular.isArray(value)) {
+	                promisesArr.push($q.when($injector.invoke(value)));
+	              }
+	            });
+	            return promisesArr;
+	          }
+	
+	          $modal.open = function (modalOptions) {
+	
+	            var modalResultDeferred = $q.defer();
+	            var modalOpenedDeferred = $q.defer();
+	            var modalRenderDeferred = $q.defer();
+	
+	            //prepare an instance of a modal to be injected into controllers and returned to a caller
+	            var modalInstance = {
+	              result: modalResultDeferred.promise,
+	              opened: modalOpenedDeferred.promise,
+	              rendered: modalRenderDeferred.promise,
+	              close: function (result) {
+	                return $modalStack.close(modalInstance, result);
+	              },
+	              dismiss: function (reason) {
+	                return $modalStack.dismiss(modalInstance, reason);
+	              }
+	            };
+	
+	            //merge and clean up options
+	            modalOptions = angular.extend({}, $modalProvider.options, modalOptions);
+	            modalOptions.resolve = modalOptions.resolve || {};
+	
+	            //verify options
+	            if (!modalOptions.template && !modalOptions.templateUrl) {
+	              throw new Error('One of template or templateUrl options is required.');
+	            }
+	
+	            var templateAndResolvePromise =
+	              $q.all([getTemplatePromise(modalOptions)].concat(getResolvePromises(modalOptions.resolve)));
+	
+	
+	            templateAndResolvePromise.then(function resolveSuccess(tplAndVars) {
+	
+	              var modalScope = (modalOptions.scope || $rootScope).$new();
+	              modalScope.$close = modalInstance.close;
+	              modalScope.$dismiss = modalInstance.dismiss;
+	
+	              var ctrlInstance, ctrlLocals = {};
+	              var resolveIter = 1;
+	
+	              //controllers
+	              if (modalOptions.controller) {
+	                ctrlLocals.$scope = modalScope;
+	                ctrlLocals.$modalInstance = modalInstance;
+	                angular.forEach(modalOptions.resolve, function (value, key) {
+	                  ctrlLocals[key] = tplAndVars[resolveIter++];
+	                });
+	
+	                ctrlInstance = $controller(modalOptions.controller, ctrlLocals);
+	                if (modalOptions.controllerAs) {
+	                  if (modalOptions.bindToController) {
+	                    angular.extend(ctrlInstance, modalScope);
+	                  }
+	
+	                  modalScope[modalOptions.controllerAs] = ctrlInstance;
+	                }
+	              }
+	
+	              $modalStack.open(modalInstance, {
+	                scope: modalScope,
+	                deferred: modalResultDeferred,
+	                renderDeferred: modalRenderDeferred,
+	                content: tplAndVars[0],
+	                animation: modalOptions.animation,
+	                backdrop: modalOptions.backdrop,
+	                keyboard: modalOptions.keyboard,
+	                backdropClass: modalOptions.backdropClass,
+	                windowClass: modalOptions.windowClass,
+	                windowTemplateUrl: modalOptions.windowTemplateUrl,
+	                size: modalOptions.size
+	              });
+	
+	            }, function resolveError(reason) {
+	              modalResultDeferred.reject(reason);
+	            });
+	
+	            templateAndResolvePromise.then(function () {
+	              modalOpenedDeferred.resolve(true);
+	            }, function (reason) {
+	              modalOpenedDeferred.reject(reason);
+	            });
+	
+	            return modalInstance;
+	          };
+	
+	          return $modal;
+	        }]
+	    };
+	
+	    return $modalProvider;
+	  });
+	
+	angular.module('ui.bootstrap.pagination', [])
+	.controller('PaginationController', ['$scope', '$attrs', '$parse', function ($scope, $attrs, $parse) {
+	  var self = this,
+	      ngModelCtrl = { $setViewValue: angular.noop }, // nullModelCtrl
+	      setNumPages = $attrs.numPages ? $parse($attrs.numPages).assign : angular.noop;
+	
+	  this.init = function(ngModelCtrl_, config) {
+	    ngModelCtrl = ngModelCtrl_;
+	    this.config = config;
+	
+	    ngModelCtrl.$render = function() {
+	      self.render();
+	    };
+	
+	    if ($attrs.itemsPerPage) {
+	      $scope.$parent.$watch($parse($attrs.itemsPerPage), function(value) {
+	        self.itemsPerPage = parseInt(value, 10);
+	        $scope.totalPages = self.calculateTotalPages();
+	      });
+	    } else {
+	      this.itemsPerPage = config.itemsPerPage;
+	    }
+	
+	    $scope.$watch('totalItems', function() {
+	      $scope.totalPages = self.calculateTotalPages();
+	    });
+	
+	    $scope.$watch('totalPages', function(value) {
+	      setNumPages($scope.$parent, value); // Readonly variable
+	
+	      if ( $scope.page > value ) {
+	        $scope.selectPage(value);
+	      } else {
+	        ngModelCtrl.$render();
+	      }
+	    });
+	  };
+	
+	  this.calculateTotalPages = function() {
+	    var totalPages = this.itemsPerPage < 1 ? 1 : Math.ceil($scope.totalItems / this.itemsPerPage);
+	    return Math.max(totalPages || 0, 1);
+	  };
+	
+	  this.render = function() {
+	    $scope.page = parseInt(ngModelCtrl.$viewValue, 10) || 1;
+	  };
+	
+	  $scope.selectPage = function(page, evt) {
+	    var clickAllowed = !$scope.ngDisabled || !evt;
+	    if (clickAllowed && $scope.page !== page && page > 0 && page <= $scope.totalPages) {
+	      if (evt && evt.target) {
+	        evt.target.blur();
+	      }
+	      ngModelCtrl.$setViewValue(page);
+	      ngModelCtrl.$render();
+	    }
+	  };
+	
+	  $scope.getText = function( key ) {
+	    return $scope[key + 'Text'] || self.config[key + 'Text'];
+	  };
+	  $scope.noPrevious = function() {
+	    return $scope.page === 1;
+	  };
+	  $scope.noNext = function() {
+	    return $scope.page === $scope.totalPages;
+	  };
+	}])
+	
+	.constant('paginationConfig', {
+	  itemsPerPage: 10,
+	  boundaryLinks: false,
+	  directionLinks: true,
+	  firstText: 'First',
+	  previousText: 'Previous',
+	  nextText: 'Next',
+	  lastText: 'Last',
+	  rotate: true
+	})
+	
+	.directive('pagination', ['$parse', 'paginationConfig', function($parse, paginationConfig) {
+	  return {
+	    restrict: 'EA',
+	    scope: {
+	      totalItems: '=',
+	      firstText: '@',
+	      previousText: '@',
+	      nextText: '@',
+	      lastText: '@',
+	      ngDisabled:'='
+	    },
+	    require: ['pagination', '?ngModel'],
+	    controller: 'PaginationController',
+	    templateUrl: 'template/pagination/pagination.html',
+	    replace: true,
+	    link: function(scope, element, attrs, ctrls) {
+	      var paginationCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+	
+	      if (!ngModelCtrl) {
+	         return; // do nothing if no ng-model
+	      }
+	
+	      // Setup configuration parameters
+	      var maxSize = angular.isDefined(attrs.maxSize) ? scope.$parent.$eval(attrs.maxSize) : paginationConfig.maxSize,
+	          rotate = angular.isDefined(attrs.rotate) ? scope.$parent.$eval(attrs.rotate) : paginationConfig.rotate;
+	      scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : paginationConfig.boundaryLinks;
+	      scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : paginationConfig.directionLinks;
+	
+	      paginationCtrl.init(ngModelCtrl, paginationConfig);
+	
+	      if (attrs.maxSize) {
+	        scope.$parent.$watch($parse(attrs.maxSize), function(value) {
+	          maxSize = parseInt(value, 10);
+	          paginationCtrl.render();
+	        });
+	      }
+	
+	      // Create page object used in template
+	      function makePage(number, text, isActive) {
+	        return {
+	          number: number,
+	          text: text,
+	          active: isActive
+	        };
+	      }
+	
+	      function getPages(currentPage, totalPages) {
+	        var pages = [];
+	
+	        // Default page limits
+	        var startPage = 1, endPage = totalPages;
+	        var isMaxSized = ( angular.isDefined(maxSize) && maxSize < totalPages );
+	
+	        // recompute if maxSize
+	        if ( isMaxSized ) {
+	          if ( rotate ) {
+	            // Current page is displayed in the middle of the visible ones
+	            startPage = Math.max(currentPage - Math.floor(maxSize/2), 1);
+	            endPage   = startPage + maxSize - 1;
+	
+	            // Adjust if limit is exceeded
+	            if (endPage > totalPages) {
+	              endPage   = totalPages;
+	              startPage = endPage - maxSize + 1;
+	            }
+	          } else {
+	            // Visible pages are paginated with maxSize
+	            startPage = ((Math.ceil(currentPage / maxSize) - 1) * maxSize) + 1;
+	
+	            // Adjust last page if limit is exceeded
+	            endPage = Math.min(startPage + maxSize - 1, totalPages);
+	          }
+	        }
+	
+	        // Add page number links
+	        for (var number = startPage; number <= endPage; number++) {
+	          var page = makePage(number, number, number === currentPage);
+	          pages.push(page);
+	        }
+	
+	        // Add links to move between page sets
+	        if ( isMaxSized && ! rotate ) {
+	          if ( startPage > 1 ) {
+	            var previousPageSet = makePage(startPage - 1, '...', false);
+	            pages.unshift(previousPageSet);
+	          }
+	
+	          if ( endPage < totalPages ) {
+	            var nextPageSet = makePage(endPage + 1, '...', false);
+	            pages.push(nextPageSet);
+	          }
+	        }
+	
+	        return pages;
+	      }
+	
+	      var originalRender = paginationCtrl.render;
+	      paginationCtrl.render = function() {
+	        originalRender();
+	        if (scope.page > 0 && scope.page <= scope.totalPages) {
+	          scope.pages = getPages(scope.page, scope.totalPages);
+	        }
+	      };
+	    }
+	  };
+	}])
+	
+	.constant('pagerConfig', {
+	  itemsPerPage: 10,
+	  previousText: '« Previous',
+	  nextText: 'Next »',
+	  align: true
+	})
+	
+	.directive('pager', ['pagerConfig', function(pagerConfig) {
+	  return {
+	    restrict: 'EA',
+	    scope: {
+	      totalItems: '=',
+	      previousText: '@',
+	      nextText: '@'
+	    },
+	    require: ['pager', '?ngModel'],
+	    controller: 'PaginationController',
+	    templateUrl: 'template/pagination/pager.html',
+	    replace: true,
+	    link: function(scope, element, attrs, ctrls) {
+	      var paginationCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+	
+	      if (!ngModelCtrl) {
+	         return; // do nothing if no ng-model
+	      }
+	
+	      scope.align = angular.isDefined(attrs.align) ? scope.$parent.$eval(attrs.align) : pagerConfig.align;
+	      paginationCtrl.init(ngModelCtrl, pagerConfig);
+	    }
+	  };
+	}]);
+	
+	/**
+	 * The following features are still outstanding: animation as a
+	 * function, placement as a function, inside, support for more triggers than
+	 * just mouse enter/leave, html tooltips, and selector delegation.
+	 */
+	angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap.bindHtml' ] )
+	
+	/**
+	 * The $tooltip service creates tooltip- and popover-like directives as well as
+	 * houses global options for them.
+	 */
+	.provider( '$tooltip', function () {
+	  // The default options tooltip and popover.
+	  var defaultOptions = {
+	    placement: 'top',
+	    animation: true,
+	    popupDelay: 0,
+	    useContentExp: false
+	  };
+	
+	  // Default hide triggers for each show trigger
+	  var triggerMap = {
+	    'mouseenter': 'mouseleave',
+	    'click': 'click',
+	    'focus': 'blur'
+	  };
+	
+	  // The options specified to the provider globally.
+	  var globalOptions = {};
+	
+	  /**
+	   * `options({})` allows global configuration of all tooltips in the
+	   * application.
+	   *
+	   *   var app = angular.module( 'App', ['ui.bootstrap.tooltip'], function( $tooltipProvider ) {
+	   *     // place tooltips left instead of top by default
+	   *     $tooltipProvider.options( { placement: 'left' } );
+	   *   });
+	   */
+		this.options = function( value ) {
+			angular.extend( globalOptions, value );
+		};
+	
+	  /**
+	   * This allows you to extend the set of trigger mappings available. E.g.:
+	   *
+	   *   $tooltipProvider.setTriggers( 'openTrigger': 'closeTrigger' );
+	   */
+	  this.setTriggers = function setTriggers ( triggers ) {
+	    angular.extend( triggerMap, triggers );
+	  };
+	
+	  /**
+	   * This is a helper function for translating camel-case to snake-case.
+	   */
+	  function snake_case(name){
+	    var regexp = /[A-Z]/g;
+	    var separator = '-';
+	    return name.replace(regexp, function(letter, pos) {
+	      return (pos ? separator : '') + letter.toLowerCase();
+	    });
+	  }
+	
+	  /**
+	   * Returns the actual instance of the $tooltip service.
+	   * TODO support multiple triggers
+	   */
+	  this.$get = [ '$window', '$compile', '$timeout', '$document', '$position', '$interpolate', function ( $window, $compile, $timeout, $document, $position, $interpolate ) {
+	    return function $tooltip ( type, prefix, defaultTriggerShow, options ) {
+	      options = angular.extend( {}, defaultOptions, globalOptions, options );
+	
+	      /**
+	       * Returns an object of show and hide triggers.
+	       *
+	       * If a trigger is supplied,
+	       * it is used to show the tooltip; otherwise, it will use the `trigger`
+	       * option passed to the `$tooltipProvider.options` method; else it will
+	       * default to the trigger supplied to this directive factory.
+	       *
+	       * The hide trigger is based on the show trigger. If the `trigger` option
+	       * was passed to the `$tooltipProvider.options` method, it will use the
+	       * mapped trigger from `triggerMap` or the passed trigger if the map is
+	       * undefined; otherwise, it uses the `triggerMap` value of the show
+	       * trigger; else it will just use the show trigger.
+	       */
+	      function getTriggers ( trigger ) {
+	        var show = trigger || options.trigger || defaultTriggerShow;
+	        var hide = triggerMap[show] || show;
+	        return {
+	          show: show,
+	          hide: hide
+	        };
+	      }
+	
+	      var directiveName = snake_case( type );
+	
+	      var startSym = $interpolate.startSymbol();
+	      var endSym = $interpolate.endSymbol();
+	      var template =
+	        '<div '+ directiveName +'-popup '+
+	          'title="'+startSym+'title'+endSym+'" '+
+	          (options.useContentExp ?
+	            'content-exp="contentExp()" ' :
+	            'content="'+startSym+'content'+endSym+'" ') +
+	          'placement="'+startSym+'placement'+endSym+'" '+
+	          'popup-class="'+startSym+'popupClass'+endSym+'" '+
+	          'animation="animation" '+
+	          'is-open="isOpen"'+
+	          'origin-scope="origScope" '+
+	          '>'+
+	        '</div>';
+	
+	      return {
+	        restrict: 'EA',
+	        compile: function (tElem, tAttrs) {
+	          var tooltipLinker = $compile( template );
+	
+	          return function link ( scope, element, attrs, tooltipCtrl ) {
+	            var tooltip;
+	            var tooltipLinkedScope;
+	            var transitionTimeout;
+	            var popupTimeout;
+	            var appendToBody = angular.isDefined( options.appendToBody ) ? options.appendToBody : false;
+	            var triggers = getTriggers( undefined );
+	            var hasEnableExp = angular.isDefined(attrs[prefix+'Enable']);
+	            var ttScope = scope.$new(true);
+	
+	            var positionTooltip = function () {
+	              if (!tooltip) { return; }
+	
+	              var ttPosition = $position.positionElements(element, tooltip, ttScope.placement, appendToBody);
+	              ttPosition.top += 'px';
+	              ttPosition.left += 'px';
+	
+	              // Now set the calculated positioning.
+	              tooltip.css( ttPosition );
+	            };
+	
+	            var positionTooltipAsync = function () {
+	              $timeout(positionTooltip, 0, false);
+	            };
+	
+	            // Set up the correct scope to allow transclusion later
+	            ttScope.origScope = scope;
+	
+	            // By default, the tooltip is not open.
+	            // TODO add ability to start tooltip opened
+	            ttScope.isOpen = false;
+	
+	            function toggleTooltipBind () {
+	              if ( ! ttScope.isOpen ) {
+	                showTooltipBind();
+	              } else {
+	                hideTooltipBind();
+	              }
+	            }
+	
+	            // Show the tooltip with delay if specified, otherwise show it immediately
+	            function showTooltipBind() {
+	              if(hasEnableExp && !scope.$eval(attrs[prefix+'Enable'])) {
+	                return;
+	              }
+	
+	              prepareTooltip();
+	
+	              if ( ttScope.popupDelay ) {
+	                // Do nothing if the tooltip was already scheduled to pop-up.
+	                // This happens if show is triggered multiple times before any hide is triggered.
+	                if (!popupTimeout) {
+	                  popupTimeout = $timeout( show, ttScope.popupDelay, false );
+	                  popupTimeout.then(function(reposition){reposition();});
+	                }
+	              } else {
+	                show()();
+	              }
+	            }
+	
+	            function hideTooltipBind () {
+	              scope.$apply(function () {
+	                hide();
+	              });
+	            }
+	
+	            // Show the tooltip popup element.
+	            function show() {
+	
+	              popupTimeout = null;
+	
+	              // If there is a pending remove transition, we must cancel it, lest the
+	              // tooltip be mysteriously removed.
+	              if ( transitionTimeout ) {
+	                $timeout.cancel( transitionTimeout );
+	                transitionTimeout = null;
+	              }
+	
+	              // Don't show empty tooltips.
+	              if ( !(options.useContentExp ? ttScope.contentExp() : ttScope.content) ) {
+	                return angular.noop;
+	              }
+	
+	              createTooltip();
+	
+	              // Set the initial positioning.
+	              tooltip.css({ top: 0, left: 0, display: 'block' });
+	              ttScope.$digest();
+	
+	              positionTooltip();
+	
+	              // And show the tooltip.
+	              ttScope.isOpen = true;
+	              ttScope.$apply(); // digest required as $apply is not called
+	
+	              // Return positioning function as promise callback for correct
+	              // positioning after draw.
+	              return positionTooltip;
+	            }
+	
+	            // Hide the tooltip popup element.
+	            function hide() {
+	              // First things first: we don't show it anymore.
+	              ttScope.isOpen = false;
+	
+	              //if tooltip is going to be shown after delay, we must cancel this
+	              $timeout.cancel( popupTimeout );
+	              popupTimeout = null;
+	
+	              // And now we remove it from the DOM. However, if we have animation, we
+	              // need to wait for it to expire beforehand.
+	              // FIXME: this is a placeholder for a port of the transitions library.
+	              if ( ttScope.animation ) {
+	                if (!transitionTimeout) {
+	                  transitionTimeout = $timeout(removeTooltip, 500);
+	                }
+	              } else {
+	                removeTooltip();
+	              }
+	            }
+	
+	            function createTooltip() {
+	              // There can only be one tooltip element per directive shown at once.
+	              if (tooltip) {
+	                removeTooltip();
+	              }
+	              tooltipLinkedScope = ttScope.$new();
+	              tooltip = tooltipLinker(tooltipLinkedScope, function (tooltip) {
+	                if ( appendToBody ) {
+	                  $document.find( 'body' ).append( tooltip );
+	                } else {
+	                  element.after( tooltip );
+	                }
+	              });
+	
+	              if (options.useContentExp) {
+	                tooltipLinkedScope.$watch('contentExp()', function (val) {
+	                  positionTooltipAsync();
+	                  if (!val && ttScope.isOpen ) {
+	                    hide();
+	                  }
+	                });
+	              }
+	            }
+	
+	            function removeTooltip() {
+	              transitionTimeout = null;
+	              if (tooltip) {
+	                tooltip.remove();
+	                tooltip = null;
+	              }
+	              if (tooltipLinkedScope) {
+	                tooltipLinkedScope.$destroy();
+	                tooltipLinkedScope = null;
+	              }
+	            }
+	
+	            function prepareTooltip() {
+	              prepPopupClass();
+	              prepPlacement();
+	              prepPopupDelay();
+	            }
+	
+	            ttScope.contentExp = function () {
+	              return scope.$eval(attrs[type]);
+	            };
+	
+	            /**
+	             * Observe the relevant attributes.
+	             */
+	            if (!options.useContentExp) {
+	              attrs.$observe( type, function ( val ) {
+	                ttScope.content = val;
+	                positionTooltipAsync();
+	
+	                if (!val && ttScope.isOpen ) {
+	                  hide();
+	                }
+	              });
+	            }
+	
+	            attrs.$observe( 'disabled', function ( val ) {
+	              if (val && ttScope.isOpen ) {
+	                hide();
+	              }
+	            });
+	
+	            attrs.$observe( prefix+'Title', function ( val ) {
+	              ttScope.title = val;
+	              positionTooltipAsync();
+	            });
+	
+	            attrs.$observe( prefix + 'Placement', function () {
+	              if (ttScope.isOpen) {
+	                $timeout(function () {
+	                  prepPlacement();
+	                  show()();
+	                }, 0, false);
+	              }
+	            });
+	
+	            function prepPopupClass() {
+	              ttScope.popupClass = attrs[prefix + 'Class'];
+	            }
+	
+	            function prepPlacement() {
+	              var val = attrs[ prefix + 'Placement' ];
+	              ttScope.placement = angular.isDefined( val ) ? val : options.placement;
+	            }
+	
+	            function prepPopupDelay() {
+	              var val = attrs[ prefix + 'PopupDelay' ];
+	              var delay = parseInt( val, 10 );
+	              ttScope.popupDelay = ! isNaN(delay) ? delay : options.popupDelay;
+	            }
+	
+	            var unregisterTriggers = function () {
+	              element.unbind(triggers.show, showTooltipBind);
+	              element.unbind(triggers.hide, hideTooltipBind);
+	            };
+	
+	            function prepTriggers() {
+	              var val = attrs[ prefix + 'Trigger' ];
+	              unregisterTriggers();
+	
+	              triggers = getTriggers( val );
+	
+	              if ( triggers.show === triggers.hide ) {
+	                element.bind( triggers.show, toggleTooltipBind );
+	              } else {
+	                element.bind( triggers.show, showTooltipBind );
+	                element.bind( triggers.hide, hideTooltipBind );
+	              }
+	            }
+	            prepTriggers();
+	
+	            var animation = scope.$eval(attrs[prefix + 'Animation']);
+	            ttScope.animation = angular.isDefined(animation) ? !!animation : options.animation;
+	
+	            var appendToBodyVal = scope.$eval(attrs[prefix + 'AppendToBody']);
+	            appendToBody = angular.isDefined(appendToBodyVal) ? appendToBodyVal : appendToBody;
+	
+	            // if a tooltip is attached to <body> we need to remove it on
+	            // location change as its parent scope will probably not be destroyed
+	            // by the change.
+	            if ( appendToBody ) {
+	              scope.$on('$locationChangeSuccess', function closeTooltipOnLocationChangeSuccess () {
+	              if ( ttScope.isOpen ) {
+	                hide();
+	              }
+	            });
+	            }
+	
+	            // Make sure tooltip is destroyed and removed.
+	            scope.$on('$destroy', function onDestroyTooltip() {
+	              $timeout.cancel( transitionTimeout );
+	              $timeout.cancel( popupTimeout );
+	              unregisterTriggers();
+	              removeTooltip();
+	              ttScope = null;
+	            });
+	          };
+	        }
+	      };
+	    };
+	  }];
+	})
+	
+	// This is mostly ngInclude code but with a custom scope
+	.directive( 'tooltipTemplateTransclude', [
+	         '$animate', '$sce', '$compile', '$templateRequest',
+	function ($animate ,  $sce ,  $compile ,  $templateRequest) {
+	  return {
+	    link: function ( scope, elem, attrs ) {
+	      var origScope = scope.$eval(attrs.tooltipTemplateTranscludeScope);
+	
+	      var changeCounter = 0,
+	        currentScope,
+	        previousElement,
+	        currentElement;
+	
+	      var cleanupLastIncludeContent = function() {
+	        if (previousElement) {
+	          previousElement.remove();
+	          previousElement = null;
+	        }
+	        if (currentScope) {
+	          currentScope.$destroy();
+	          currentScope = null;
+	        }
+	        if (currentElement) {
+	          $animate.leave(currentElement).then(function() {
+	            previousElement = null;
+	          });
+	          previousElement = currentElement;
+	          currentElement = null;
+	        }
+	      };
+	
+	      scope.$watch($sce.parseAsResourceUrl(attrs.tooltipTemplateTransclude), function (src) {
+	        var thisChangeId = ++changeCounter;
+	
+	        if (src) {
+	          //set the 2nd param to true to ignore the template request error so that the inner
+	          //contents and scope can be cleaned up.
+	          $templateRequest(src, true).then(function(response) {
+	            if (thisChangeId !== changeCounter) { return; }
+	            var newScope = origScope.$new();
+	            var template = response;
+	
+	            var clone = $compile(template)(newScope, function(clone) {
+	              cleanupLastIncludeContent();
+	              $animate.enter(clone, elem);
+	            });
+	
+	            currentScope = newScope;
+	            currentElement = clone;
+	
+	            currentScope.$emit('$includeContentLoaded', src);
+	          }, function() {
+	            if (thisChangeId === changeCounter) {
+	              cleanupLastIncludeContent();
+	              scope.$emit('$includeContentError', src);
+	            }
+	          });
+	          scope.$emit('$includeContentRequested', src);
+	        } else {
+	          cleanupLastIncludeContent();
+	        }
+	      });
+	
+	      scope.$on('$destroy', cleanupLastIncludeContent);
+	    }
+	  };
+	}])
+	
+	/**
+	 * Note that it's intentional that these classes are *not* applied through $animate.
+	 * They must not be animated as they're expected to be present on the tooltip on
+	 * initialization.
+	 */
+	.directive('tooltipClasses', function () {
+	  return {
+	    restrict: 'A',
+	    link: function (scope, element, attrs) {
+	      if (scope.placement) {
+	        element.addClass(scope.placement);
+	      }
+	      if (scope.popupClass) {
+	        element.addClass(scope.popupClass);
+	      }
+	      if (scope.animation()) {
+	        element.addClass(attrs.tooltipAnimationClass);
+	      }
+	    }
+	  };
+	})
+	
+	.directive( 'tooltipPopup', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    scope: { content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
+	    templateUrl: 'template/tooltip/tooltip-popup.html'
+	  };
+	})
+	
+	.directive( 'tooltip', [ '$tooltip', function ( $tooltip ) {
+	  return $tooltip( 'tooltip', 'tooltip', 'mouseenter' );
+	}])
+	
+	.directive( 'tooltipTemplatePopup', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    scope: { contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&',
+	      originScope: '&' },
+	    templateUrl: 'template/tooltip/tooltip-template-popup.html'
+	  };
+	})
+	
+	.directive( 'tooltipTemplate', [ '$tooltip', function ( $tooltip ) {
+	  return $tooltip('tooltipTemplate', 'tooltip', 'mouseenter', {
+	    useContentExp: true
+	  });
+	}])
+	
+	.directive( 'tooltipHtmlPopup', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    scope: { contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
+	    templateUrl: 'template/tooltip/tooltip-html-popup.html'
+	  };
+	})
+	
+	.directive( 'tooltipHtml', [ '$tooltip', function ( $tooltip ) {
+	  return $tooltip('tooltipHtml', 'tooltip', 'mouseenter', {
+	    useContentExp: true
+	  });
+	}])
+	
+	/*
+	Deprecated
+	*/
+	.directive( 'tooltipHtmlUnsafePopup', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    scope: { content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
+	    templateUrl: 'template/tooltip/tooltip-html-unsafe-popup.html'
+	  };
+	})
+	
+	.value('tooltipHtmlUnsafeSuppressDeprecated', false)
+	.directive( 'tooltipHtmlUnsafe', [
+	          '$tooltip', 'tooltipHtmlUnsafeSuppressDeprecated', '$log',
+	function ( $tooltip ,  tooltipHtmlUnsafeSuppressDeprecated ,  $log) {
+	  if (!tooltipHtmlUnsafeSuppressDeprecated) {
+	    $log.warn('tooltip-html-unsafe is now deprecated. Use tooltip-html or tooltip-template instead.');
+	  }
+	  return $tooltip( 'tooltipHtmlUnsafe', 'tooltip', 'mouseenter' );
+	}]);
+	
+	/**
+	 * The following features are still outstanding: popup delay, animation as a
+	 * function, placement as a function, inside, support for more triggers than
+	 * just mouse enter/leave, and selector delegatation.
+	 */
+	angular.module( 'ui.bootstrap.popover', [ 'ui.bootstrap.tooltip' ] )
+	
+	.directive( 'popoverTemplatePopup', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    scope: { title: '@', contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&',
+	      originScope: '&' },
+	    templateUrl: 'template/popover/popover-template.html'
+	  };
+	})
+	
+	.directive( 'popoverTemplate', [ '$tooltip', function ( $tooltip ) {
+	  return $tooltip( 'popoverTemplate', 'popover', 'click', {
+	    useContentExp: true
+	  } );
+	}])
+	
+	.directive( 'popoverHtmlPopup', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    scope: { contentExp: '&', title: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
+	    templateUrl: 'template/popover/popover-html.html'
+	  };
+	})
+	
+	.directive( 'popoverHtml', [ '$tooltip', function ( $tooltip ) {
+	  return $tooltip( 'popoverHtml', 'popover', 'click', {
+	    useContentExp: true
+	  });
+	}])
+	
+	.directive( 'popoverPopup', function () {
+	  return {
+	    restrict: 'EA',
+	    replace: true,
+	    scope: { title: '@', content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
+	    templateUrl: 'template/popover/popover.html'
+	  };
+	})
+	
+	.directive( 'popover', [ '$tooltip', function ( $tooltip ) {
+	  return $tooltip( 'popover', 'popover', 'click' );
+	}]);
+	
+	angular.module('ui.bootstrap.progressbar', [])
+	
+	.constant('progressConfig', {
+	  animate: true,
+	  max: 100
+	})
+	
+	.controller('ProgressController', ['$scope', '$attrs', 'progressConfig', function($scope, $attrs, progressConfig) {
+	    var self = this,
+	        animate = angular.isDefined($attrs.animate) ? $scope.$parent.$eval($attrs.animate) : progressConfig.animate;
+	
+	    this.bars = [];
+	    $scope.max = angular.isDefined($scope.max) ? $scope.max : progressConfig.max;
+	
+	    this.addBar = function(bar, element) {
+	        if ( !animate ) {
+	            element.css({'transition': 'none'});
+	        }
+	
+	        this.bars.push(bar);
+	
+	        bar.max = $scope.max;
+	
+	        bar.$watch('value', function( value ) {
+	            bar.recalculatePercentage();
+	        });
+	
+	        bar.recalculatePercentage = function() {
+	            bar.percent = +(100 * bar.value / bar.max).toFixed(2);
+				
+	            var totalPercentage = 0;
+	            self.bars.forEach(function (bar) {
+	                totalPercentage += bar.percent;
+	            });
+	
+	            if (totalPercentage > 100) {
+	                bar.percent -= totalPercentage - 100;
+	            }
+	        };
+	
+	        bar.$on('$destroy', function() {
+	            element = null;
+	            self.removeBar(bar);
+	        });
+	    };
+	
+	    this.removeBar = function(bar) {
+	        this.bars.splice(this.bars.indexOf(bar), 1);
+	    };
+	
+	    $scope.$watch('max', function(max) {
+	        self.bars.forEach(function (bar) {
+	            bar.max = $scope.max;
+	            bar.recalculatePercentage();
+	        });
+	    });
+	}])
+	
+	.directive('progress', function() {
+	    return {
+	        restrict: 'EA',
+	        replace: true,
+	        transclude: true,
+	        controller: 'ProgressController',
+	        require: 'progress',
+	        scope: {
+	          max: '=?'
+	        },
+	        templateUrl: 'template/progressbar/progress.html'
+	    };
+	})
+	
+	.directive('bar', function() {
+	    return {
+	        restrict: 'EA',
+	        replace: true,
+	        transclude: true,
+	        require: '^progress',
+	        scope: {
+	            value: '=',
+	            type: '@'
+	        },
+	        templateUrl: 'template/progressbar/bar.html',
+	        link: function(scope, element, attrs, progressCtrl) {
+	            progressCtrl.addBar(scope, element);
+	        }
+	    };
+	})
+	
+	.directive('progressbar', function() {
+	    return {
+	        restrict: 'EA',
+	        replace: true,
+	        transclude: true,
+	        controller: 'ProgressController',
+	        scope: {
+	            value: '=',
+	            max: '=?',
+	            type: '@'
+	        },
+	        templateUrl: 'template/progressbar/progressbar.html',
+	        link: function(scope, element, attrs, progressCtrl) {
+	            progressCtrl.addBar(scope, angular.element(element.children()[0]));
+	        }
+	    };
+	});
+	
+	angular.module('ui.bootstrap.rating', [])
+	
+	.constant('ratingConfig', {
+	  max: 5,
+	  stateOn: null,
+	  stateOff: null,
+	  titles : ['one', 'two', 'three', 'four', 'five']
+	})
+	
+	.controller('RatingController', ['$scope', '$attrs', 'ratingConfig', function($scope, $attrs, ratingConfig) {
+	  var ngModelCtrl  = { $setViewValue: angular.noop };
+	
+	  this.init = function(ngModelCtrl_) {
+	    ngModelCtrl = ngModelCtrl_;
+	    ngModelCtrl.$render = this.render;
+	
+	    ngModelCtrl.$formatters.push(function(value) {
+	      if (angular.isNumber(value) && value << 0 !== value) {
+	        value = Math.round(value);
+	      }
+	      return value;
+	    });
+	
+	    this.stateOn = angular.isDefined($attrs.stateOn) ? $scope.$parent.$eval($attrs.stateOn) : ratingConfig.stateOn;
+	    this.stateOff = angular.isDefined($attrs.stateOff) ? $scope.$parent.$eval($attrs.stateOff) : ratingConfig.stateOff;
+	    var tmpTitles = angular.isDefined($attrs.titles)  ? $scope.$parent.$eval($attrs.titles) : ratingConfig.titles ;    
+	    this.titles = angular.isArray(tmpTitles) && tmpTitles.length > 0 ?
+	      tmpTitles : ratingConfig.titles;
+	    
+	    var ratingStates = angular.isDefined($attrs.ratingStates) ? $scope.$parent.$eval($attrs.ratingStates) :
+	                        new Array( angular.isDefined($attrs.max) ? $scope.$parent.$eval($attrs.max) : ratingConfig.max );
+	    $scope.range = this.buildTemplateObjects(ratingStates);
+	  };
+	
+	  this.buildTemplateObjects = function(states) {
+	    for (var i = 0, n = states.length; i < n; i++) {
+	      states[i] = angular.extend({ index: i }, { stateOn: this.stateOn, stateOff: this.stateOff, title: this.getTitle(i) }, states[i]);
+	    }
+	    return states;
+	  };
+	  
+	  this.getTitle = function(index) {
+	    if (index >= this.titles.length) {
+	      return index + 1;
+	    } else {
+	      return this.titles[index];
+	    }
+	  };
+	  
+	  $scope.rate = function(value) {
+	    if ( !$scope.readonly && value >= 0 && value <= $scope.range.length ) {
+	      ngModelCtrl.$setViewValue(ngModelCtrl.$viewValue === value ? 0 : value);
+	      ngModelCtrl.$render();
+	    }
+	  };
+	
+	  $scope.enter = function(value) {
+	    if ( !$scope.readonly ) {
+	      $scope.value = value;
+	    }
+	    $scope.onHover({value: value});
+	  };
+	
+	  $scope.reset = function() {
+	    $scope.value = ngModelCtrl.$viewValue;
+	    $scope.onLeave();
+	  };
+	
+	  $scope.onKeydown = function(evt) {
+	    if (/(37|38|39|40)/.test(evt.which)) {
+	      evt.preventDefault();
+	      evt.stopPropagation();
+	      $scope.rate( $scope.value + (evt.which === 38 || evt.which === 39 ? 1 : -1) );
+	    }
+	  };
+	
+	  this.render = function() {
+	    $scope.value = ngModelCtrl.$viewValue;
+	  };
+	}])
+	
+	.directive('rating', function() {
+	  return {
+	    restrict: 'EA',
+	    require: ['rating', 'ngModel'],
+	    scope: {
+	      readonly: '=?',
+	      onHover: '&',
+	      onLeave: '&'
+	    },
+	    controller: 'RatingController',
+	    templateUrl: 'template/rating/rating.html',
+	    replace: true,
+	    link: function(scope, element, attrs, ctrls) {
+	      var ratingCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+	      ratingCtrl.init( ngModelCtrl );
+	    }
+	  };
+	});
+	
+	
+	/**
+	 * @ngdoc overview
+	 * @name ui.bootstrap.tabs
+	 *
+	 * @description
+	 * AngularJS version of the tabs directive.
+	 */
+	
+	angular.module('ui.bootstrap.tabs', [])
+	
+	.controller('TabsetController', ['$scope', function TabsetCtrl($scope) {
+	  var ctrl = this,
+	      tabs = ctrl.tabs = $scope.tabs = [];
+	
+	  ctrl.select = function(selectedTab) {
+	    angular.forEach(tabs, function(tab) {
+	      if (tab.active && tab !== selectedTab) {
+	        tab.active = false;
+	        tab.onDeselect();
+	      }
+	    });
+	    selectedTab.active = true;
+	    selectedTab.onSelect();
+	  };
+	
+	  ctrl.addTab = function addTab(tab) {
+	    tabs.push(tab);
+	    // we can't run the select function on the first tab
+	    // since that would select it twice
+	    if (tabs.length === 1 && tab.active !== false) {
+	      tab.active = true;
+	    } else if (tab.active) {
+	      ctrl.select(tab);
+	    }
+	    else {
+	      tab.active = false;
+	    }
+	  };
+	
+	  ctrl.removeTab = function removeTab(tab) {
+	    var index = tabs.indexOf(tab);
+	    //Select a new tab if the tab to be removed is selected and not destroyed
+	    if (tab.active && tabs.length > 1 && !destroyed) {
+	      //If this is the last tab, select the previous tab. else, the next tab.
+	      var newActiveIndex = index == tabs.length - 1 ? index - 1 : index + 1;
+	      ctrl.select(tabs[newActiveIndex]);
+	    }
+	    tabs.splice(index, 1);
+	  };
+	
+	  var destroyed;
+	  $scope.$on('$destroy', function() {
+	    destroyed = true;
+	  });
+	}])
+	
+	/**
+	 * @ngdoc directive
+	 * @name ui.bootstrap.tabs.directive:tabset
+	 * @restrict EA
+	 *
+	 * @description
+	 * Tabset is the outer container for the tabs directive
+	 *
+	 * @param {boolean=} vertical Whether or not to use vertical styling for the tabs.
+	 * @param {boolean=} justified Whether or not to use justified styling for the tabs.
+	 *
+	 * @example
+	<example module="ui.bootstrap">
+	  <file name="index.html">
+	    <tabset>
+	      <tab heading="Tab 1"><b>First</b> Content!</tab>
+	      <tab heading="Tab 2"><i>Second</i> Content!</tab>
+	    </tabset>
+	    <hr />
+	    <tabset vertical="true">
+	      <tab heading="Vertical Tab 1"><b>First</b> Vertical Content!</tab>
+	      <tab heading="Vertical Tab 2"><i>Second</i> Vertical Content!</tab>
+	    </tabset>
+	    <tabset justified="true">
+	      <tab heading="Justified Tab 1"><b>First</b> Justified Content!</tab>
+	      <tab heading="Justified Tab 2"><i>Second</i> Justified Content!</tab>
+	    </tabset>
+	  </file>
+	</example>
+	 */
+	.directive('tabset', function() {
+	  return {
+	    restrict: 'EA',
+	    transclude: true,
+	    replace: true,
+	    scope: {
+	      type: '@'
+	    },
+	    controller: 'TabsetController',
+	    templateUrl: 'template/tabs/tabset.html',
+	    link: function(scope, element, attrs) {
+	      scope.vertical = angular.isDefined(attrs.vertical) ? scope.$parent.$eval(attrs.vertical) : false;
+	      scope.justified = angular.isDefined(attrs.justified) ? scope.$parent.$eval(attrs.justified) : false;
+	    }
+	  };
+	})
+	
+	/**
+	 * @ngdoc directive
+	 * @name ui.bootstrap.tabs.directive:tab
+	 * @restrict EA
+	 *
+	 * @param {string=} heading The visible heading, or title, of the tab. Set HTML headings with {@link ui.bootstrap.tabs.directive:tabHeading tabHeading}.
+	 * @param {string=} select An expression to evaluate when the tab is selected.
+	 * @param {boolean=} active A binding, telling whether or not this tab is selected.
+	 * @param {boolean=} disabled A binding, telling whether or not this tab is disabled.
+	 *
+	 * @description
+	 * Creates a tab with a heading and content. Must be placed within a {@link ui.bootstrap.tabs.directive:tabset tabset}.
+	 *
+	 * @example
+	<example module="ui.bootstrap">
+	  <file name="index.html">
+	    <div ng-controller="TabsDemoCtrl">
+	      <button class="btn btn-small" ng-click="items[0].active = true">
+	        Select item 1, using active binding
+	      </button>
+	      <button class="btn btn-small" ng-click="items[1].disabled = !items[1].disabled">
+	        Enable/disable item 2, using disabled binding
+	      </button>
+	      <br />
+	      <tabset>
+	        <tab heading="Tab 1">First Tab</tab>
+	        <tab select="alertMe()">
+	          <tab-heading><i class="icon-bell"></i> Alert me!</tab-heading>
+	          Second Tab, with alert callback and html heading!
+	        </tab>
+	        <tab ng-repeat="item in items"
+	          heading="{{item.title}}"
+	          disabled="item.disabled"
+	          active="item.active">
+	          {{item.content}}
+	        </tab>
+	      </tabset>
+	    </div>
+	  </file>
+	  <file name="script.js">
+	    function TabsDemoCtrl($scope) {
+	      $scope.items = [
+	        { title:"Dynamic Title 1", content:"Dynamic Item 0" },
+	        { title:"Dynamic Title 2", content:"Dynamic Item 1", disabled: true }
+	      ];
+	
+	      $scope.alertMe = function() {
+	        setTimeout(function() {
+	          alert("You've selected the alert tab!");
+	        });
+	      };
+	    };
+	  </file>
+	</example>
+	 */
+	
+	/**
+	 * @ngdoc directive
+	 * @name ui.bootstrap.tabs.directive:tabHeading
+	 * @restrict EA
+	 *
+	 * @description
+	 * Creates an HTML heading for a {@link ui.bootstrap.tabs.directive:tab tab}. Must be placed as a child of a tab element.
+	 *
+	 * @example
+	<example module="ui.bootstrap">
+	  <file name="index.html">
+	    <tabset>
+	      <tab>
+	        <tab-heading><b>HTML</b> in my titles?!</tab-heading>
+	        And some content, too!
+	      </tab>
+	      <tab>
+	        <tab-heading><i class="icon-heart"></i> Icon heading?!?</tab-heading>
+	        That's right.
+	      </tab>
+	    </tabset>
+	  </file>
+	</example>
+	 */
+	.directive('tab', ['$parse', '$log', function($parse, $log) {
+	  return {
+	    require: '^tabset',
+	    restrict: 'EA',
+	    replace: true,
+	    templateUrl: 'template/tabs/tab.html',
+	    transclude: true,
+	    scope: {
+	      active: '=?',
+	      heading: '@',
+	      onSelect: '&select', //This callback is called in contentHeadingTransclude
+	                          //once it inserts the tab's content into the dom
+	      onDeselect: '&deselect'
+	    },
+	    controller: function() {
+	      //Empty controller so other directives can require being 'under' a tab
+	    },
+	    link: function(scope, elm, attrs, tabsetCtrl, transclude) {
+	      scope.$watch('active', function(active) {
+	        if (active) {
+	          tabsetCtrl.select(scope);
+	        }
+	      });
+	
+	      scope.disabled = false;
+	      if ( attrs.disable ) {
+	        scope.$parent.$watch($parse(attrs.disable), function(value) {
+	          scope.disabled = !! value;
+	        });
+	      }
+	
+	      // Deprecation support of "disabled" parameter
+	      // fix(tab): IE9 disabled attr renders grey text on enabled tab #2677
+	      // This code is duplicated from the lines above to make it easy to remove once
+	      // the feature has been completely deprecated
+	      if ( attrs.disabled ) {
+	        $log.warn('Use of "disabled" attribute has been deprecated, please use "disable"');
+	        scope.$parent.$watch($parse(attrs.disabled), function(value) {
+	          scope.disabled = !! value;
+	        });
+	      }
+	
+	      scope.select = function() {
+	        if ( !scope.disabled ) {
+	          scope.active = true;
+	        }
+	      };
+	
+	      tabsetCtrl.addTab(scope);
+	      scope.$on('$destroy', function() {
+	        tabsetCtrl.removeTab(scope);
+	      });
+	
+	      //We need to transclude later, once the content container is ready.
+	      //when this link happens, we're inside a tab heading.
+	      scope.$transcludeFn = transclude;
+	    }
+	  };
+	}])
+	
+	.directive('tabHeadingTransclude', [function() {
+	  return {
+	    restrict: 'A',
+	    require: '^tab',
+	    link: function(scope, elm, attrs, tabCtrl) {
+	      scope.$watch('headingElement', function updateHeadingElement(heading) {
+	        if (heading) {
+	          elm.html('');
+	          elm.append(heading);
+	        }
+	      });
+	    }
+	  };
+	}])
+	
+	.directive('tabContentTransclude', function() {
+	  return {
+	    restrict: 'A',
+	    require: '^tabset',
+	    link: function(scope, elm, attrs) {
+	      var tab = scope.$eval(attrs.tabContentTransclude);
+	
+	      //Now our tab is ready to be transcluded: both the tab heading area
+	      //and the tab content area are loaded.  Transclude 'em both.
+	      tab.$transcludeFn(tab.$parent, function(contents) {
+	        angular.forEach(contents, function(node) {
+	          if (isTabHeading(node)) {
+	            //Let tabHeadingTransclude know.
+	            tab.headingElement = node;
+	          } else {
+	            elm.append(node);
+	          }
+	        });
+	      });
+	    }
+	  };
+	  function isTabHeading(node) {
+	    return node.tagName &&  (
+	      node.hasAttribute('tab-heading') ||
+	      node.hasAttribute('data-tab-heading') ||
+	      node.tagName.toLowerCase() === 'tab-heading' ||
+	      node.tagName.toLowerCase() === 'data-tab-heading'
+	    );
+	  }
+	})
+	
+	;
+	
+	angular.module('ui.bootstrap.timepicker', [])
+	
+	.constant('timepickerConfig', {
+	  hourStep: 1,
+	  minuteStep: 1,
+	  showMeridian: true,
+	  meridians: null,
+	  readonlyInput: false,
+	  mousewheel: true,
+	  arrowkeys: true,
+	  showSpinners: true
+	})
+	
+	.controller('TimepickerController', ['$scope', '$attrs', '$parse', '$log', '$locale', 'timepickerConfig', function($scope, $attrs, $parse, $log, $locale, timepickerConfig) {
+	  var selected = new Date(),
+	      ngModelCtrl = { $setViewValue: angular.noop }, // nullModelCtrl
+	      meridians = angular.isDefined($attrs.meridians) ? $scope.$parent.$eval($attrs.meridians) : timepickerConfig.meridians || $locale.DATETIME_FORMATS.AMPMS;
+	
+	  this.init = function( ngModelCtrl_, inputs ) {
+	    ngModelCtrl = ngModelCtrl_;
+	    ngModelCtrl.$render = this.render;
+	
+	    ngModelCtrl.$formatters.unshift(function (modelValue) {
+	      return modelValue ? new Date( modelValue ) : null;
+	    });
+	
+	    var hoursInputEl = inputs.eq(0),
+	        minutesInputEl = inputs.eq(1);
+	
+	    var mousewheel = angular.isDefined($attrs.mousewheel) ? $scope.$parent.$eval($attrs.mousewheel) : timepickerConfig.mousewheel;
+	    if ( mousewheel ) {
+	      this.setupMousewheelEvents( hoursInputEl, minutesInputEl );
+	    }
+	
+	    var arrowkeys = angular.isDefined($attrs.arrowkeys) ? $scope.$parent.$eval($attrs.arrowkeys) : timepickerConfig.arrowkeys;
+	    if (arrowkeys) {
+	      this.setupArrowkeyEvents( hoursInputEl, minutesInputEl );
+	    }
+	
+	    $scope.readonlyInput = angular.isDefined($attrs.readonlyInput) ? $scope.$parent.$eval($attrs.readonlyInput) : timepickerConfig.readonlyInput;
+	    this.setupInputEvents( hoursInputEl, minutesInputEl );
+	  };
+	
+	  var hourStep = timepickerConfig.hourStep;
+	  if ($attrs.hourStep) {
+	    $scope.$parent.$watch($parse($attrs.hourStep), function(value) {
+	      hourStep = parseInt(value, 10);
+	    });
+	  }
+	
+	  var minuteStep = timepickerConfig.minuteStep;
+	  if ($attrs.minuteStep) {
+	    $scope.$parent.$watch($parse($attrs.minuteStep), function(value) {
+	      minuteStep = parseInt(value, 10);
+	    });
+	  }
+	
+	  // 12H / 24H mode
+	  $scope.showMeridian = timepickerConfig.showMeridian;
+	  if ($attrs.showMeridian) {
+	    $scope.$parent.$watch($parse($attrs.showMeridian), function(value) {
+	      $scope.showMeridian = !!value;
+	
+	      if ( ngModelCtrl.$error.time ) {
+	        // Evaluate from template
+	        var hours = getHoursFromTemplate(), minutes = getMinutesFromTemplate();
+	        if (angular.isDefined( hours ) && angular.isDefined( minutes )) {
+	          selected.setHours( hours );
+	          refresh();
+	        }
+	      } else {
+	        updateTemplate();
+	      }
+	    });
+	  }
+	
+	  // Get $scope.hours in 24H mode if valid
+	  function getHoursFromTemplate ( ) {
+	    var hours = parseInt( $scope.hours, 10 );
+	    var valid = ( $scope.showMeridian ) ? (hours > 0 && hours < 13) : (hours >= 0 && hours < 24);
+	    if ( !valid ) {
+	      return undefined;
+	    }
+	
+	    if ( $scope.showMeridian ) {
+	      if ( hours === 12 ) {
+	        hours = 0;
+	      }
+	      if ( $scope.meridian === meridians[1] ) {
+	        hours = hours + 12;
+	      }
+	    }
+	    return hours;
+	  }
+	
+	  function getMinutesFromTemplate() {
+	    var minutes = parseInt($scope.minutes, 10);
+	    return ( minutes >= 0 && minutes < 60 ) ? minutes : undefined;
+	  }
+	
+	  function pad( value ) {
+	    return ( angular.isDefined(value) && value.toString().length < 2 ) ? '0' + value : value.toString();
+	  }
+	
+	  // Respond on mousewheel spin
+	  this.setupMousewheelEvents = function( hoursInputEl, minutesInputEl ) {
+	    var isScrollingUp = function(e) {
+	      if (e.originalEvent) {
+	        e = e.originalEvent;
+	      }
+	      //pick correct delta variable depending on event
+	      var delta = (e.wheelDelta) ? e.wheelDelta : -e.deltaY;
+	      return (e.detail || delta > 0);
+	    };
+	
+	    hoursInputEl.bind('mousewheel wheel', function(e) {
+	      $scope.$apply( (isScrollingUp(e)) ? $scope.incrementHours() : $scope.decrementHours() );
+	      e.preventDefault();
+	    });
+	
+	    minutesInputEl.bind('mousewheel wheel', function(e) {
+	      $scope.$apply( (isScrollingUp(e)) ? $scope.incrementMinutes() : $scope.decrementMinutes() );
+	      e.preventDefault();
+	    });
+	
+	  };
+	
+	  // Respond on up/down arrowkeys
+	  this.setupArrowkeyEvents = function( hoursInputEl, minutesInputEl ) {
+	    hoursInputEl.bind('keydown', function(e) {
+	      if ( e.which === 38 ) { // up
+	        e.preventDefault();
+	        $scope.incrementHours();
+	        $scope.$apply();
+	      }
+	      else if ( e.which === 40 ) { // down
+	        e.preventDefault();
+	        $scope.decrementHours();
+	        $scope.$apply();
+	      }
+	    });
+	
+	    minutesInputEl.bind('keydown', function(e) {
+	      if ( e.which === 38 ) { // up
+	        e.preventDefault();
+	        $scope.incrementMinutes();
+	        $scope.$apply();
+	      }
+	      else if ( e.which === 40 ) { // down
+	        e.preventDefault();
+	        $scope.decrementMinutes();
+	        $scope.$apply();
+	      }
+	    });
+	  };
+	
+	  this.setupInputEvents = function( hoursInputEl, minutesInputEl ) {
+	    if ( $scope.readonlyInput ) {
+	      $scope.updateHours = angular.noop;
+	      $scope.updateMinutes = angular.noop;
+	      return;
+	    }
+	
+	    var invalidate = function(invalidHours, invalidMinutes) {
+	      ngModelCtrl.$setViewValue( null );
+	      ngModelCtrl.$setValidity('time', false);
+	      if (angular.isDefined(invalidHours)) {
+	        $scope.invalidHours = invalidHours;
+	      }
+	      if (angular.isDefined(invalidMinutes)) {
+	        $scope.invalidMinutes = invalidMinutes;
+	      }
+	    };
+	
+	    $scope.updateHours = function() {
+	      var hours = getHoursFromTemplate();
+	
+	      if ( angular.isDefined(hours) ) {
+	        selected.setHours( hours );
+	        refresh( 'h' );
+	      } else {
+	        invalidate(true);
+	      }
+	    };
+	
+	    hoursInputEl.bind('blur', function(e) {
+	      if ( !$scope.invalidHours && $scope.hours < 10) {
+	        $scope.$apply( function() {
+	          $scope.hours = pad( $scope.hours );
+	        });
+	      }
+	    });
+	
+	    $scope.updateMinutes = function() {
+	      var minutes = getMinutesFromTemplate();
+	
+	      if ( angular.isDefined(minutes) ) {
+	        selected.setMinutes( minutes );
+	        refresh( 'm' );
+	      } else {
+	        invalidate(undefined, true);
+	      }
+	    };
+	
+	    minutesInputEl.bind('blur', function(e) {
+	      if ( !$scope.invalidMinutes && $scope.minutes < 10 ) {
+	        $scope.$apply( function() {
+	          $scope.minutes = pad( $scope.minutes );
+	        });
+	      }
+	    });
+	
+	  };
+	
+	  this.render = function() {
+	    var date = ngModelCtrl.$viewValue;
+	
+	    if ( isNaN(date) ) {
+	      ngModelCtrl.$setValidity('time', false);
+	      $log.error('Timepicker directive: "ng-model" value must be a Date object, a number of milliseconds since 01.01.1970 or a string representing an RFC2822 or ISO 8601 date.');
+	    } else {
+	      if ( date ) {
+	        selected = date;
+	      }
+	      makeValid();
+	      updateTemplate();
+	    }
+	  };
+	
+	  // Call internally when we know that model is valid.
+	  function refresh( keyboardChange ) {
+	    makeValid();
+	    ngModelCtrl.$setViewValue( new Date(selected) );
+	    updateTemplate( keyboardChange );
+	  }
+	
+	  function makeValid() {
+	    ngModelCtrl.$setValidity('time', true);
+	    $scope.invalidHours = false;
+	    $scope.invalidMinutes = false;
+	  }
+	
+	  function updateTemplate( keyboardChange ) {
+	    var hours = selected.getHours(), minutes = selected.getMinutes();
+	
+	    if ( $scope.showMeridian ) {
+	      hours = ( hours === 0 || hours === 12 ) ? 12 : hours % 12; // Convert 24 to 12 hour system
+	    }
+	
+	    $scope.hours = keyboardChange === 'h' ? hours : pad(hours);
+	    if (keyboardChange !== 'm') {
+	      $scope.minutes = pad(minutes);
+	    }
+	    $scope.meridian = selected.getHours() < 12 ? meridians[0] : meridians[1];
+	  }
+	
+	  function addMinutes( minutes ) {
+	    var dt = new Date( selected.getTime() + minutes * 60000 );
+	    selected.setHours( dt.getHours(), dt.getMinutes() );
+	    refresh();
+	  }
+	  
+	  $scope.showSpinners = angular.isDefined($attrs.showSpinners) ?
+	    $scope.$parent.$eval($attrs.showSpinners) : timepickerConfig.showSpinners;
+	  
+	  $scope.incrementHours = function() {
+	    addMinutes( hourStep * 60 );
+	  };
+	  $scope.decrementHours = function() {
+	    addMinutes( - hourStep * 60 );
+	  };
+	  $scope.incrementMinutes = function() {
+	    addMinutes( minuteStep );
+	  };
+	  $scope.decrementMinutes = function() {
+	    addMinutes( - minuteStep );
+	  };
+	  $scope.toggleMeridian = function() {
+	    addMinutes( 12 * 60 * (( selected.getHours() < 12 ) ? 1 : -1) );
+	  };
+	}])
+	
+	.directive('timepicker', function () {
+	  return {
+	    restrict: 'EA',
+	    require: ['timepicker', '?^ngModel'],
+	    controller:'TimepickerController',
+	    replace: true,
+	    scope: {},
+	    templateUrl: 'template/timepicker/timepicker.html',
+	    link: function(scope, element, attrs, ctrls) {
+	      var timepickerCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+	
+	      if ( ngModelCtrl ) {
+	        timepickerCtrl.init( ngModelCtrl, element.find('input') );
+	      }
+	    }
+	  };
+	});
+	
+	angular.module('ui.bootstrap.transition', [])
+	
+	.value('$transitionSuppressDeprecated', false)
+	/**
+	 * $transition service provides a consistent interface to trigger CSS 3 transitions and to be informed when they complete.
+	 * @param  {DOMElement} element  The DOMElement that will be animated.
+	 * @param  {string|object|function} trigger  The thing that will cause the transition to start:
+	 *   - As a string, it represents the css class to be added to the element.
+	 *   - As an object, it represents a hash of style attributes to be applied to the element.
+	 *   - As a function, it represents a function to be called that will cause the transition to occur.
+	 * @return {Promise}  A promise that is resolved when the transition finishes.
+	 */
+	.factory('$transition', [
+	        '$q', '$timeout', '$rootScope', '$log', '$transitionSuppressDeprecated',
+	function($q ,  $timeout ,  $rootScope ,  $log ,  $transitionSuppressDeprecated) {
+	
+	  if (!$transitionSuppressDeprecated) {
+	    $log.warn('$transition is now deprecated. Use $animate from ngAnimate instead.');
+	  }
+	
+	  var $transition = function(element, trigger, options) {
+	    options = options || {};
+	    var deferred = $q.defer();
+	    var endEventName = $transition[options.animation ? 'animationEndEventName' : 'transitionEndEventName'];
+	
+	    var transitionEndHandler = function(event) {
+	      $rootScope.$apply(function() {
+	        element.unbind(endEventName, transitionEndHandler);
+	        deferred.resolve(element);
+	      });
+	    };
+	
+	    if (endEventName) {
+	      element.bind(endEventName, transitionEndHandler);
+	    }
+	
+	    // Wrap in a timeout to allow the browser time to update the DOM before the transition is to occur
+	    $timeout(function() {
+	      if ( angular.isString(trigger) ) {
+	        element.addClass(trigger);
+	      } else if ( angular.isFunction(trigger) ) {
+	        trigger(element);
+	      } else if ( angular.isObject(trigger) ) {
+	        element.css(trigger);
+	      }
+	      //If browser does not support transitions, instantly resolve
+	      if ( !endEventName ) {
+	        deferred.resolve(element);
+	      }
+	    });
+	
+	    // Add our custom cancel function to the promise that is returned
+	    // We can call this if we are about to run a new transition, which we know will prevent this transition from ending,
+	    // i.e. it will therefore never raise a transitionEnd event for that transition
+	    deferred.promise.cancel = function() {
+	      if ( endEventName ) {
+	        element.unbind(endEventName, transitionEndHandler);
+	      }
+	      deferred.reject('Transition cancelled');
+	    };
+	
+	    return deferred.promise;
+	  };
+	
+	  // Work out the name of the transitionEnd event
+	  var transElement = document.createElement('trans');
+	  var transitionEndEventNames = {
+	    'WebkitTransition': 'webkitTransitionEnd',
+	    'MozTransition': 'transitionend',
+	    'OTransition': 'oTransitionEnd',
+	    'transition': 'transitionend'
+	  };
+	  var animationEndEventNames = {
+	    'WebkitTransition': 'webkitAnimationEnd',
+	    'MozTransition': 'animationend',
+	    'OTransition': 'oAnimationEnd',
+	    'transition': 'animationend'
+	  };
+	  function findEndEventName(endEventNames) {
+	    for (var name in endEventNames){
+	      if (transElement.style[name] !== undefined) {
+	        return endEventNames[name];
+	      }
+	    }
+	  }
+	  $transition.transitionEndEventName = findEndEventName(transitionEndEventNames);
+	  $transition.animationEndEventName = findEndEventName(animationEndEventNames);
+	  return $transition;
+	}]);
+	
+	angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap.bindHtml'])
+	
+	/**
+	 * A helper service that can parse typeahead's syntax (string provided by users)
+	 * Extracted to a separate service for ease of unit testing
+	 */
+	  .factory('typeaheadParser', ['$parse', function ($parse) {
+	
+	  //                      00000111000000000000022200000000000000003333333333333330000000000044000
+	  var TYPEAHEAD_REGEXP = /^\s*([\s\S]+?)(?:\s+as\s+([\s\S]+?))?\s+for\s+(?:([\$\w][\$\w\d]*))\s+in\s+([\s\S]+?)$/;
+	
+	  return {
+	    parse:function (input) {
+	
+	      var match = input.match(TYPEAHEAD_REGEXP);
+	      if (!match) {
+	        throw new Error(
+	          'Expected typeahead specification in form of "_modelValue_ (as _label_)? for _item_ in _collection_"' +
+	            ' but got "' + input + '".');
+	      }
+	
+	      return {
+	        itemName:match[3],
+	        source:$parse(match[4]),
+	        viewMapper:$parse(match[2] || match[1]),
+	        modelMapper:$parse(match[1])
+	      };
+	    }
+	  };
+	}])
+	
+	  .directive('typeahead', ['$compile', '$parse', '$q', '$timeout', '$document', '$window', '$rootScope', '$position', 'typeaheadParser',
+	       function ($compile, $parse, $q, $timeout, $document, $window, $rootScope, $position, typeaheadParser) {
+	
+	  var HOT_KEYS = [9, 13, 27, 38, 40];
+	  var eventDebounceTime = 200;
+	
+	  return {
+	    require:'ngModel',
+	    link:function (originalScope, element, attrs, modelCtrl) {
+	
+	      //SUPPORTED ATTRIBUTES (OPTIONS)
+	
+	      //minimal no of characters that needs to be entered before typeahead kicks-in
+	      var minLength = originalScope.$eval(attrs.typeaheadMinLength);
+	      if (!minLength && minLength !== 0) {
+	        minLength = 1;
+	      }
+	
+	      //minimal wait time after last character typed before typeahead kicks-in
+	      var waitTime = originalScope.$eval(attrs.typeaheadWaitMs) || 0;
+	
+	      //should it restrict model values to the ones selected from the popup only?
+	      var isEditable = originalScope.$eval(attrs.typeaheadEditable) !== false;
+	
+	      //binding to a variable that indicates if matches are being retrieved asynchronously
+	      var isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop;
+	
+	      //a callback executed when a match is selected
+	      var onSelectCallback = $parse(attrs.typeaheadOnSelect);
+	
+	      //should it select highlighted popup value when losing focus?
+	      var isSelectOnBlur = angular.isDefined(attrs.typeaheadSelectOnBlur) ? originalScope.$eval(attrs.typeaheadSelectOnBlur) : false;
+	
+	      //binding to a variable that indicates if there were no results after the query is completed
+	      var isNoResultsSetter = $parse(attrs.typeaheadNoResults).assign || angular.noop;
+	
+	      var inputFormatter = attrs.typeaheadInputFormatter ? $parse(attrs.typeaheadInputFormatter) : undefined;
+	
+	      var appendToBody =  attrs.typeaheadAppendToBody ? originalScope.$eval(attrs.typeaheadAppendToBody) : false;
+	
+	      var focusFirst = originalScope.$eval(attrs.typeaheadFocusFirst) !== false;
+	
+	      //If input matches an item of the list exactly, select it automatically
+	      var selectOnExact = attrs.typeaheadSelectOnExact ? originalScope.$eval(attrs.typeaheadSelectOnExact) : false;
+	
+	      //INTERNAL VARIABLES
+	
+	      //model setter executed upon match selection
+	      var $setModelValue = $parse(attrs.ngModel).assign;
+	
+	      //expressions used by typeahead
+	      var parserResult = typeaheadParser.parse(attrs.typeahead);
+	
+	      var hasFocus;
+	
+	      //Used to avoid bug in iOS webview where iOS keyboard does not fire
+	      //mousedown & mouseup events
+	      //Issue #3699
+	      var selected;
+	
+	      //create a child scope for the typeahead directive so we are not polluting original scope
+	      //with typeahead-specific data (matches, query etc.)
+	      var scope = originalScope.$new();
+	      originalScope.$on('$destroy', function(){
+	        scope.$destroy();
+	      });
+	
+	      // WAI-ARIA
+	      var popupId = 'typeahead-' + scope.$id + '-' + Math.floor(Math.random() * 10000);
+	      element.attr({
+	        'aria-autocomplete': 'list',
+	        'aria-expanded': false,
+	        'aria-owns': popupId
+	      });
+	
+	      //pop-up element used to display matches
+	      var popUpEl = angular.element('<div typeahead-popup></div>');
+	      popUpEl.attr({
+	        id: popupId,
+	        matches: 'matches',
+	        active: 'activeIdx',
+	        select: 'select(activeIdx)',
+	        'move-in-progress': 'moveInProgress',
+	        query: 'query',
+	        position: 'position'
+	      });
+	      //custom item template
+	      if (angular.isDefined(attrs.typeaheadTemplateUrl)) {
+	        popUpEl.attr('template-url', attrs.typeaheadTemplateUrl);
+	      }
+	
+	      var resetMatches = function() {
+	        scope.matches = [];
+	        scope.activeIdx = -1;
+	        element.attr('aria-expanded', false);
+	      };
+	
+	      var getMatchId = function(index) {
+	        return popupId + '-option-' + index;
+	      };
+	
+	      // Indicate that the specified match is the active (pre-selected) item in the list owned by this typeahead.
+	      // This attribute is added or removed automatically when the `activeIdx` changes.
+	      scope.$watch('activeIdx', function(index) {
+	        if (index < 0) {
+	          element.removeAttr('aria-activedescendant');
+	        } else {
+	          element.attr('aria-activedescendant', getMatchId(index));
+	        }
+	      });
+	
+	      var inputIsExactMatch = function(inputValue, index) {
+	
+	        if (scope.matches.length > index && inputValue) {
+	          return inputValue.toUpperCase() === scope.matches[index].label.toUpperCase();
+	        }
+	
+	        return false;
+	      };
+	
+	      var getMatchesAsync = function(inputValue) {
+	
+	        var locals = {$viewValue: inputValue};
+	        isLoadingSetter(originalScope, true);
+	        isNoResultsSetter(originalScope, false);
+	        $q.when(parserResult.source(originalScope, locals)).then(function(matches) {
+	
+	          //it might happen that several async queries were in progress if a user were typing fast
+	          //but we are interested only in responses that correspond to the current view value
+	          var onCurrentRequest = (inputValue === modelCtrl.$viewValue);
+	          if (onCurrentRequest && hasFocus) {
+	            if (matches && matches.length > 0) {
+	
+	              scope.activeIdx = focusFirst ? 0 : -1;
+	              isNoResultsSetter(originalScope, false);
+	              scope.matches.length = 0;
+	
+	              //transform labels
+	              for(var i=0; i<matches.length; i++) {
+	                locals[parserResult.itemName] = matches[i];
+	                scope.matches.push({
+	                  id: getMatchId(i),
+	                  label: parserResult.viewMapper(scope, locals),
+	                  model: matches[i]
+	                });
+	              }
+	
+	              scope.query = inputValue;
+	              //position pop-up with matches - we need to re-calculate its position each time we are opening a window
+	              //with matches as a pop-up might be absolute-positioned and position of an input might have changed on a page
+	              //due to other elements being rendered
+	              recalculatePosition();
+	
+	              element.attr('aria-expanded', true);
+	
+	              //Select the single remaining option if user input matches
+	              if (selectOnExact && scope.matches.length === 1 && inputIsExactMatch(inputValue, 0)) {
+	                scope.select(0);
+	              }
+	            } else {
+	              resetMatches();
+	              isNoResultsSetter(originalScope, true);
+	            }
+	          }
+	          if (onCurrentRequest) {
+	            isLoadingSetter(originalScope, false);
+	          }
+	        }, function(){
+	          resetMatches();
+	          isLoadingSetter(originalScope, false);
+	          isNoResultsSetter(originalScope, true);
+	        });
+	      };
+	
+	      // bind events only if appendToBody params exist - performance feature
+	      if (appendToBody) {
+	        angular.element($window).bind('resize', fireRecalculating);
+	        $document.find('body').bind('scroll', fireRecalculating);
+	      }
+	
+	      // Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
+	      var timeoutEventPromise;
+	
+	      // Default progress type
+	      scope.moveInProgress = false;
+	
+	      function fireRecalculating() {
+	        if(!scope.moveInProgress){
+	          scope.moveInProgress = true;
+	          scope.$digest();
+	        }
+	
+	        // Cancel previous timeout
+	        if (timeoutEventPromise) {
+	          $timeout.cancel(timeoutEventPromise);
+	        }
+	
+	        // Debounced executing recalculate after events fired
+	        timeoutEventPromise = $timeout(function () {
+	          // if popup is visible
+	          if (scope.matches.length) {
+	            recalculatePosition();
+	          }
+	
+	          scope.moveInProgress = false;
+	          scope.$digest();
+	        }, eventDebounceTime);
+	      }
+	
+	      // recalculate actual position and set new values to scope
+	      // after digest loop is popup in right position
+	      function recalculatePosition() {
+	        scope.position = appendToBody ? $position.offset(element) : $position.position(element);
+	        scope.position.top += element.prop('offsetHeight');
+	      }
+	
+	      resetMatches();
+	
+	      //we need to propagate user's query so we can higlight matches
+	      scope.query = undefined;
+	
+	      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
+	      var timeoutPromise;
+	
+	      var scheduleSearchWithTimeout = function(inputValue) {
+	        timeoutPromise = $timeout(function () {
+	          getMatchesAsync(inputValue);
+	        }, waitTime);
+	      };
+	
+	      var cancelPreviousTimeout = function() {
+	        if (timeoutPromise) {
+	          $timeout.cancel(timeoutPromise);
+	        }
+	      };
+	
+	      //plug into $parsers pipeline to open a typeahead on view changes initiated from DOM
+	      //$parsers kick-in on all the changes coming from the view as well as manually triggered by $setViewValue
+	      modelCtrl.$parsers.unshift(function (inputValue) {
+	
+	        hasFocus = true;
+	
+	        if (minLength === 0 || inputValue && inputValue.length >= minLength) {
+	          if (waitTime > 0) {
+	            cancelPreviousTimeout();
+	            scheduleSearchWithTimeout(inputValue);
+	          } else {
+	            getMatchesAsync(inputValue);
+	          }
+	        } else {
+	          isLoadingSetter(originalScope, false);
+	          cancelPreviousTimeout();
+	          resetMatches();
+	        }
+	
+	        if (isEditable) {
+	          return inputValue;
+	        } else {
+	          if (!inputValue) {
+	            // Reset in case user had typed something previously.
+	            modelCtrl.$setValidity('editable', true);
+	            return inputValue;
+	          } else {
+	            modelCtrl.$setValidity('editable', false);
+	            return undefined;
+	          }
+	        }
+	      });
+	
+	      modelCtrl.$formatters.push(function (modelValue) {
+	
+	        var candidateViewValue, emptyViewValue;
+	        var locals = {};
+	
+	        // The validity may be set to false via $parsers (see above) if
+	        // the model is restricted to selected values. If the model
+	        // is set manually it is considered to be valid.
+	        if (!isEditable) {
+	          modelCtrl.$setValidity('editable', true);
+	        }
+	
+	        if (inputFormatter) {
+	
+	          locals.$model = modelValue;
+	          return inputFormatter(originalScope, locals);
+	
+	        } else {
+	
+	          //it might happen that we don't have enough info to properly render input value
+	          //we need to check for this situation and simply return model value if we can't apply custom formatting
+	          locals[parserResult.itemName] = modelValue;
+	          candidateViewValue = parserResult.viewMapper(originalScope, locals);
+	          locals[parserResult.itemName] = undefined;
+	          emptyViewValue = parserResult.viewMapper(originalScope, locals);
+	
+	          return candidateViewValue!== emptyViewValue ? candidateViewValue : modelValue;
+	        }
+	      });
+	
+	      scope.select = function (activeIdx) {
+	        //called from within the $digest() cycle
+	        var locals = {};
+	        var model, item;
+	
+	        selected = true;
+	        locals[parserResult.itemName] = item = scope.matches[activeIdx].model;
+	        model = parserResult.modelMapper(originalScope, locals);
+	        $setModelValue(originalScope, model);
+	        modelCtrl.$setValidity('editable', true);
+	        modelCtrl.$setValidity('parse', true);
+	
+	        onSelectCallback(originalScope, {
+	          $item: item,
+	          $model: model,
+	          $label: parserResult.viewMapper(originalScope, locals)
+	        });
+	
+	        resetMatches();
+	
+	        //return focus to the input element if a match was selected via a mouse click event
+	        // use timeout to avoid $rootScope:inprog error
+	        $timeout(function() { element[0].focus(); }, 0, false);
+	      };
+	
+	      //bind keyboard events: arrows up(38) / down(40), enter(13) and tab(9), esc(27)
+	      element.bind('keydown', function (evt) {
+	
+	        //typeahead is open and an "interesting" key was pressed
+	        if (scope.matches.length === 0 || HOT_KEYS.indexOf(evt.which) === -1) {
+	          return;
+	        }
+	
+	        // if there's nothing selected (i.e. focusFirst) and enter or tab is hit, clear the results
+	        if (scope.activeIdx === -1 && (evt.which === 9 || evt.which === 13)) {
+	          resetMatches();
+	          scope.$digest();
+	          return;
+	        }
+	
+	        evt.preventDefault();
+	
+	        if (evt.which === 40) {
+	          scope.activeIdx = (scope.activeIdx + 1) % scope.matches.length;
+	          scope.$digest();
+	
+	        } else if (evt.which === 38) {
+	          scope.activeIdx = (scope.activeIdx > 0 ? scope.activeIdx : scope.matches.length) - 1;
+	          scope.$digest();
+	
+	        } else if (evt.which === 13 || evt.which === 9) {
+	          scope.$apply(function () {
+	            scope.select(scope.activeIdx);
+	          });
+	
+	        } else if (evt.which === 27) {
+	          evt.stopPropagation();
+	
+	          resetMatches();
+	          scope.$digest();
+	        }
+	      });
+	
+	      element.bind('blur', function () {
+	        if (isSelectOnBlur && scope.matches.length && scope.activeIdx !== -1 && !selected) {
+	          selected = true;
+	          scope.$apply(function () {
+	            scope.select(scope.activeIdx);
+	          });
+	        }
+	        hasFocus = false;
+	        selected = false;
+	      });
+	
+	      // Keep reference to click handler to unbind it.
+	      var dismissClickHandler = function (evt) {
+	        // Issue #3973
+	        // Firefox treats right click as a click on document
+	        if (element[0] !== evt.target && evt.which !== 3 && scope.matches.length !== 0) {
+	          resetMatches();
+	          if (!$rootScope.$$phase) {
+	            scope.$digest();
+	          }
+	        }
+	      };
+	
+	      $document.bind('click', dismissClickHandler);
+	
+	      originalScope.$on('$destroy', function(){
+	        $document.unbind('click', dismissClickHandler);
+	        if (appendToBody) {
+	          $popup.remove();
+	        }
+	        // Prevent jQuery cache memory leak
+	        popUpEl.remove();
+	      });
+	
+	      var $popup = $compile(popUpEl)(scope);
+	
+	      if (appendToBody) {
+	        $document.find('body').append($popup);
+	      } else {
+	        element.after($popup);
+	      }
+	    }
+	  };
+	
+	}])
+	
+	  .directive('typeaheadPopup', function () {
+	    return {
+	      restrict:'EA',
+	      scope:{
+	        matches:'=',
+	        query:'=',
+	        active:'=',
+	        position:'&',
+	        moveInProgress:'=',
+	        select:'&'
+	      },
+	      replace:true,
+	      templateUrl:'template/typeahead/typeahead-popup.html',
+	      link:function (scope, element, attrs) {
+	
+	        scope.templateUrl = attrs.templateUrl;
+	
+	        scope.isOpen = function () {
+	          return scope.matches.length > 0;
+	        };
+	
+	        scope.isActive = function (matchIdx) {
+	          return scope.active == matchIdx;
+	        };
+	
+	        scope.selectActive = function (matchIdx) {
+	          scope.active = matchIdx;
+	        };
+	
+	        scope.selectMatch = function (activeIdx) {
+	          scope.select({activeIdx:activeIdx});
+	        };
+	      }
+	    };
+	  })
+	
+	  .directive('typeaheadMatch', ['$templateRequest', '$compile', '$parse', function ($templateRequest, $compile, $parse) {
+	    return {
+	      restrict:'EA',
+	      scope:{
+	        index:'=',
+	        match:'=',
+	        query:'='
+	      },
+	      link:function (scope, element, attrs) {
+	        var tplUrl = $parse(attrs.templateUrl)(scope.$parent) || 'template/typeahead/typeahead-match.html';
+	        $templateRequest(tplUrl).then(function(tplContent) {
+	          $compile(tplContent.trim())(scope, function(clonedElement){
+	            element.replaceWith(clonedElement);
+	          });
+	        });
+	      }
+	    };
+	  }])
+	
+	  .filter('typeaheadHighlight', function() {
+	
+	    function escapeRegexp(queryToEscape) {
+	      return queryToEscape.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+	    }
+	
+	    return function(matchItem, query) {
+	      return query ? ('' + matchItem).replace(new RegExp(escapeRegexp(query), 'gi'), '<strong>$&</strong>') : matchItem;
+	    };
+	  });
+	
+	angular.module("template/accordion/accordion-group.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/accordion/accordion-group.html",
+	    "<div class=\"panel panel-default\">\n" +
+	    "  <div class=\"panel-heading\">\n" +
+	    "    <h4 class=\"panel-title\">\n" +
+	    "      <a href=\"#\" tabindex=\"0\" class=\"accordion-toggle\" ng-click=\"$event.preventDefault(); toggleOpen()\" accordion-transclude=\"heading\"><span ng-class=\"{'text-muted': isDisabled}\">{{heading}}</span></a>\n" +
+	    "    </h4>\n" +
+	    "  </div>\n" +
+	    "  <div class=\"panel-collapse collapse\" collapse=\"!isOpen\">\n" +
+	    "	  <div class=\"panel-body\" ng-transclude></div>\n" +
+	    "  </div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/accordion/accordion.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/accordion/accordion.html",
+	    "<div class=\"panel-group\" ng-transclude></div>");
+	}]);
+	
+	angular.module("template/alert/alert.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/alert/alert.html",
+	    "<div class=\"alert\" ng-class=\"['alert-' + (type || 'warning'), closeable ? 'alert-dismissible' : null]\" role=\"alert\">\n" +
+	    "    <button ng-show=\"closeable\" type=\"button\" class=\"close\" ng-click=\"close($event)\">\n" +
+	    "        <span aria-hidden=\"true\">&times;</span>\n" +
+	    "        <span class=\"sr-only\">Close</span>\n" +
+	    "    </button>\n" +
+	    "    <div ng-transclude></div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/carousel/carousel.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/carousel/carousel.html",
+	    "<div ng-mouseenter=\"pause()\" ng-mouseleave=\"play()\" class=\"carousel\" ng-swipe-right=\"prev()\" ng-swipe-left=\"next()\">\n" +
+	    "    <ol class=\"carousel-indicators\" ng-show=\"slides.length > 1\">\n" +
+	    "        <li ng-repeat=\"slide in slides | orderBy:'index' track by $index\" ng-class=\"{active: isActive(slide)}\" ng-click=\"select(slide)\"></li>\n" +
+	    "    </ol>\n" +
+	    "    <div class=\"carousel-inner\" ng-transclude></div>\n" +
+	    "    <a class=\"left carousel-control\" ng-click=\"prev()\" ng-show=\"slides.length > 1\"><span class=\"glyphicon glyphicon-chevron-left\"></span></a>\n" +
+	    "    <a class=\"right carousel-control\" ng-click=\"next()\" ng-show=\"slides.length > 1\"><span class=\"glyphicon glyphicon-chevron-right\"></span></a>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/carousel/slide.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/carousel/slide.html",
+	    "<div ng-class=\"{\n" +
+	    "    'active': active\n" +
+	    "  }\" class=\"item text-center\" ng-transclude></div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/datepicker/datepicker.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/datepicker/datepicker.html",
+	    "<div ng-switch=\"datepickerMode\" role=\"application\" ng-keydown=\"keydown($event)\">\n" +
+	    "  <daypicker ng-switch-when=\"day\" tabindex=\"0\"></daypicker>\n" +
+	    "  <monthpicker ng-switch-when=\"month\" tabindex=\"0\"></monthpicker>\n" +
+	    "  <yearpicker ng-switch-when=\"year\" tabindex=\"0\"></yearpicker>\n" +
+	    "</div>");
+	}]);
+	
+	angular.module("template/datepicker/day.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/datepicker/day.html",
+	    "<table role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
+	    "  <thead>\n" +
+	    "    <tr>\n" +
+	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
+	    "      <th colspan=\"{{::5 + showWeeks}}\"><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\" style=\"width:100%;\"><strong>{{title}}</strong></button></th>\n" +
+	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
+	    "    </tr>\n" +
+	    "    <tr>\n" +
+	    "      <th ng-if=\"showWeeks\" class=\"text-center\"></th>\n" +
+	    "      <th ng-repeat=\"label in ::labels track by $index\" class=\"text-center\"><small aria-label=\"{{::label.full}}\">{{::label.abbr}}</small></th>\n" +
+	    "    </tr>\n" +
+	    "  </thead>\n" +
+	    "  <tbody>\n" +
+	    "    <tr ng-repeat=\"row in rows track by $index\">\n" +
+	    "      <td ng-if=\"showWeeks\" class=\"text-center h6\"><em>{{ weekNumbers[$index] }}</em></td>\n" +
+	    "      <td ng-repeat=\"dt in row track by dt.date\" class=\"text-center\" role=\"gridcell\" id=\"{{::dt.uid}}\" ng-class=\"::dt.customClass\">\n" +
+	    "        <button type=\"button\" style=\"min-width:100%;\" class=\"btn btn-default btn-sm\" ng-class=\"{'btn-info': dt.selected, active: isActive(dt)}\" ng-click=\"select(dt.date)\" ng-disabled=\"dt.disabled\" tabindex=\"-1\"><span ng-class=\"::{'text-muted': dt.secondary, 'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
+	    "      </td>\n" +
+	    "    </tr>\n" +
+	    "  </tbody>\n" +
+	    "</table>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/datepicker/month.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/datepicker/month.html",
+	    "<table role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
+	    "  <thead>\n" +
+	    "    <tr>\n" +
+	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
+	    "      <th><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\" style=\"width:100%;\"><strong>{{title}}</strong></button></th>\n" +
+	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
+	    "    </tr>\n" +
+	    "  </thead>\n" +
+	    "  <tbody>\n" +
+	    "    <tr ng-repeat=\"row in rows track by $index\">\n" +
+	    "      <td ng-repeat=\"dt in row track by dt.date\" class=\"text-center\" role=\"gridcell\" id=\"{{::dt.uid}}\" ng-class=\"::dt.customClass\">\n" +
+	    "        <button type=\"button\" style=\"min-width:100%;\" class=\"btn btn-default\" ng-class=\"{'btn-info': dt.selected, active: isActive(dt)}\" ng-click=\"select(dt.date)\" ng-disabled=\"dt.disabled\" tabindex=\"-1\"><span ng-class=\"::{'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
+	    "      </td>\n" +
+	    "    </tr>\n" +
+	    "  </tbody>\n" +
+	    "</table>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/datepicker/popup.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/datepicker/popup.html",
+	    "<ul class=\"dropdown-menu\" ng-if=\"isOpen\" style=\"display: block\" ng-style=\"{top: position.top+'px', left: position.left+'px'}\" ng-keydown=\"keydown($event)\" ng-click=\"$event.stopPropagation()\">\n" +
+	    "	<li ng-transclude></li>\n" +
+	    "	<li ng-if=\"showButtonBar\" style=\"padding:10px 9px 2px\">\n" +
+	    "		<span class=\"btn-group pull-left\">\n" +
+	    "			<button type=\"button\" class=\"btn btn-sm btn-info\" ng-click=\"select('today')\">{{ getText('current') }}</button>\n" +
+	    "			<button type=\"button\" class=\"btn btn-sm btn-danger\" ng-click=\"select(null)\">{{ getText('clear') }}</button>\n" +
+	    "		</span>\n" +
+	    "		<button type=\"button\" class=\"btn btn-sm btn-success pull-right\" ng-click=\"close()\">{{ getText('close') }}</button>\n" +
+	    "	</li>\n" +
+	    "</ul>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/datepicker/year.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/datepicker/year.html",
+	    "<table role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
+	    "  <thead>\n" +
+	    "    <tr>\n" +
+	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
+	    "      <th colspan=\"3\"><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\" style=\"width:100%;\"><strong>{{title}}</strong></button></th>\n" +
+	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
+	    "    </tr>\n" +
+	    "  </thead>\n" +
+	    "  <tbody>\n" +
+	    "    <tr ng-repeat=\"row in rows track by $index\">\n" +
+	    "      <td ng-repeat=\"dt in row track by dt.date\" class=\"text-center\" role=\"gridcell\" id=\"{{::dt.uid}}\">\n" +
+	    "        <button type=\"button\" style=\"min-width:100%;\" class=\"btn btn-default\" ng-class=\"{'btn-info': dt.selected, active: isActive(dt)}\" ng-click=\"select(dt.date)\" ng-disabled=\"dt.disabled\" tabindex=\"-1\"><span ng-class=\"::{'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
+	    "      </td>\n" +
+	    "    </tr>\n" +
+	    "  </tbody>\n" +
+	    "</table>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/modal/backdrop.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/modal/backdrop.html",
+	    "<div class=\"modal-backdrop\"\n" +
+	    "     modal-animation-class=\"fade\"\n" +
+	    "     modal-in-class=\"in\"\n" +
+	    "     ng-style=\"{'z-index': 1040 + (index && 1 || 0) + index*10}\"\n" +
+	    "></div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/modal/window.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/modal/window.html",
+	    "<div modal-render=\"{{$isRendered}}\" tabindex=\"-1\" role=\"dialog\" class=\"modal\"\n" +
+	    "    modal-animation-class=\"fade\"\n" +
+	    "    modal-in-class=\"in\"\n" +
+	    "	ng-style=\"{'z-index': 1050 + index*10, display: 'block'}\" ng-click=\"close($event)\">\n" +
+	    "    <div class=\"modal-dialog\" ng-class=\"size ? 'modal-' + size : ''\"><div class=\"modal-content\" modal-transclude></div></div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/pagination/pager.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/pagination/pager.html",
+	    "<ul class=\"pager\">\n" +
+	    "  <li ng-class=\"{disabled: noPrevious(), previous: align}\"><a href ng-click=\"selectPage(page - 1, $event)\">{{::getText('previous')}}</a></li>\n" +
+	    "  <li ng-class=\"{disabled: noNext(), next: align}\"><a href ng-click=\"selectPage(page + 1, $event)\">{{::getText('next')}}</a></li>\n" +
+	    "</ul>");
+	}]);
+	
+	angular.module("template/pagination/pagination.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/pagination/pagination.html",
+	    "<ul class=\"pagination\">\n" +
+	    "  <li ng-if=\"::boundaryLinks\" ng-class=\"{disabled: noPrevious()||ngDisabled}\"><a href ng-click=\"selectPage(1, $event)\">{{::getText('first')}}</a></li>\n" +
+	    "  <li ng-if=\"::directionLinks\" ng-class=\"{disabled: noPrevious()||ngDisabled}\"><a href ng-click=\"selectPage(page - 1, $event)\">{{::getText('previous')}}</a></li>\n" +
+	    "  <li ng-repeat=\"page in pages track by $index\" ng-class=\"{active: page.active,disabled: ngDisabled&&!page.active}\"><a href ng-click=\"selectPage(page.number, $event)\">{{page.text}}</a></li>\n" +
+	    "  <li ng-if=\"::directionLinks\" ng-class=\"{disabled: noNext()||ngDisabled}\"><a href ng-click=\"selectPage(page + 1, $event)\">{{::getText('next')}}</a></li>\n" +
+	    "  <li ng-if=\"::boundaryLinks\" ng-class=\"{disabled: noNext()||ngDisabled}\"><a href ng-click=\"selectPage(totalPages, $event)\">{{::getText('last')}}</a></li>\n" +
+	    "</ul>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/tooltip/tooltip-html-popup.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/tooltip/tooltip-html-popup.html",
+	    "<div class=\"tooltip\"\n" +
+	    "  tooltip-animation-class=\"fade\"\n" +
+	    "  tooltip-classes\n" +
+	    "  ng-class=\"{ in: isOpen() }\">\n" +
+	    "  <div class=\"tooltip-arrow\"></div>\n" +
+	    "  <div class=\"tooltip-inner\" ng-bind-html=\"contentExp()\"></div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/tooltip/tooltip-html-unsafe-popup.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/tooltip/tooltip-html-unsafe-popup.html",
+	    "<div class=\"tooltip\"\n" +
+	    "  tooltip-animation-class=\"fade\"\n" +
+	    "  tooltip-classes\n" +
+	    "  ng-class=\"{ in: isOpen() }\">\n" +
+	    "  <div class=\"tooltip-arrow\"></div>\n" +
+	    "  <div class=\"tooltip-inner\" bind-html-unsafe=\"content\"></div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/tooltip/tooltip-popup.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/tooltip/tooltip-popup.html",
+	    "<div class=\"tooltip\"\n" +
+	    "  tooltip-animation-class=\"fade\"\n" +
+	    "  tooltip-classes\n" +
+	    "  ng-class=\"{ in: isOpen() }\">\n" +
+	    "  <div class=\"tooltip-arrow\"></div>\n" +
+	    "  <div class=\"tooltip-inner\" ng-bind=\"content\"></div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/tooltip/tooltip-template-popup.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/tooltip/tooltip-template-popup.html",
+	    "<div class=\"tooltip\"\n" +
+	    "  tooltip-animation-class=\"fade\"\n" +
+	    "  tooltip-classes\n" +
+	    "  ng-class=\"{ in: isOpen() }\">\n" +
+	    "  <div class=\"tooltip-arrow\"></div>\n" +
+	    "  <div class=\"tooltip-inner\"\n" +
+	    "    tooltip-template-transclude=\"contentExp()\"\n" +
+	    "    tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/popover/popover-html.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/popover/popover-html.html",
+	    "<div class=\"popover\"\n" +
+	    "  tooltip-animation-class=\"fade\"\n" +
+	    "  tooltip-classes\n" +
+	    "  ng-class=\"{ in: isOpen() }\">\n" +
+	    "  <div class=\"arrow\"></div>\n" +
+	    "\n" +
+	    "  <div class=\"popover-inner\">\n" +
+	    "      <h3 class=\"popover-title\" ng-bind=\"title\" ng-if=\"title\"></h3>\n" +
+	    "      <div class=\"popover-content\" ng-bind-html=\"contentExp()\"></div>\n" +
+	    "  </div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/popover/popover-template.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/popover/popover-template.html",
+	    "<div class=\"popover\"\n" +
+	    "  tooltip-animation-class=\"fade\"\n" +
+	    "  tooltip-classes\n" +
+	    "  ng-class=\"{ in: isOpen() }\">\n" +
+	    "  <div class=\"arrow\"></div>\n" +
+	    "\n" +
+	    "  <div class=\"popover-inner\">\n" +
+	    "      <h3 class=\"popover-title\" ng-bind=\"title\" ng-if=\"title\"></h3>\n" +
+	    "      <div class=\"popover-content\"\n" +
+	    "        tooltip-template-transclude=\"contentExp()\"\n" +
+	    "        tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
+	    "  </div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/popover/popover.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/popover/popover.html",
+	    "<div class=\"popover\"\n" +
+	    "  tooltip-animation-class=\"fade\"\n" +
+	    "  tooltip-classes\n" +
+	    "  ng-class=\"{ in: isOpen() }\">\n" +
+	    "  <div class=\"arrow\"></div>\n" +
+	    "\n" +
+	    "  <div class=\"popover-inner\">\n" +
+	    "      <h3 class=\"popover-title\" ng-bind=\"title\" ng-if=\"title\"></h3>\n" +
+	    "      <div class=\"popover-content\" ng-bind=\"content\"></div>\n" +
+	    "  </div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/progressbar/bar.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/progressbar/bar.html",
+	    "<div class=\"progress-bar\" ng-class=\"type && 'progress-bar-' + type\" role=\"progressbar\" aria-valuenow=\"{{value}}\" aria-valuemin=\"0\" aria-valuemax=\"{{max}}\" ng-style=\"{width: (percent < 100 ? percent : 100) + '%'}\" aria-valuetext=\"{{percent | number:0}}%\" ng-transclude></div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/progressbar/progress.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/progressbar/progress.html",
+	    "<div class=\"progress\" ng-transclude></div>");
+	}]);
+	
+	angular.module("template/progressbar/progressbar.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/progressbar/progressbar.html",
+	    "<div class=\"progress\">\n" +
+	    "  <div class=\"progress-bar\" ng-class=\"type && 'progress-bar-' + type\" role=\"progressbar\" aria-valuenow=\"{{value}}\" aria-valuemin=\"0\" aria-valuemax=\"{{max}}\" ng-style=\"{width: (percent < 100 ? percent : 100) + '%'}\" aria-valuetext=\"{{percent | number:0}}%\" ng-transclude></div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/rating/rating.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/rating/rating.html",
+	    "<span ng-mouseleave=\"reset()\" ng-keydown=\"onKeydown($event)\" tabindex=\"0\" role=\"slider\" aria-valuemin=\"0\" aria-valuemax=\"{{range.length}}\" aria-valuenow=\"{{value}}\">\n" +
+	    "    <i ng-repeat=\"r in range track by $index\" ng-mouseenter=\"enter($index + 1)\" ng-click=\"rate($index + 1)\" class=\"glyphicon\" ng-class=\"$index < value && (r.stateOn || 'glyphicon-star') || (r.stateOff || 'glyphicon-star-empty')\" ng-attr-title=\"{{r.title}}\" >\n" +
+	    "        <span class=\"sr-only\">({{ $index < value ? '*' : ' ' }})</span>\n" +
+	    "    </i>\n" +
+	    "</span>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/tabs/tab.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/tabs/tab.html",
+	    "<li ng-class=\"{active: active, disabled: disabled}\">\n" +
+	    "  <a href=\"#\" ng-click=\"$event.preventDefault(); select()\" tab-heading-transclude>{{heading}}</a>\n" +
+	    "</li>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/tabs/tabset.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/tabs/tabset.html",
+	    "<div>\n" +
+	    "  <ul class=\"nav nav-{{type || 'tabs'}}\" ng-class=\"{'nav-stacked': vertical, 'nav-justified': justified}\" ng-transclude></ul>\n" +
+	    "  <div class=\"tab-content\">\n" +
+	    "    <div class=\"tab-pane\" \n" +
+	    "         ng-repeat=\"tab in tabs\" \n" +
+	    "         ng-class=\"{active: tab.active}\"\n" +
+	    "         tab-content-transclude=\"tab\">\n" +
+	    "    </div>\n" +
+	    "  </div>\n" +
+	    "</div>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/timepicker/timepicker.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/timepicker/timepicker.html",
+	    "<table>\n" +
+	    "  <tbody>\n" +
+	    "    <tr class=\"text-center\" ng-show=\"::showSpinners\">\n" +
+	    "      <td><a ng-click=\"incrementHours()\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a></td>\n" +
+	    "      <td>&nbsp;</td>\n" +
+	    "      <td><a ng-click=\"incrementMinutes()\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a></td>\n" +
+	    "      <td ng-show=\"showMeridian\"></td>\n" +
+	    "    </tr>\n" +
+	    "    <tr>\n" +
+	    "      <td class=\"form-group\" ng-class=\"{'has-error': invalidHours}\">\n" +
+	    "        <input style=\"width:50px;\" type=\"text\" ng-model=\"hours\" ng-change=\"updateHours()\" class=\"form-control text-center\" ng-readonly=\"::readonlyInput\" maxlength=\"2\">\n" +
+	    "      </td>\n" +
+	    "      <td>:</td>\n" +
+	    "      <td class=\"form-group\" ng-class=\"{'has-error': invalidMinutes}\">\n" +
+	    "        <input style=\"width:50px;\" type=\"text\" ng-model=\"minutes\" ng-change=\"updateMinutes()\" class=\"form-control text-center\" ng-readonly=\"::readonlyInput\" maxlength=\"2\">\n" +
+	    "      </td>\n" +
+	    "      <td ng-show=\"showMeridian\"><button type=\"button\" class=\"btn btn-default text-center\" ng-click=\"toggleMeridian()\">{{meridian}}</button></td>\n" +
+	    "    </tr>\n" +
+	    "    <tr class=\"text-center\" ng-show=\"::showSpinners\">\n" +
+	    "      <td><a ng-click=\"decrementHours()\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>\n" +
+	    "      <td>&nbsp;</td>\n" +
+	    "      <td><a ng-click=\"decrementMinutes()\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>\n" +
+	    "      <td ng-show=\"showMeridian\"></td>\n" +
+	    "    </tr>\n" +
+	    "  </tbody>\n" +
+	    "</table>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/typeahead/typeahead-match.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/typeahead/typeahead-match.html",
+	    "<a href=\"#\" ng-click=\"$event.preventDefault()\" tabindex=\"-1\" bind-html-unsafe=\"match.label | typeaheadHighlight:query\"></a>\n" +
+	    "");
+	}]);
+	
+	angular.module("template/typeahead/typeahead-popup.html", []).run(["$templateCache", function($templateCache) {
+	  $templateCache.put("template/typeahead/typeahead-popup.html",
+	    "<ul class=\"dropdown-menu\" ng-show=\"isOpen() && !moveInProgress\" ng-style=\"{top: position().top+'px', left: position().left+'px'}\" style=\"display: block;\" role=\"listbox\" aria-hidden=\"{{!isOpen()}}\">\n" +
+	    "    <li ng-repeat=\"match in matches track by $index\" ng-class=\"{active: isActive($index) }\" ng-mouseenter=\"selectActive($index)\" ng-click=\"selectMatch($index)\" role=\"option\" id=\"{{::match.id}}\">\n" +
+	    "        <div typeahead-match index=\"$index\" match=\"match\" query=\"query\" template-url=\"templateUrl\"></div>\n" +
+	    "    </li>\n" +
+	    "</ul>\n" +
+	    "");
+	}]);
+	!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">.ng-animate.item:not(.left):not(.right){-webkit-transition:0s ease-in-out left;transition:0s ease-in-out left}</style>');
 
 /***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__(4);
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(5);
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(global) {"use strict";
 	
-	__webpack_require__(4);
+	__webpack_require__(6);
 	
-	__webpack_require__(183);
+	__webpack_require__(169);
 	
 	if (global._babelPolyfill) {
 	  throw new Error("only one instance of babel/polyfill is allowed");
@@ -128,23 +5504,15 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(5);
-	__webpack_require__(34);
-	__webpack_require__(42);
-	__webpack_require__(44);
-	__webpack_require__(46);
-	__webpack_require__(48);
-	__webpack_require__(50);
-	__webpack_require__(52);
+	__webpack_require__(32);
+	__webpack_require__(47);
+	__webpack_require__(51);
 	__webpack_require__(53);
-	__webpack_require__(54);
 	__webpack_require__(55);
-	__webpack_require__(56);
 	__webpack_require__(57);
-	__webpack_require__(58);
 	__webpack_require__(59);
 	__webpack_require__(60);
 	__webpack_require__(61);
@@ -152,7 +5520,7 @@
 	__webpack_require__(63);
 	__webpack_require__(64);
 	__webpack_require__(65);
-	__webpack_require__(66);
+	__webpack_require__(67);
 	__webpack_require__(68);
 	__webpack_require__(69);
 	__webpack_require__(70);
@@ -160,12 +5528,13 @@
 	__webpack_require__(72);
 	__webpack_require__(73);
 	__webpack_require__(74);
+	__webpack_require__(75);
 	__webpack_require__(76);
-	__webpack_require__(77);
 	__webpack_require__(78);
+	__webpack_require__(79);
 	__webpack_require__(80);
-	__webpack_require__(81);
 	__webpack_require__(82);
+	__webpack_require__(83);
 	__webpack_require__(84);
 	__webpack_require__(85);
 	__webpack_require__(86);
@@ -177,91 +5546,476 @@
 	__webpack_require__(92);
 	__webpack_require__(93);
 	__webpack_require__(94);
-	__webpack_require__(95);
 	__webpack_require__(96);
-	__webpack_require__(98);
-	__webpack_require__(104);
-	__webpack_require__(105);
-	__webpack_require__(107);
+	__webpack_require__(97);
+	__webpack_require__(99);
+	__webpack_require__(100);
+	__webpack_require__(102);
+	__webpack_require__(103);
 	__webpack_require__(108);
-	__webpack_require__(110);
+	__webpack_require__(7);
+	__webpack_require__(109);
 	__webpack_require__(111);
-	__webpack_require__(116);
+	__webpack_require__(112);
+	__webpack_require__(113);
+	__webpack_require__(114);
+	__webpack_require__(115);
 	__webpack_require__(117);
+	__webpack_require__(118);
 	__webpack_require__(120);
+	__webpack_require__(121);
 	__webpack_require__(122);
 	__webpack_require__(123);
-	__webpack_require__(124);
-	__webpack_require__(125);
-	__webpack_require__(126);
 	__webpack_require__(128);
-	__webpack_require__(129);
 	__webpack_require__(131);
 	__webpack_require__(132);
-	__webpack_require__(133);
 	__webpack_require__(134);
+	__webpack_require__(135);
+	__webpack_require__(136);
+	__webpack_require__(137);
+	__webpack_require__(138);
 	__webpack_require__(139);
+	__webpack_require__(140);
+	__webpack_require__(141);
 	__webpack_require__(142);
 	__webpack_require__(143);
+	__webpack_require__(144);
 	__webpack_require__(145);
-	__webpack_require__(146);
 	__webpack_require__(147);
 	__webpack_require__(148);
 	__webpack_require__(149);
 	__webpack_require__(150);
 	__webpack_require__(151);
 	__webpack_require__(152);
-	__webpack_require__(153);
 	__webpack_require__(154);
 	__webpack_require__(155);
 	__webpack_require__(156);
-	__webpack_require__(158);
+	__webpack_require__(157);
 	__webpack_require__(159);
 	__webpack_require__(160);
-	__webpack_require__(161);
 	__webpack_require__(162);
 	__webpack_require__(163);
-	__webpack_require__(165);
-	__webpack_require__(166);
+	__webpack_require__(164);
 	__webpack_require__(167);
 	__webpack_require__(168);
-	__webpack_require__(170);
-	__webpack_require__(171);
-	__webpack_require__(173);
-	__webpack_require__(174);
-	__webpack_require__(176);
-	__webpack_require__(177);
-	__webpack_require__(178);
-	__webpack_require__(181);
-	__webpack_require__(182);
-	module.exports = __webpack_require__(17);
+	module.exports = __webpack_require__(26);
 
 /***/ },
-/* 5 */
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var setUnscope = __webpack_require__(8)
+	  , step       = __webpack_require__(17)
+	  , Iterators  = __webpack_require__(18)
+	  , toObject   = __webpack_require__(19);
+	
+	// 22.1.3.4 Array.prototype.entries()
+	// 22.1.3.13 Array.prototype.keys()
+	// 22.1.3.29 Array.prototype.values()
+	// 22.1.3.30 Array.prototype[@@iterator]()
+	__webpack_require__(23)(Array, 'Array', function(iterated, kind){
+	  this._t = toObject(iterated); // target
+	  this._i = 0;                  // next index
+	  this._k = kind;               // kind
+	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+	}, function(){
+	  var O     = this._t
+	    , kind  = this._k
+	    , index = this._i++;
+	  if(!O || index >= O.length){
+	    this._t = undefined;
+	    return step(1);
+	  }
+	  if(kind == 'keys'  )return step(0, index);
+	  if(kind == 'values')return step(0, O[index]);
+	  return step(0, [index, O[index]]);
+	}, 'values');
+	
+	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+	Iterators.Arguments = Iterators.Array;
+	
+	setUnscope('keys');
+	setUnscope('values');
+	setUnscope('entries');
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 22.1.3.31 Array.prototype[@@unscopables]
+	var UNSCOPABLES = __webpack_require__(9)('unscopables');
+	if(!(UNSCOPABLES in []))__webpack_require__(13)(Array.prototype, UNSCOPABLES, {});
+	module.exports = function(key){
+	  [][UNSCOPABLES][key] = true;
+	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var store  = __webpack_require__(10)('wks')
+	  , Symbol = __webpack_require__(11).Symbol;
+	module.exports = function(name){
+	  return store[name] || (store[name] =
+	    Symbol && Symbol[name] || (Symbol || __webpack_require__(12))('Symbol.' + name));
+	};
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global = __webpack_require__(11)
+	  , SHARED = '__core-js_shared__'
+	  , store  = global[SHARED] || (global[SHARED] = {});
+	module.exports = function(key){
+	  return store[key] || (store[key] = {});
+	};
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	var global = typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+	module.exports = global;
+	if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	var id = 0
+	  , px = Math.random();
+	module.exports = function(key){
+	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+	};
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $          = __webpack_require__(14)
+	  , createDesc = __webpack_require__(15);
+	module.exports = __webpack_require__(16) ? function(object, key, value){
+	  return $.setDesc(object, key, createDesc(1, value));
+	} : function(object, key, value){
+	  object[key] = value;
+	  return object;
+	};
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	var $Object = Object;
+	module.exports = {
+	  create:     $Object.create,
+	  getProto:   $Object.getPrototypeOf,
+	  isEnum:     {}.propertyIsEnumerable,
+	  getDesc:    $Object.getOwnPropertyDescriptor,
+	  setDesc:    $Object.defineProperty,
+	  setDescs:   $Object.defineProperties,
+	  getKeys:    $Object.keys,
+	  getNames:   $Object.getOwnPropertyNames,
+	  getSymbols: $Object.getOwnPropertySymbols,
+	  each:       [].forEach
+	};
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = function(bitmap, value){
+	  return {
+	    enumerable  : !(bitmap & 1),
+	    configurable: !(bitmap & 2),
+	    writable    : !(bitmap & 4),
+	    value       : value
+	  };
+	};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	// Thank's IE8 for his funny defineProperty
+	module.exports = !!function(){
+	  try {
+	    return Object.defineProperty({}, 'a', {get: function(){ return 2; }}).a == 2;
+	  } catch(e){ /* empty */ }
+	}();
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = function(done, value){
+	  return {value: value, done: !!done};
+	};
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = {};
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ES5Object = __webpack_require__(20)
+	  , defined   = __webpack_require__(22);
+	module.exports = function(it, realString){
+	  return (realString ? Object : ES5Object)(defined(it));
+	};
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// fallback for not array-like ES3 strings
+	var cof     = __webpack_require__(21)
+	  , $Object = Object;
+	module.exports = 0 in $Object('z') ? $Object : function(it){
+	  return cof(it) == 'String' ? it.split('') : $Object(it);
+	};
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	var toString = {}.toString;
+	
+	module.exports = function(it){
+	  return toString.call(it).slice(8, -1);
+	};
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = function(it){
+	  if(it == undefined)throw TypeError("Can't call method on  " + it);
+	  return it;
+	};
+
+/***/ },
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $                = __webpack_require__(6)
-	  , SUPPORT_DESC     = __webpack_require__(7)
-	  , createDesc       = __webpack_require__(9)
-	  , html             = __webpack_require__(10)
-	  , cel              = __webpack_require__(12)
-	  , has              = __webpack_require__(14)
-	  , cof              = __webpack_require__(15)
-	  , $def             = __webpack_require__(16)
-	  , invoke           = __webpack_require__(21)
-	  , arrayMethod      = __webpack_require__(22)
-	  , IE_PROTO         = __webpack_require__(20)('__proto__')
-	  , isObject         = __webpack_require__(13)
-	  , anObject         = __webpack_require__(30)
-	  , aFunction        = __webpack_require__(24)
-	  , toObject         = __webpack_require__(26)
-	  , toIObject        = __webpack_require__(31)
-	  , toInteger        = __webpack_require__(29)
-	  , toIndex          = __webpack_require__(32)
-	  , toLength         = __webpack_require__(28)
-	  , IObject          = __webpack_require__(25)
-	  , fails            = __webpack_require__(8)
+	var LIBRARY         = __webpack_require__(24)
+	  , $def            = __webpack_require__(25)
+	  , $redef          = __webpack_require__(27)
+	  , hide            = __webpack_require__(13)
+	  , has             = __webpack_require__(28)
+	  , SYMBOL_ITERATOR = __webpack_require__(9)('iterator')
+	  , Iterators       = __webpack_require__(18)
+	  , FF_ITERATOR     = '@@iterator'
+	  , KEYS            = 'keys'
+	  , VALUES          = 'values';
+	function returnThis(){ return this; }
+	module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE){
+	  __webpack_require__(29)(Constructor, NAME, next);
+	  function createMethod(kind){
+	    switch(kind){
+	      case KEYS: return function keys(){ return new Constructor(this, kind); };
+	      case VALUES: return function values(){ return new Constructor(this, kind); };
+	    } return function entries(){ return new Constructor(this, kind); };
+	  }
+	  var TAG      = NAME + ' Iterator'
+	    , proto    = Base.prototype
+	    , _native  = proto[SYMBOL_ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+	    , _default = _native || createMethod(DEFAULT)
+	    , methods, key;
+	  // Fix native
+	  if(_native){
+	    var IteratorPrototype = __webpack_require__(14).getProto(_default.call(new Base));
+	    // Set @@toStringTag to native iterators
+	    __webpack_require__(30)(IteratorPrototype, TAG, true);
+	    // FF fix
+	    if(!LIBRARY && has(proto, FF_ITERATOR))hide(IteratorPrototype, SYMBOL_ITERATOR, returnThis);
+	  }
+	  // Define iterator
+	  if(!LIBRARY || FORCE)hide(proto, SYMBOL_ITERATOR, _default);
+	  // Plug for library
+	  Iterators[NAME] = _default;
+	  Iterators[TAG]  = returnThis;
+	  if(DEFAULT){
+	    methods = {
+	      keys:    IS_SET            ? _default : createMethod(KEYS),
+	      values:  DEFAULT == VALUES ? _default : createMethod(VALUES),
+	      entries: DEFAULT != VALUES ? _default : createMethod('entries')
+	    };
+	    if(FORCE)for(key in methods){
+	      if(!(key in proto))$redef(proto, key, methods[key]);
+	    } else $def($def.P + $def.F * __webpack_require__(31), NAME, methods);
+	  }
+	};
+
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
+
+	module.exports = false;
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global     = __webpack_require__(11)
+	  , core       = __webpack_require__(26)
+	  , hide       = __webpack_require__(13)
+	  , $redef     = __webpack_require__(27)
+	  , PROTOTYPE  = 'prototype';
+	function ctx(fn, that){
+	  return function(){
+	    return fn.apply(that, arguments);
+	  };
+	}
+	global.core = core;
+	// type bitmap
+	$def.F = 1;  // forced
+	$def.G = 2;  // global
+	$def.S = 4;  // static
+	$def.P = 8;  // proto
+	$def.B = 16; // bind
+	$def.W = 32; // wrap
+	function $def(type, name, source){
+	  var key, own, out, exp
+	    , isGlobal = type & $def.G
+	    , isProto  = type & $def.P
+	    , target   = isGlobal ? global : type & $def.S
+	        ? global[name] || (global[name] = {}) : (global[name] || {})[PROTOTYPE]
+	    , exports  = isGlobal ? core : core[name] || (core[name] = {});
+	  if(isGlobal)source = name;
+	  for(key in source){
+	    // contains in native
+	    own = !(type & $def.F) && target && key in target;
+	    // export native or passed
+	    out = (own ? target : source)[key];
+	    // bind timers to global for call from export context
+	    if(type & $def.B && own)exp = ctx(out, global);
+	    else exp = isProto && typeof out == 'function' ? ctx(Function.call, out) : out;
+	    // extend global
+	    if(target && !own)$redef(target, key, out);
+	    // export
+	    if(exports[key] != out)hide(exports, key, exp);
+	    if(isProto)(exports[PROTOTYPE] || (exports[PROTOTYPE] = {}))[key] = out;
+	  }
+	}
+	module.exports = $def;
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	var core = module.exports = {};
+	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global     = __webpack_require__(11)
+	  , has        = __webpack_require__(28)
+	  , hide       = __webpack_require__(13)
+	  , tpl        = String({}.hasOwnProperty)
+	  , SRC        = __webpack_require__(12)('src')
+	  , _toString  = Function.toString;
+	
+	function $redef(O, key, val, safe){
+	  if(typeof val == 'function'){
+	    var base = O[key];
+	    hide(val, SRC, base ? String(base) : tpl.replace(/hasOwnProperty/, String(key)));
+	    if(!('name' in val))val.name = key;
+	  }
+	  if(O === global){
+	    O[key] = val;
+	  } else {
+	    if(!safe)delete O[key];
+	    hide(O, key, val);
+	  }
+	}
+	
+	// add fake Function#toString for correct work wrapped methods / constructors
+	// with methods similar to LoDash isNative
+	$redef(Function.prototype, 'toString', function toString(){
+	  return has(this, SRC) ? this[SRC] : _toString.call(this);
+	});
+	
+	__webpack_require__(26).inspectSource = function(it){
+	  return _toString.call(it);
+	};
+	
+	module.exports = $redef;
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	var hasOwnProperty = {}.hasOwnProperty;
+	module.exports = function(it, key){
+	  return hasOwnProperty.call(it, key);
+	};
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $ = __webpack_require__(14)
+	  , IteratorPrototype = {};
+	
+	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+	__webpack_require__(13)(IteratorPrototype, __webpack_require__(9)('iterator'), function(){ return this; });
+	
+	module.exports = function(Constructor, NAME, next){
+	  Constructor.prototype = $.create(IteratorPrototype, {next: __webpack_require__(15)(1,next)});
+	  __webpack_require__(30)(Constructor, NAME + ' Iterator');
+	};
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var has  = __webpack_require__(28)
+	  , hide = __webpack_require__(13)
+	  , TAG  = __webpack_require__(9)('toStringTag');
+	
+	module.exports = function(it, tag, stat){
+	  if(it && !has(it = stat ? it : it.prototype, TAG))hide(it, TAG, tag);
+	};
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
+	// Safari has buggy iterators w/o `next`
+	module.exports = 'keys' in [] && !('next' in [].keys());
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $                = __webpack_require__(14)
+	  , SUPPORT_DESC     = __webpack_require__(16)
+	  , createDesc       = __webpack_require__(15)
+	  , html             = __webpack_require__(34)
+	  , cel              = __webpack_require__(35)
+	  , has              = __webpack_require__(28)
+	  , cof              = __webpack_require__(21)
+	  , $def             = __webpack_require__(25)
+	  , invoke           = __webpack_require__(36)
+	  , arrayMethod      = __webpack_require__(37)
+	  , IE_PROTO         = __webpack_require__(12)('__proto__')
+	  , isObject         = __webpack_require__(33)
+	  , anObject         = __webpack_require__(42)
+	  , aFunction        = __webpack_require__(39)
+	  , toObject         = __webpack_require__(19)
+	  , toInteger        = __webpack_require__(41)
+	  , toIndex          = __webpack_require__(43)
+	  , toLength         = __webpack_require__(40)
+	  , ES5Object        = __webpack_require__(20)
 	  , ObjectProto      = Object.prototype
 	  , A                = []
 	  , _slice           = A.slice
@@ -269,14 +6023,22 @@
 	  , defineProperty   = $.setDesc
 	  , getOwnDescriptor = $.getDesc
 	  , defineProperties = $.setDescs
-	  , $indexOf         = __webpack_require__(33)(false)
+	  , IE8_DOM_DEFINE   = false
+	  , $indexOf         = __webpack_require__(44)(false)
+	  , $forEach         = arrayMethod(0)
+	  , $map             = arrayMethod(1)
+	  , $filter          = arrayMethod(2)
+	  , $some            = arrayMethod(3)
+	  , $every           = arrayMethod(4)
 	  , factories        = {}
-	  , IE8_DOM_DEFINE;
+	  , $trim            = __webpack_require__(45)(/^\s*([\s\S]*\S)?\s*$/, '$1');
 	
 	if(!SUPPORT_DESC){
-	  IE8_DOM_DEFINE = !fails(function(){
-	    return defineProperty(cel('div'), 'a', {get: function(){ return 7; }}).a != 7;
-	  });
+	  try {
+	    IE8_DOM_DEFINE = defineProperty(cel('div'), 'x',
+	      {get: function(){ return 8; }}
+	    ).x == 8;
+	  } catch(e){ /* empty */ }
 	  $.setDesc = function(O, P, Attributes){
 	    if(IE8_DOM_DEFINE)try {
 	      return defineProperty(O, P, Attributes);
@@ -337,9 +6099,9 @@
 	  while(i--)delete createDict.prototype[keys1[i]];
 	  return createDict();
 	};
-	var createGetKeys = function(names, length){
+	function createGetKeys(names, length){
 	  return function(object){
-	    var O      = toIObject(object)
+	    var O      = toObject(object)
 	      , i      = 0
 	      , result = []
 	      , key;
@@ -350,12 +6112,12 @@
 	    }
 	    return result;
 	  };
-	};
-	var Empty = function(){};
+	}
+	function Empty(){}
 	$def($def.S, 'Object', {
 	  // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 	  getPrototypeOf: $.getProto = $.getProto || function(O){
-	    O = toObject(O);
+	    O = toObject(O, true);
 	    if(has(O, IE_PROTO))return O[IE_PROTO];
 	    if(typeof O.constructor == 'function' && O instanceof O.constructor){
 	      return O.constructor.prototype;
@@ -376,38 +6138,64 @@
 	    return Properties === undefined ? result : defineProperties(result, Properties);
 	  },
 	  // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-	  keys: $.getKeys = $.getKeys || createGetKeys(keys1, keysLen1, false)
+	  keys: $.getKeys = $.getKeys || createGetKeys(keys1, keysLen1, false),
+	  // 19.1.2.17 / 15.2.3.8 Object.seal(O)
+	  seal: function seal(it){
+	    return it; // <- cap
+	  },
+	  // 19.1.2.5 / 15.2.3.9 Object.freeze(O)
+	  freeze: function freeze(it){
+	    return it; // <- cap
+	  },
+	  // 19.1.2.15 / 15.2.3.10 Object.preventExtensions(O)
+	  preventExtensions: function preventExtensions(it){
+	    return it; // <- cap
+	  },
+	  // 19.1.2.13 / 15.2.3.11 Object.isSealed(O)
+	  isSealed: function isSealed(it){
+	    return !isObject(it); // <- cap
+	  },
+	  // 19.1.2.12 / 15.2.3.12 Object.isFrozen(O)
+	  isFrozen: function isFrozen(it){
+	    return !isObject(it); // <- cap
+	  },
+	  // 19.1.2.11 / 15.2.3.13 Object.isExtensible(O)
+	  isExtensible: function isExtensible(it){
+	    return isObject(it); // <- cap
+	  }
 	});
 	
-	var construct = function(F, len, args){
+	function construct(F, len, args){
 	  if(!(len in factories)){
 	    for(var n = [], i = 0; i < len; i++)n[i] = 'a[' + i + ']';
 	    factories[len] = Function('F,a', 'return new F(' + n.join(',') + ')');
 	  }
 	  return factories[len](F, args);
-	};
+	}
 	
 	// 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
 	$def($def.P, 'Function', {
-	  bind: function bind(that /*, args... */){
+	  bind: function(that /*, args... */){
 	    var fn       = aFunction(this)
 	      , partArgs = _slice.call(arguments, 1);
-	    var bound = function(/* args... */){
+	    function bound(/* args... */){
 	      var args = partArgs.concat(_slice.call(arguments));
 	      return this instanceof bound ? construct(fn, args.length, args) : invoke(fn, args, that);
-	    };
+	    }
 	    if(isObject(fn.prototype))bound.prototype = fn.prototype;
 	    return bound;
 	  }
 	});
 	
 	// fallback for not array-like ES3 strings and DOM objects
-	var buggySlice = fails(function(){
+	var buggySlice = true;
+	try {
 	  if(html)_slice.call(html);
-	});
+	  buggySlice = false;
+	} catch(e){ /* empty */ }
 	
 	$def($def.P + $def.F * buggySlice, 'Array', {
-	  slice: function(begin, end){
+	  slice: function slice(begin, end){
 	    var len   = toLength(this.length)
 	      , klass = cof(this);
 	    end = end === undefined ? len : end;
@@ -423,19 +6211,19 @@
 	    return cloned;
 	  }
 	});
-	$def($def.P + $def.F * (IObject != Object), 'Array', {
-	  join: function(){
-	    return _join.apply(IObject(this), arguments);
+	$def($def.P + $def.F * (ES5Object != Object), 'Array', {
+	  join: function join(){
+	    return _join.apply(ES5Object(this), arguments);
 	  }
 	});
 	
 	// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
 	$def($def.S, 'Array', {isArray: function(arg){ return cof(arg) == 'Array'; }});
 	
-	var createArrayReduce = function(isRight){
+	function createArrayReduce(isRight){
 	  return function(callbackfn, memo){
 	    aFunction(callbackfn);
-	    var O      = IObject(this)
+	    var O      = toObject(this)
 	      , length = toLength(O.length)
 	      , index  = isRight ? length - 1 : 0
 	      , i      = isRight ? -1 : 1;
@@ -455,32 +6243,39 @@
 	    }
 	    return memo;
 	  };
-	};
-	var methodize = function($fn){
-	  return function(arg1/*, arg2 = undefined */){
-	    return $fn(this, arg1, arguments[1]);
-	  };
-	};
+	}
 	$def($def.P, 'Array', {
 	  // 22.1.3.10 / 15.4.4.18 Array.prototype.forEach(callbackfn [, thisArg])
-	  forEach: $.each = $.each || methodize(arrayMethod(0)),
+	  forEach: $.each = $.each || function forEach(callbackfn/*, that = undefined */){
+	    return $forEach(this, callbackfn, arguments[1]);
+	  },
 	  // 22.1.3.15 / 15.4.4.19 Array.prototype.map(callbackfn [, thisArg])
-	  map: methodize(arrayMethod(1)),
+	  map: function map(callbackfn/*, that = undefined */){
+	    return $map(this, callbackfn, arguments[1]);
+	  },
 	  // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
-	  filter: methodize(arrayMethod(2)),
+	  filter: function filter(callbackfn/*, that = undefined */){
+	    return $filter(this, callbackfn, arguments[1]);
+	  },
 	  // 22.1.3.23 / 15.4.4.17 Array.prototype.some(callbackfn [, thisArg])
-	  some: methodize(arrayMethod(3)),
+	  some: function some(callbackfn/*, that = undefined */){
+	    return $some(this, callbackfn, arguments[1]);
+	  },
 	  // 22.1.3.5 / 15.4.4.16 Array.prototype.every(callbackfn [, thisArg])
-	  every: methodize(arrayMethod(4)),
+	  every: function every(callbackfn/*, that = undefined */){
+	    return $every(this, callbackfn, arguments[1]);
+	  },
 	  // 22.1.3.18 / 15.4.4.21 Array.prototype.reduce(callbackfn [, initialValue])
 	  reduce: createArrayReduce(false),
 	  // 22.1.3.19 / 15.4.4.22 Array.prototype.reduceRight(callbackfn [, initialValue])
 	  reduceRight: createArrayReduce(true),
 	  // 22.1.3.11 / 15.4.4.14 Array.prototype.indexOf(searchElement [, fromIndex])
-	  indexOf: methodize($indexOf),
+	  indexOf: function indexOf(el /*, fromIndex = 0 */){
+	    return $indexOf(this, el, arguments[1]);
+	  },
 	  // 22.1.3.14 / 15.4.4.15 Array.prototype.lastIndexOf(searchElement [, fromIndex])
-	  lastIndexOf: function(el, fromIndex /* = @[*-1] */){
-	    var O      = toIObject(this)
+	  lastIndexOf: function lastIndexOf(el, fromIndex /* = @[*-1] */){
+	    var O      = toObject(this)
 	      , length = toLength(O.length)
 	      , index  = length - 1;
 	    if(arguments.length > 1)index = Math.min(index, toInteger(fromIndex));
@@ -490,18 +6285,21 @@
 	  }
 	});
 	
-	// 20.3.3.1 / 15.9.4.4 Date.now()
-	$def($def.S, 'Date', {now: function(){ return +new Date; }});
+	// 21.1.3.25 / 15.5.4.20 String.prototype.trim()
+	$def($def.P, 'String', {trim: function trim(){ return $trim(this); }});
 	
-	var lz = function(num){
+	// 20.3.3.1 / 15.9.4.4 Date.now()
+	$def($def.S, 'Date', {now: function now(){ return +new Date; }});
+	
+	function lz(num){
 	  return num > 9 ? num : '0' + num;
-	};
+	}
 	
 	// 20.3.4.36 / 15.9.5.43 Date.prototype.toISOString()
 	// PhantomJS and old webkit had a broken Date implementation.
 	var date       = new Date(-5e13 - 1)
 	  , brokenDate = !(date.toISOString && date.toISOString() == '0385-07-25T07:06:39.999Z'
-	      && fails(function(){ new Date(NaN).toISOString(); }));
+	      && __webpack_require__(46)(function(){ new Date(NaN).toISOString(); }));
 	$def($def.P + $def.F * brokenDate, 'Date', {
 	  toISOString: function toISOString(){
 	    if(!isFinite(this))throw RangeError('Invalid time value');
@@ -517,85 +6315,7 @@
 	});
 
 /***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	var $Object = Object;
-	module.exports = {
-	  create:     $Object.create,
-	  getProto:   $Object.getPrototypeOf,
-	  isEnum:     {}.propertyIsEnumerable,
-	  getDesc:    $Object.getOwnPropertyDescriptor,
-	  setDesc:    $Object.defineProperty,
-	  setDescs:   $Object.defineProperties,
-	  getKeys:    $Object.keys,
-	  getNames:   $Object.getOwnPropertyNames,
-	  getSymbols: $Object.getOwnPropertySymbols,
-	  each:       [].forEach
-	};
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// Thank's IE8 for his funny defineProperty
-	module.exports = !__webpack_require__(8)(function(){
-	  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
-	});
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	module.exports = function(exec){
-	  try {
-	    return !!exec();
-	  } catch(e){
-	    return true;
-	  }
-	};
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = function(bitmap, value){
-	  return {
-	    enumerable  : !(bitmap & 1),
-	    configurable: !(bitmap & 2),
-	    writable    : !(bitmap & 4),
-	    value       : value
-	  };
-	};
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(11).document && document.documentElement;
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	var global = typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-	module.exports = global;
-	if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObject = __webpack_require__(13)
-	  , document = __webpack_require__(11).document
-	  // in old IE typeof document.createElement is 'object'
-	  , is = isObject(document) && isObject(document.createElement);
-	module.exports = function(it){
-	  return is ? document.createElement(it) : {};
-	};
-
-/***/ },
-/* 13 */
+/* 33 */
 /***/ function(module, exports) {
 
 	// http://jsperf.com/core-js-isobject
@@ -604,138 +6324,29 @@
 	};
 
 /***/ },
-/* 14 */
-/***/ function(module, exports) {
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
 
-	var hasOwnProperty = {}.hasOwnProperty;
-	module.exports = function(it, key){
-	  return hasOwnProperty.call(it, key);
-	};
+	module.exports = __webpack_require__(11).document && document.documentElement;
 
 /***/ },
-/* 15 */
-/***/ function(module, exports) {
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
 
-	var toString = {}.toString;
-	
+	var isObject = __webpack_require__(33)
+	  , document = __webpack_require__(11).document
+	  // in old IE typeof document.createElement is 'object'
+	  , is = isObject(document) && isObject(document.createElement);
 	module.exports = function(it){
-	  return toString.call(it).slice(8, -1);
+	  return is ? document.createElement(it) : {};
 	};
 
 /***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var global     = __webpack_require__(11)
-	  , core       = __webpack_require__(17)
-	  , hide       = __webpack_require__(18)
-	  , $redef     = __webpack_require__(19)
-	  , PROTOTYPE  = 'prototype';
-	var ctx = function(fn, that){
-	  return function(){
-	    return fn.apply(that, arguments);
-	  };
-	};
-	var $def = function(type, name, source){
-	  var key, own, out, exp
-	    , isGlobal = type & $def.G
-	    , isProto  = type & $def.P
-	    , target   = isGlobal ? global : type & $def.S
-	        ? global[name] || (global[name] = {}) : (global[name] || {})[PROTOTYPE]
-	    , exports  = isGlobal ? core : core[name] || (core[name] = {});
-	  if(isGlobal)source = name;
-	  for(key in source){
-	    // contains in native
-	    own = !(type & $def.F) && target && key in target;
-	    // export native or passed
-	    out = (own ? target : source)[key];
-	    // bind timers to global for call from export context
-	    if(type & $def.B && own)exp = ctx(out, global);
-	    else exp = isProto && typeof out == 'function' ? ctx(Function.call, out) : out;
-	    // extend global
-	    if(target && !own)$redef(target, key, out);
-	    // export
-	    if(exports[key] != out)hide(exports, key, exp);
-	    if(isProto)(exports[PROTOTYPE] || (exports[PROTOTYPE] = {}))[key] = out;
-	  }
-	};
-	global.core = core;
-	// type bitmap
-	$def.F = 1;  // forced
-	$def.G = 2;  // global
-	$def.S = 4;  // static
-	$def.P = 8;  // proto
-	$def.B = 16; // bind
-	$def.W = 32; // wrap
-	module.exports = $def;
-
-/***/ },
-/* 17 */
+/* 36 */
 /***/ function(module, exports) {
 
-	var core = module.exports = {};
-	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $          = __webpack_require__(6)
-	  , createDesc = __webpack_require__(9);
-	module.exports = __webpack_require__(7) ? function(object, key, value){
-	  return $.setDesc(object, key, createDesc(1, value));
-	} : function(object, key, value){
-	  object[key] = value;
-	  return object;
-	};
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// add fake Function#toString
-	// for correct work wrapped methods / constructors with methods like LoDash isNative
-	var global    = __webpack_require__(11)
-	  , hide      = __webpack_require__(18)
-	  , SRC       = __webpack_require__(20)('src')
-	  , TO_STRING = 'toString'
-	  , $toString = Function[TO_STRING]
-	  , TPL       = ('' + $toString).split(TO_STRING);
-	
-	__webpack_require__(17).inspectSource = function(it){
-	  return $toString.call(it);
-	};
-	
-	(module.exports = function(O, key, val, safe){
-	  if(typeof val == 'function'){
-	    hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
-	    if(!('name' in val))val.name = key;
-	  }
-	  if(O === global){
-	    O[key] = val;
-	  } else {
-	    if(!safe)delete O[key];
-	    hide(O, key, val);
-	  }
-	})(Function.prototype, TO_STRING, function toString(){
-	  return typeof this == 'function' && this[SRC] || $toString.call(this);
-	});
-
-/***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	var id = 0
-	  , px = Math.random();
-	module.exports = function(key){
-	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-	};
-
-/***/ },
-/* 21 */
-/***/ function(module, exports) {
-
-	// fast apply, http://jsperf.lnkit.com/fast-apply/5
+	// Fast apply
+	// http://jsperf.lnkit.com/fast-apply/5
 	module.exports = function(fn, args, that){
 	  var un = that === undefined;
 	  switch(args.length){
@@ -749,11 +6360,13 @@
 	                      : fn.call(that, args[0], args[1], args[2]);
 	    case 4: return un ? fn(args[0], args[1], args[2], args[3])
 	                      : fn.call(that, args[0], args[1], args[2], args[3]);
+	    case 5: return un ? fn(args[0], args[1], args[2], args[3], args[4])
+	                      : fn.call(that, args[0], args[1], args[2], args[3], args[4]);
 	  } return              fn.apply(that, args);
 	};
 
 /***/ },
-/* 22 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 0 -> Array#forEach
@@ -763,10 +6376,10 @@
 	// 4 -> Array#every
 	// 5 -> Array#find
 	// 6 -> Array#findIndex
-	var ctx      = __webpack_require__(23)
-	  , IObject  = __webpack_require__(25)
-	  , toObject = __webpack_require__(26)
-	  , toLength = __webpack_require__(28);
+	var toObject  = __webpack_require__(19)
+	  , ES5Object = __webpack_require__(20)
+	  , ctx       = __webpack_require__(38)
+	  , toLength  = __webpack_require__(40);
 	module.exports = function(TYPE){
 	  var IS_MAP        = TYPE == 1
 	    , IS_FILTER     = TYPE == 2
@@ -775,8 +6388,8 @@
 	    , IS_FIND_INDEX = TYPE == 6
 	    , NO_HOLES      = TYPE == 5 || IS_FIND_INDEX;
 	  return function($this, callbackfn, that){
-	    var O      = toObject($this)
-	      , self   = IObject(O)
+	    var O      = toObject($this, true)
+	      , self   = ES5Object(O)
 	      , f      = ctx(callbackfn, that, 3)
 	      , length = toLength(self.length)
 	      , index  = 0
@@ -800,14 +6413,14 @@
 	};
 
 /***/ },
-/* 23 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// optional / simple context binding
-	var aFunction = __webpack_require__(24);
+	// Optional / simple context binding
+	var aFunction = __webpack_require__(39);
 	module.exports = function(fn, that, length){
 	  aFunction(fn);
-	  if(that === undefined)return fn;
+	  if(~length && that === undefined)return fn;
 	  switch(length){
 	    case 1: return function(a){
 	      return fn.call(that, a);
@@ -824,7 +6437,7 @@
 	};
 
 /***/ },
-/* 24 */
+/* 39 */
 /***/ function(module, exports) {
 
 	module.exports = function(it){
@@ -833,48 +6446,18 @@
 	};
 
 /***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// indexed object, fallback for non-array-like ES3 strings
-	var cof = __webpack_require__(15);
-	module.exports = 0 in Object('z') ? Object : function(it){
-	  return cof(it) == 'String' ? it.split('') : Object(it);
-	};
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 7.1.13 ToObject(argument)
-	var defined = __webpack_require__(27);
-	module.exports = function(it){
-	  return Object(defined(it));
-	};
-
-/***/ },
-/* 27 */
-/***/ function(module, exports) {
-
-	// 7.2.1 RequireObjectCoercible(argument)
-	module.exports = function(it){
-	  if(it == undefined)throw TypeError("Can't call method on  " + it);
-	  return it;
-	};
-
-/***/ },
-/* 28 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 7.1.15 ToLength
-	var toInteger = __webpack_require__(29)
+	var toInteger = __webpack_require__(41)
 	  , min       = Math.min;
 	module.exports = function(it){
 	  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 	};
 
 /***/ },
-/* 29 */
+/* 41 */
 /***/ function(module, exports) {
 
 	// 7.1.4 ToInteger
@@ -885,31 +6468,20 @@
 	};
 
 /***/ },
-/* 30 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(13);
+	var isObject = __webpack_require__(33);
 	module.exports = function(it){
 	  if(!isObject(it))throw TypeError(it + ' is not an object!');
 	  return it;
 	};
 
 /***/ },
-/* 31 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// to indexed object, toObject with fallback for non-array-like ES3 strings
-	var IObject = __webpack_require__(25)
-	  , defined = __webpack_require__(27);
-	module.exports = function(it){
-	  return IObject(defined(it));
-	};
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var toInteger = __webpack_require__(29)
+	var toInteger = __webpack_require__(41)
 	  , max       = Math.max
 	  , min       = Math.min;
 	module.exports = function(index, length){
@@ -918,25 +6490,23 @@
 	};
 
 /***/ },
-/* 33 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// false -> Array#indexOf
 	// true  -> Array#includes
-	var toIObject = __webpack_require__(31)
-	  , toLength  = __webpack_require__(28)
-	  , toIndex   = __webpack_require__(32);
+	var toObject = __webpack_require__(19)
+	  , toLength = __webpack_require__(40)
+	  , toIndex  = __webpack_require__(43);
 	module.exports = function(IS_INCLUDES){
 	  return function($this, el, fromIndex){
-	    var O      = toIObject($this)
+	    var O      = toObject($this)
 	      , length = toLength(O.length)
 	      , index  = toIndex(fromIndex, length)
 	      , value;
-	    // Array#includes uses SameValueZero equality algorithm
 	    if(IS_INCLUDES && el != el)while(length > index){
 	      value = O[index++];
 	      if(value != value)return true;
-	    // Array#toIndex ignores holes, Array#includes - not
 	    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
 	      if(O[index] === el)return IS_INCLUDES || index;
 	    } return !IS_INCLUDES && -1;
@@ -944,27 +6514,53 @@
 	};
 
 /***/ },
-/* 34 */
+/* 45 */
+/***/ function(module, exports) {
+
+	module.exports = function(regExp, replace){
+	  var replacer = replace === Object(replace) ? function(part){
+	    return replace[part];
+	  } : replace;
+	  return function(it){
+	    return String(it).replace(regExp, replacer);
+	  };
+	};
+
+/***/ },
+/* 46 */
+/***/ function(module, exports) {
+
+	module.exports = function(exec){
+	  try {
+	    exec();
+	    return false;
+	  } catch(e){
+	    return true;
+	  }
+	};
+
+/***/ },
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	// ECMAScript 6 symbols shim
-	var $              = __webpack_require__(6)
+	var $              = __webpack_require__(14)
 	  , global         = __webpack_require__(11)
-	  , has            = __webpack_require__(14)
-	  , SUPPORT_DESC   = __webpack_require__(7)
-	  , $def           = __webpack_require__(16)
-	  , $redef         = __webpack_require__(19)
-	  , shared         = __webpack_require__(35)
-	  , setTag         = __webpack_require__(36)
-	  , uid            = __webpack_require__(20)
-	  , wks            = __webpack_require__(37)
-	  , keyOf          = __webpack_require__(38)
-	  , $names         = __webpack_require__(39)
-	  , enumKeys       = __webpack_require__(40)
-	  , anObject       = __webpack_require__(30)
-	  , toIObject      = __webpack_require__(31)
-	  , createDesc     = __webpack_require__(9)
+	  , has            = __webpack_require__(28)
+	  , SUPPORT_DESC   = __webpack_require__(16)
+	  , $def           = __webpack_require__(25)
+	  , $redef         = __webpack_require__(27)
+	  , shared         = __webpack_require__(10)
+	  , setTag         = __webpack_require__(30)
+	  , uid            = __webpack_require__(12)
+	  , wks            = __webpack_require__(9)
+	  , keyOf          = __webpack_require__(48)
+	  , $names         = __webpack_require__(49)
+	  , enumKeys       = __webpack_require__(50)
+	  , anObject       = __webpack_require__(42)
+	  , toObject       = __webpack_require__(19)
+	  , createDesc     = __webpack_require__(15)
 	  , getDesc        = $.getDesc
 	  , setDesc        = $.setDesc
 	  , $create        = $.create
@@ -995,7 +6591,7 @@
 	  }
 	}() : setDesc;
 	
-	var wrap = function(tag){
+	function wrap(tag){
 	  var sym = AllSymbols[tag] = $create($Symbol.prototype);
 	  sym._k = tag;
 	  SUPPORT_DESC && setter && setSymbolDesc(ObjectProto, tag, {
@@ -1006,7 +6602,7 @@
 	    }
 	  });
 	  return sym;
-	};
+	}
 	
 	function defineProperty(it, key, D){
 	  if(D && has(AllSymbols, key)){
@@ -1021,7 +6617,7 @@
 	}
 	function defineProperties(it, P){
 	  anObject(it);
-	  var keys = enumKeys(P = toIObject(P))
+	  var keys = enumKeys(P = toObject(P))
 	    , i    = 0
 	    , l = keys.length
 	    , key;
@@ -1037,12 +6633,12 @@
 	    ? E : true;
 	}
 	function getOwnPropertyDescriptor(it, key){
-	  var D = getDesc(it = toIObject(it), key);
+	  var D = getDesc(it = toObject(it), key);
 	  if(D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
 	  return D;
 	}
 	function getOwnPropertyNames(it){
-	  var names  = getNames(toIObject(it))
+	  var names  = getNames(toObject(it))
 	    , result = []
 	    , i      = 0
 	    , key;
@@ -1050,7 +6646,7 @@
 	  return result;
 	}
 	function getOwnPropertySymbols(it){
-	  var names  = getNames(toIObject(it))
+	  var names  = getNames(toObject(it))
 	    , result = []
 	    , i      = 0
 	    , key;
@@ -1076,7 +6672,7 @@
 	  $.getNames   = $names.get = getOwnPropertyNames;
 	  $.getSymbols = getOwnPropertySymbols;
 	
-	  if(SUPPORT_DESC && !__webpack_require__(41)){
+	  if(SUPPORT_DESC && !__webpack_require__(24)){
 	    $redef(ObjectProto, 'propertyIsEnumerable', propertyIsEnumerable, true);
 	  }
 	}
@@ -1144,47 +6740,13 @@
 	setTag(global.JSON, 'JSON', true);
 
 /***/ },
-/* 35 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var global = __webpack_require__(11)
-	  , SHARED = '__core-js_shared__'
-	  , store  = global[SHARED] || (global[SHARED] = {});
-	module.exports = function(key){
-	  return store[key] || (store[key] = {});
-	};
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var has  = __webpack_require__(14)
-	  , hide = __webpack_require__(18)
-	  , TAG  = __webpack_require__(37)('toStringTag');
-	
-	module.exports = function(it, tag, stat){
-	  if(it && !has(it = stat ? it : it.prototype, TAG))hide(it, TAG, tag);
-	};
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var store  = __webpack_require__(35)('wks')
-	  , Symbol = __webpack_require__(11).Symbol;
-	module.exports = function(name){
-	  return store[name] || (store[name] =
-	    Symbol && Symbol[name] || (Symbol || __webpack_require__(20))('Symbol.' + name));
-	};
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $         = __webpack_require__(6)
-	  , toIObject = __webpack_require__(31);
+	var $        = __webpack_require__(14)
+	  , toObject = __webpack_require__(19);
 	module.exports = function(object, el){
-	  var O      = toIObject(object)
+	  var O      = toObject(object)
 	    , keys   = $.getKeys(O)
 	    , length = keys.length
 	    , index  = 0
@@ -1193,79 +6755,69 @@
 	};
 
 /***/ },
-/* 39 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-	var toString  = {}.toString
-	  , toIObject = __webpack_require__(31)
-	  , getNames  = __webpack_require__(6).getNames;
+	var toString = {}.toString
+	  , toObject = __webpack_require__(19)
+	  , getNames = __webpack_require__(14).getNames;
 	
 	var windowNames = typeof window == 'object' && Object.getOwnPropertyNames
 	  ? Object.getOwnPropertyNames(window) : [];
 	
-	var getWindowNames = function(it){
+	function getWindowNames(it){
 	  try {
 	    return getNames(it);
 	  } catch(e){
 	    return windowNames.slice();
 	  }
-	};
+	}
 	
 	module.exports.get = function getOwnPropertyNames(it){
 	  if(windowNames && toString.call(it) == '[object Window]')return getWindowNames(it);
-	  return getNames(toIObject(it));
+	  return getNames(toObject(it));
 	};
 
 /***/ },
-/* 40 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// all enumerable object keys, includes symbols
-	var $ = __webpack_require__(6);
+	var $ = __webpack_require__(14);
 	module.exports = function(it){
 	  var keys       = $.getKeys(it)
+	    , isEnum     = $.isEnum
 	    , getSymbols = $.getSymbols;
-	  if(getSymbols){
-	    var symbols = getSymbols(it)
-	      , isEnum  = $.isEnum
-	      , i       = 0
-	      , key;
-	    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))keys.push(key);
+	  if(getSymbols)for(var symbols = getSymbols(it), i = 0, key; symbols.length > i; ){
+	    if(isEnum.call(it, key = symbols[i++]))keys.push(key);
 	  }
 	  return keys;
 	};
 
 /***/ },
-/* 41 */
-/***/ function(module, exports) {
-
-	module.exports = false;
-
-/***/ },
-/* 42 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.3.1 Object.assign(target, source)
-	var $def = __webpack_require__(16);
-	$def($def.S, 'Object', {assign: __webpack_require__(43)});
+	var $def = __webpack_require__(25);
+	$def($def.S, 'Object', {assign: __webpack_require__(52)});
 
 /***/ },
-/* 43 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var toObject  = __webpack_require__(19)
+	  , ES5Object = __webpack_require__(20)
+	  , enumKeys  = __webpack_require__(50);
 	// 19.1.2.1 Object.assign(target, source, ...)
-	var toObject = __webpack_require__(26)
-	  , IObject  = __webpack_require__(25)
-	  , enumKeys = __webpack_require__(40);
 	/* eslint-disable no-unused-vars */
 	module.exports = Object.assign || function assign(target, source){
 	/* eslint-enable no-unused-vars */
-	  var T = toObject(target)
+	  var T = toObject(target, true)
 	    , l = arguments.length
 	    , i = 1;
 	  while(l > i){
-	    var S      = IObject(arguments[i++])
+	    var S      = ES5Object(arguments[i++])
 	      , keys   = enumKeys(S)
 	      , length = keys.length
 	      , j      = 0
@@ -1276,17 +6828,17 @@
 	};
 
 /***/ },
-/* 44 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.3.10 Object.is(value1, value2)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	$def($def.S, 'Object', {
-	  is: __webpack_require__(45)
+	  is: __webpack_require__(54)
 	});
 
 /***/ },
-/* 45 */
+/* 54 */
 /***/ function(module, exports) {
 
 	module.exports = Object.is || function is(x, y){
@@ -1294,31 +6846,31 @@
 	};
 
 /***/ },
-/* 46 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.3.19 Object.setPrototypeOf(O, proto)
-	var $def = __webpack_require__(16);
-	$def($def.S, 'Object', {setPrototypeOf: __webpack_require__(47).set});
+	var $def = __webpack_require__(25);
+	$def($def.S, 'Object', {setPrototypeOf: __webpack_require__(56).set});
 
 /***/ },
-/* 47 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Works with __proto__ only. Old v8 can't work with null proto objects.
 	/* eslint-disable no-proto */
-	var getDesc  = __webpack_require__(6).getDesc
-	  , isObject = __webpack_require__(13)
-	  , anObject = __webpack_require__(30);
-	var check = function(O, proto){
+	var getDesc  = __webpack_require__(14).getDesc
+	  , isObject = __webpack_require__(33)
+	  , anObject = __webpack_require__(42);
+	function check(O, proto){
 	  anObject(O);
 	  if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
-	};
+	}
 	module.exports = {
 	  set: Object.setPrototypeOf || ('__proto__' in {} // eslint-disable-line
 	    ? function(buggy, set){
 	        try {
-	          set = __webpack_require__(23)(Function.call, getDesc(Object.prototype, '__proto__').set, 2);
+	          set = __webpack_require__(38)(Function.call, getDesc(Object.prototype, '__proto__').set, 2);
 	          set({}, []);
 	        } catch(e){ buggy = true; }
 	        return function setPrototypeOf(O, proto){
@@ -1333,27 +6885,26 @@
 	};
 
 /***/ },
-/* 48 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	// 19.1.3.6 Object.prototype.toString()
-	var classof = __webpack_require__(49)
+	var classof = __webpack_require__(58)
 	  , test    = {};
-	test[__webpack_require__(37)('toStringTag')] = 'z';
+	test[__webpack_require__(9)('toStringTag')] = 'z';
 	if(test + '' != '[object z]'){
-	  __webpack_require__(19)(Object.prototype, 'toString', function toString(){
+	  __webpack_require__(27)(Object.prototype, 'toString', function toString(){
 	    return '[object ' + classof(this) + ']';
 	  }, true);
 	}
 
 /***/ },
-/* 49 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// getting tag from 19.1.3.6 Object.prototype.toString()
-	var cof = __webpack_require__(15)
-	  , TAG = __webpack_require__(37)('toStringTag')
+	var cof = __webpack_require__(21)
+	  , TAG = __webpack_require__(9)('toStringTag')
 	  // ES3 wrong here
 	  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
 	
@@ -1369,173 +6920,79 @@
 	};
 
 /***/ },
-/* 50 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.5 Object.freeze(O)
-	var isObject = __webpack_require__(13);
-	
-	__webpack_require__(51)('freeze', function($freeze){
-	  return function freeze(it){
-	    return $freeze && isObject(it) ? $freeze(it) : it;
-	  };
-	});
-
-/***/ },
-/* 51 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// most Object methods by ES6 should accept primitives
-	module.exports = function(KEY, exec){
-	  var $def = __webpack_require__(16)
-	    , fn   = (__webpack_require__(17).Object || {})[KEY] || Object[KEY]
-	    , exp  = {};
-	  exp[KEY] = exec(fn);
-	  $def($def.S + $def.F * __webpack_require__(8)(function(){ fn(1); }), 'Object', exp);
-	};
-
-/***/ },
-/* 52 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.17 Object.seal(O)
-	var isObject = __webpack_require__(13);
-	
-	__webpack_require__(51)('seal', function($seal){
-	  return function seal(it){
-	    return $seal && isObject(it) ? $seal(it) : it;
-	  };
-	});
-
-/***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.15 Object.preventExtensions(O)
-	var isObject = __webpack_require__(13);
-	
-	__webpack_require__(51)('preventExtensions', function($preventExtensions){
-	  return function preventExtensions(it){
-	    return $preventExtensions && isObject(it) ? $preventExtensions(it) : it;
-	  };
-	});
-
-/***/ },
-/* 54 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.12 Object.isFrozen(O)
-	var isObject = __webpack_require__(13);
-	
-	__webpack_require__(51)('isFrozen', function($isFrozen){
-	  return function isFrozen(it){
-	    return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
-	  };
-	});
-
-/***/ },
-/* 55 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.13 Object.isSealed(O)
-	var isObject = __webpack_require__(13);
-	
-	__webpack_require__(51)('isSealed', function($isSealed){
-	  return function isSealed(it){
-	    return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
-	  };
-	});
-
-/***/ },
-/* 56 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.11 Object.isExtensible(O)
-	var isObject = __webpack_require__(13);
-	
-	__webpack_require__(51)('isExtensible', function($isExtensible){
-	  return function isExtensible(it){
-	    return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
-	  };
-	});
-
-/***/ },
-/* 57 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-	var toIObject = __webpack_require__(31);
-	
-	__webpack_require__(51)('getOwnPropertyDescriptor', function($getOwnPropertyDescriptor){
-	  return function getOwnPropertyDescriptor(it, key){
-	    return $getOwnPropertyDescriptor(toIObject(it), key);
-	  };
-	});
-
-/***/ },
-/* 58 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.9 Object.getPrototypeOf(O)
-	var toObject = __webpack_require__(26);
-	
-	__webpack_require__(51)('getPrototypeOf', function($getPrototypeOf){
-	  return function getPrototypeOf(it){
-	    return $getPrototypeOf(toObject(it));
-	  };
-	});
-
-/***/ },
 /* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 19.1.2.14 Object.keys(O)
-	var toObject = __webpack_require__(26);
-	
-	__webpack_require__(51)('keys', function($keys){
-	  return function keys(it){
-	    return $keys(toObject(it));
-	  };
+	var $        = __webpack_require__(14)
+	  , core     = __webpack_require__(26)
+	  , $def     = __webpack_require__(25)
+	  , toObject = __webpack_require__(19)
+	  , isObject = __webpack_require__(33);
+	$.each.call(('freeze,seal,preventExtensions,isFrozen,isSealed,isExtensible,' +
+	  'getOwnPropertyDescriptor,getPrototypeOf,keys,getOwnPropertyNames').split(',')
+	, function(KEY, ID){
+	  var fn     = (core.Object || {})[KEY] || Object[KEY]
+	    , forced = 0
+	    , method = {};
+	  method[KEY] = ID == 0 ? function freeze(it){
+	    return isObject(it) ? fn(it) : it;
+	  } : ID == 1 ? function seal(it){
+	    return isObject(it) ? fn(it) : it;
+	  } : ID == 2 ? function preventExtensions(it){
+	    return isObject(it) ? fn(it) : it;
+	  } : ID == 3 ? function isFrozen(it){
+	    return isObject(it) ? fn(it) : true;
+	  } : ID == 4 ? function isSealed(it){
+	    return isObject(it) ? fn(it) : true;
+	  } : ID == 5 ? function isExtensible(it){
+	    return isObject(it) ? fn(it) : false;
+	  } : ID == 6 ? function getOwnPropertyDescriptor(it, key){
+	    return fn(toObject(it), key);
+	  } : ID == 7 ? function getPrototypeOf(it){
+	    return fn(toObject(it, true));
+	  } : ID == 8 ? function keys(it){
+	    return fn(toObject(it));
+	  } : __webpack_require__(49).get;
+	  try {
+	    fn('z');
+	  } catch(e){
+	    forced = 1;
+	  }
+	  $def($def.S + $def.F * forced, 'Object', method);
 	});
 
 /***/ },
 /* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 19.1.2.7 Object.getOwnPropertyNames(O)
-	__webpack_require__(51)('getOwnPropertyNames', function(){
-	  return __webpack_require__(39).get;
+	'use strict';
+	var $             = __webpack_require__(14)
+	  , has           = __webpack_require__(28)
+	  , createDesc    = __webpack_require__(15)
+	  , setDesc       = $.setDesc
+	  , FunctionProto = Function.prototype
+	  , NAME          = 'name';
+	// 19.2.4.2 name
+	NAME in FunctionProto || __webpack_require__(16) && setDesc(FunctionProto, NAME, {
+	  configurable: true,
+	  get: function(){
+	    var match = String(this).match(/^\s*function ([^ (]*)/)
+	      , name  = match ? match[1] : '';
+	    has(this, NAME) || setDesc(this, NAME, createDesc(5, name));
+	    return name;
+	  },
+	  set: function(value){
+	    has(this, NAME) || setDesc(this, NAME, createDesc(0, value));
+	  }
 	});
 
 /***/ },
 /* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var setDesc    = __webpack_require__(6).setDesc
-	  , createDesc = __webpack_require__(9)
-	  , has        = __webpack_require__(14)
-	  , FProto     = Function.prototype
-	  , nameRE     = /^\s*function ([^ (]*)/
-	  , NAME       = 'name';
-	// 19.2.4.2 name
-	NAME in FProto || __webpack_require__(7) && setDesc(FProto, NAME, {
-	  configurable: true,
-	  get: function(){
-	    var match = ('' + this).match(nameRE)
-	      , name  = match ? match[1] : '';
-	    has(this, NAME) || setDesc(this, NAME, createDesc(5, name));
-	    return name;
-	  }
-	});
-
-/***/ },
-/* 62 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var $             = __webpack_require__(6)
-	  , isObject      = __webpack_require__(13)
-	  , HAS_INSTANCE  = __webpack_require__(37)('hasInstance')
+	var $             = __webpack_require__(14)
+	  , isObject      = __webpack_require__(33)
+	  , HAS_INSTANCE  = __webpack_require__(9)('hasInstance')
 	  , FunctionProto = Function.prototype;
 	// 19.2.3.6 Function.prototype[@@hasInstance](V)
 	if(!(HAS_INSTANCE in FunctionProto))$.setDesc(FunctionProto, HAS_INSTANCE, {value: function(O){
@@ -1547,29 +7004,30 @@
 	}});
 
 /***/ },
-/* 63 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $          = __webpack_require__(6)
+	var $          = __webpack_require__(14)
 	  , global     = __webpack_require__(11)
-	  , has        = __webpack_require__(14)
-	  , cof        = __webpack_require__(15)
-	  , isObject   = __webpack_require__(13)
-	  , fails      = __webpack_require__(8)
+	  , has        = __webpack_require__(28)
+	  , cof        = __webpack_require__(21)
+	  , isObject   = __webpack_require__(33)
 	  , NUMBER     = 'Number'
 	  , $Number    = global[NUMBER]
 	  , Base       = $Number
 	  , proto      = $Number.prototype
 	  // Opera ~12 has broken Object#toString
-	  , BROKEN_COF = cof($.create(proto)) == NUMBER;
-	var toPrimitive = function(it){
+	  , fakeNumber = cof($.create(proto)) == NUMBER
+	    ? function(it){ try { proto.valueOf.call(it); return false; } catch(e){ return true; } }
+	    : function(it){ return cof(it) != NUMBER; };
+	function toPrimitive(it){
 	  var fn, val;
 	  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
 	  if(typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
 	  throw TypeError("Can't convert object to number");
-	};
-	var toNumber = function(it){
+	}
+	function toNumber(it){
 	  if(isObject(it))it = toPrimitive(it);
 	  if(typeof it == 'string' && it.length > 2 && it.charCodeAt(0) == 48){
 	    var binary = false;
@@ -1578,16 +7036,12 @@
 	      case 79 : case 111 : return parseInt(it.slice(2), binary ? 2 : 8);
 	    }
 	  } return +it;
-	};
+	}
 	if(!($Number('0o1') && $Number('0b1'))){
 	  $Number = function Number(it){
-	    var that = this;
-	    return that instanceof $Number
-	      // check on 1..constructor(foo) case
-	      && (BROKEN_COF ? fails(function(){ proto.valueOf.call(that); }) : cof(that) != NUMBER)
-	        ? new Base(toNumber(it)) : toNumber(it);
+	    return this instanceof $Number && fakeNumber(this) ? new Base(toNumber(it)) : toNumber(it);
 	  };
-	  $.each.call(__webpack_require__(7) ? $.getNames(Base) : (
+	  $.each.call(__webpack_require__(16) ? $.getNames(Base) : (
 	      // ES3:
 	      'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,' +
 	      // ES6 (in case, if modules with ES6 Number statics required before):
@@ -1601,24 +7055,24 @@
 	  );
 	  $Number.prototype = proto;
 	  proto.constructor = $Number;
-	  __webpack_require__(19)(global, NUMBER, $Number);
+	  __webpack_require__(27)(global, NUMBER, $Number);
 	}
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 20.1.2.1 Number.EPSILON
+	var $def = __webpack_require__(25);
+	
+	$def($def.S, 'Number', {EPSILON: Math.pow(2, -52)});
 
 /***/ },
 /* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 20.1.2.1 Number.EPSILON
-	var $def = __webpack_require__(16);
-	
-	$def($def.S, 'Number', {EPSILON: Math.pow(2, -52)});
-
-/***/ },
-/* 65 */
-/***/ function(module, exports, __webpack_require__) {
-
 	// 20.1.2.2 Number.isFinite(number)
-	var $def      = __webpack_require__(16)
+	var $def      = __webpack_require__(25)
 	  , _isFinite = __webpack_require__(11).isFinite;
 	
 	$def($def.S, 'Number', {
@@ -1628,31 +7082,31 @@
 	});
 
 /***/ },
+/* 65 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 20.1.2.3 Number.isInteger(number)
+	var $def = __webpack_require__(25);
+	
+	$def($def.S, 'Number', {isInteger: __webpack_require__(66)});
+
+/***/ },
 /* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.3 Number.isInteger(number)
-	var $def = __webpack_require__(16);
-	
-	$def($def.S, 'Number', {isInteger: __webpack_require__(67)});
-
-/***/ },
-/* 67 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 20.1.2.3 Number.isInteger(number)
-	var isObject = __webpack_require__(13)
+	var isObject = __webpack_require__(33)
 	  , floor    = Math.floor;
 	module.exports = function isInteger(it){
 	  return !isObject(it) && isFinite(it) && floor(it) === it;
 	};
 
 /***/ },
-/* 68 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.4 Number.isNaN(number)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Number', {
 	  isNaN: function isNaN(number){
@@ -1661,12 +7115,12 @@
 	});
 
 /***/ },
-/* 69 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.5 Number.isSafeInteger(number)
-	var $def      = __webpack_require__(16)
-	  , isInteger = __webpack_require__(67)
+	var $def      = __webpack_require__(25)
+	  , isInteger = __webpack_require__(66)
 	  , abs       = Math.abs;
 	
 	$def($def.S, 'Number', {
@@ -1676,75 +7130,63 @@
 	});
 
 /***/ },
-/* 70 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.6 Number.MAX_SAFE_INTEGER
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Number', {MAX_SAFE_INTEGER: 0x1fffffffffffff});
+
+/***/ },
+/* 70 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 20.1.2.10 Number.MIN_SAFE_INTEGER
+	var $def = __webpack_require__(25);
+	
+	$def($def.S, 'Number', {MIN_SAFE_INTEGER: -0x1fffffffffffff});
 
 /***/ },
 /* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 20.1.2.10 Number.MIN_SAFE_INTEGER
-	var $def = __webpack_require__(16);
+	// 20.1.2.12 Number.parseFloat(string)
+	var $def = __webpack_require__(25);
 	
-	$def($def.S, 'Number', {MIN_SAFE_INTEGER: -0x1fffffffffffff});
+	$def($def.S, 'Number', {parseFloat: parseFloat});
 
 /***/ },
 /* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 20.1.2.12 Number.parseFloat(string)
-	var $def = __webpack_require__(16);
+	// 20.1.2.13 Number.parseInt(string, radix)
+	var $def = __webpack_require__(25);
 	
-	$def($def.S, 'Number', {parseFloat: parseFloat});
+	$def($def.S, 'Number', {parseInt: parseInt});
 
 /***/ },
 /* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 20.1.2.13 Number.parseInt(string, radix)
-	var $def = __webpack_require__(16);
+	// 20.2.2.3 Math.acosh(x)
+	var $def  = __webpack_require__(25)
+	  , E     = Math.E
+	  , sqrt  = Math.sqrt;
 	
-	$def($def.S, 'Number', {parseInt: parseInt});
+	$def($def.S, 'Math', {
+	  acosh: function acosh(x){
+	    return (x = +x) < 1 ? NaN : isFinite(x)
+	      ? Math.log(x / E + sqrt(x + 1) * sqrt(x - 1) / E) + 1 : x;
+	  }
+	});
 
 /***/ },
 /* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 20.2.2.3 Math.acosh(x)
-	var $def   = __webpack_require__(16)
-	  , log1p  = __webpack_require__(75)
-	  , sqrt   = Math.sqrt
-	  , $acosh = Math.acosh;
-	
-	// V8 bug https://code.google.com/p/v8/issues/detail?id=3509 
-	$def($def.S + $def.F * !($acosh && Math.floor($acosh(Number.MAX_VALUE)) == 710), 'Math', {
-	  acosh: function acosh(x){
-	    return (x = +x) < 1 ? NaN : x > 94906265.62425156
-	      ? Math.log(x) + Math.LN2
-	      : log1p(x - 1 + sqrt(x - 1) * sqrt(x + 1));
-	  }
-	});
-
-/***/ },
-/* 75 */
-/***/ function(module, exports) {
-
-	// 20.2.2.20 Math.log1p(x)
-	module.exports = Math.log1p || function log1p(x){
-	  return (x = +x) > -1e-8 && x < 1e-8 ? x - x * x / 2 : Math.log(1 + x);
-	};
-
-/***/ },
-/* 76 */
-/***/ function(module, exports, __webpack_require__) {
-
 	// 20.2.2.5 Math.asinh(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	function asinh(x){
 	  return !isFinite(x = +x) || x == 0 ? x : x < 0 ? -asinh(-x) : Math.log(x + Math.sqrt(x * x + 1));
@@ -1753,11 +7195,11 @@
 	$def($def.S, 'Math', {asinh: asinh});
 
 /***/ },
-/* 77 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.7 Math.atanh(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Math', {
 	  atanh: function atanh(x){
@@ -1766,12 +7208,12 @@
 	});
 
 /***/ },
-/* 78 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.9 Math.cbrt(x)
-	var $def = __webpack_require__(16)
-	  , sign = __webpack_require__(79);
+	var $def = __webpack_require__(25)
+	  , sign = __webpack_require__(77);
 	
 	$def($def.S, 'Math', {
 	  cbrt: function cbrt(x){
@@ -1780,7 +7222,7 @@
 	});
 
 /***/ },
-/* 79 */
+/* 77 */
 /***/ function(module, exports) {
 
 	// 20.2.2.28 Math.sign(x)
@@ -1789,11 +7231,11 @@
 	};
 
 /***/ },
-/* 80 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.11 Math.clz32(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Math', {
 	  clz32: function clz32(x){
@@ -1802,11 +7244,11 @@
 	});
 
 /***/ },
-/* 81 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.12 Math.cosh(x)
-	var $def = __webpack_require__(16)
+	var $def = __webpack_require__(25)
 	  , exp  = Math.exp;
 	
 	$def($def.S, 'Math', {
@@ -1816,16 +7258,16 @@
 	});
 
 /***/ },
-/* 82 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.14 Math.expm1(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
-	$def($def.S, 'Math', {expm1: __webpack_require__(83)});
+	$def($def.S, 'Math', {expm1: __webpack_require__(81)});
 
 /***/ },
-/* 83 */
+/* 81 */
 /***/ function(module, exports) {
 
 	// 20.2.2.14 Math.expm1(x)
@@ -1834,21 +7276,21 @@
 	};
 
 /***/ },
-/* 84 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.16 Math.fround(x)
-	var $def  = __webpack_require__(16)
-	  , sign  = __webpack_require__(79)
+	var $def  = __webpack_require__(25)
+	  , sign  = __webpack_require__(77)
 	  , pow   = Math.pow
 	  , EPSILON   = pow(2, -52)
 	  , EPSILON32 = pow(2, -23)
 	  , MAX32     = pow(2, 127) * (2 - EPSILON32)
 	  , MIN32     = pow(2, -126);
 	
-	var roundTiesToEven = function(n){
+	function roundTiesToEven(n){
 	  return n + 1 / EPSILON - 1 / EPSILON;
-	};
+	}
 	
 	
 	$def($def.S, 'Math', {
@@ -1865,11 +7307,11 @@
 	});
 
 /***/ },
-/* 85 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.17 Math.hypot([value1[, value2[, … ]]])
-	var $def = __webpack_require__(16)
+	var $def = __webpack_require__(25)
 	  , abs  = Math.abs;
 	
 	$def($def.S, 'Math', {
@@ -1895,16 +7337,13 @@
 	});
 
 /***/ },
-/* 86 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.18 Math.imul(x, y)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
-	// WebKit fails with big numbers
-	$def($def.S + $def.F * __webpack_require__(8)(function(){
-	  return Math.imul(0xffffffff, 5) != -5;
-	}), 'Math', {
+	$def($def.S, 'Math', {
 	  imul: function imul(x, y){
 	    var UINT16 = 0xffff
 	      , xn = +x
@@ -1916,11 +7355,11 @@
 	});
 
 /***/ },
-/* 87 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.21 Math.log10(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Math', {
 	  log10: function log10(x){
@@ -1929,20 +7368,24 @@
 	});
 
 /***/ },
-/* 88 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.20 Math.log1p(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
-	$def($def.S, 'Math', {log1p: __webpack_require__(75)});
+	$def($def.S, 'Math', {
+	  log1p: function log1p(x){
+	    return (x = +x) > -1e-8 && x < 1e-8 ? x - x * x / 2 : Math.log(1 + x);
+	  }
+	});
 
 /***/ },
-/* 89 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.22 Math.log2(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Math', {
 	  log2: function log2(x){
@@ -1951,21 +7394,21 @@
 	});
 
 /***/ },
-/* 90 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.28 Math.sign(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
-	$def($def.S, 'Math', {sign: __webpack_require__(79)});
+	$def($def.S, 'Math', {sign: __webpack_require__(77)});
 
 /***/ },
-/* 91 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.30 Math.sinh(x)
-	var $def  = __webpack_require__(16)
-	  , expm1 = __webpack_require__(83)
+	var $def  = __webpack_require__(25)
+	  , expm1 = __webpack_require__(81)
 	  , exp   = Math.exp;
 	
 	$def($def.S, 'Math', {
@@ -1977,12 +7420,12 @@
 	});
 
 /***/ },
-/* 92 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.33 Math.tanh(x)
-	var $def  = __webpack_require__(16)
-	  , expm1 = __webpack_require__(83)
+	var $def  = __webpack_require__(25)
+	  , expm1 = __webpack_require__(81)
 	  , exp   = Math.exp;
 	
 	$def($def.S, 'Math', {
@@ -1994,11 +7437,11 @@
 	});
 
 /***/ },
-/* 93 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.2.2.34 Math.trunc(x)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Math', {
 	  trunc: function trunc(it){
@@ -2007,11 +7450,11 @@
 	});
 
 /***/ },
-/* 94 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $def    = __webpack_require__(16)
-	  , toIndex = __webpack_require__(32)
+	var $def    = __webpack_require__(25)
+	  , toIndex = __webpack_require__(43)
 	  , fromCharCode = String.fromCharCode
 	  , $fromCodePoint = String.fromCodePoint;
 	
@@ -2035,17 +7478,17 @@
 	});
 
 /***/ },
-/* 95 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $def      = __webpack_require__(16)
-	  , toIObject = __webpack_require__(31)
-	  , toLength  = __webpack_require__(28);
+	var $def     = __webpack_require__(25)
+	  , toObject = __webpack_require__(19)
+	  , toLength = __webpack_require__(40);
 	
 	$def($def.S, 'String', {
 	  // 21.1.2.4 String.raw(callSite, ...substitutions)
 	  raw: function raw(callSite){
-	    var tpl = toIObject(callSite.raw)
+	    var tpl = toObject(callSite.raw)
 	      , len = toLength(tpl.length)
 	      , sln = arguments.length
 	      , res = []
@@ -2058,57 +7501,13 @@
 	});
 
 /***/ },
-/* 96 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	// 21.1.3.25 String.prototype.trim()
-	__webpack_require__(97)('trim', function($trim){
-	  return function trim(){
-	    return $trim(this, 3);
-	  };
-	});
-
-/***/ },
-/* 97 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 1 -> String#trimLeft
-	// 2 -> String#trimRight
-	// 3 -> String#trim
-	var trim = function(string, TYPE){
-	  string = String(defined(string));
-	  if(TYPE & 1)string = string.replace(ltrim, '');
-	  if(TYPE & 2)string = string.replace(rtrim, '');
-	  return string;
-	};
-	
-	var $def    = __webpack_require__(16)
-	  , defined = __webpack_require__(27)
-	  , spaces  = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
-	      '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF'
-	  , space   = '[' + spaces + ']'
-	  , non     = '\u200b\u0085'
-	  , ltrim   = RegExp('^' + space + space + '*')
-	  , rtrim   = RegExp(space + space + '*$');
-	
-	module.exports = function(KEY, exec){
-	  var exp  = {};
-	  exp[KEY] = exec(trim);
-	  $def($def.P + $def.F * __webpack_require__(8)(function(){
-	    return !!spaces[KEY]() || non[KEY]() != non;
-	  }), 'String', exp);
-	};
-
-/***/ },
-/* 98 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var $at  = __webpack_require__(99)(true);
+	var $at  = __webpack_require__(95)(true);
 	
 	// 21.1.3.27 String.prototype[@@iterator]()
-	__webpack_require__(100)(String, 'String', function(iterated){
+	__webpack_require__(23)(String, 'String', function(iterated){
 	  this._t = String(iterated); // target
 	  this._i = 0;                // next index
 	// 21.1.5.2.1 %StringIteratorPrototype%.next()
@@ -2123,13 +7522,13 @@
 	});
 
 /***/ },
-/* 99 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// true  -> String#at
 	// false -> String#codePointAt
-	var toInteger = __webpack_require__(29)
-	  , defined   = __webpack_require__(27);
+	var toInteger = __webpack_require__(41)
+	  , defined   = __webpack_require__(22);
 	module.exports = function(TO_STRING){
 	  return function(that, pos){
 	    var s = String(defined(that))
@@ -2146,95 +7545,12 @@
 	};
 
 /***/ },
-/* 100 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var LIBRARY         = __webpack_require__(41)
-	  , $def            = __webpack_require__(16)
-	  , $redef          = __webpack_require__(19)
-	  , hide            = __webpack_require__(18)
-	  , has             = __webpack_require__(14)
-	  , SYMBOL_ITERATOR = __webpack_require__(37)('iterator')
-	  , Iterators       = __webpack_require__(101)
-	  , FF_ITERATOR     = '@@iterator'
-	  , KEYS            = 'keys'
-	  , VALUES          = 'values';
-	var returnThis = function(){ return this; };
-	module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE){
-	  __webpack_require__(102)(Constructor, NAME, next);
-	  var createMethod = function(kind){
-	    switch(kind){
-	      case KEYS: return function keys(){ return new Constructor(this, kind); };
-	      case VALUES: return function values(){ return new Constructor(this, kind); };
-	    } return function entries(){ return new Constructor(this, kind); };
-	  };
-	  var TAG      = NAME + ' Iterator'
-	    , proto    = Base.prototype
-	    , _native  = proto[SYMBOL_ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
-	    , _default = _native || createMethod(DEFAULT)
-	    , methods, key;
-	  // Fix native
-	  if(_native){
-	    var IteratorPrototype = __webpack_require__(6).getProto(_default.call(new Base));
-	    // Set @@toStringTag to native iterators
-	    __webpack_require__(36)(IteratorPrototype, TAG, true);
-	    // FF fix
-	    if(!LIBRARY && has(proto, FF_ITERATOR))hide(IteratorPrototype, SYMBOL_ITERATOR, returnThis);
-	  }
-	  // Define iterator
-	  if(!LIBRARY || FORCE)hide(proto, SYMBOL_ITERATOR, _default);
-	  // Plug for library
-	  Iterators[NAME] = _default;
-	  Iterators[TAG]  = returnThis;
-	  if(DEFAULT){
-	    methods = {
-	      keys:    IS_SET            ? _default : createMethod(KEYS),
-	      values:  DEFAULT == VALUES ? _default : createMethod(VALUES),
-	      entries: DEFAULT != VALUES ? _default : createMethod('entries')
-	    };
-	    if(FORCE)for(key in methods){
-	      if(!(key in proto))$redef(proto, key, methods[key]);
-	    } else $def($def.P + $def.F * __webpack_require__(103), NAME, methods);
-	  }
-	};
-
-/***/ },
-/* 101 */
-/***/ function(module, exports) {
-
-	module.exports = {};
-
-/***/ },
-/* 102 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var $ = __webpack_require__(6)
-	  , IteratorPrototype = {};
-	
-	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-	__webpack_require__(18)(IteratorPrototype, __webpack_require__(37)('iterator'), function(){ return this; });
-	
-	module.exports = function(Constructor, NAME, next){
-	  Constructor.prototype = $.create(IteratorPrototype, {next: __webpack_require__(9)(1,next)});
-	  __webpack_require__(36)(Constructor, NAME + ' Iterator');
-	};
-
-/***/ },
-/* 103 */
-/***/ function(module, exports) {
-
-	// Safari has buggy iterators w/o `next`
-	module.exports = 'keys' in [] && !('next' in [].keys());
-
-/***/ },
-/* 104 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var $def = __webpack_require__(16)
-	  , $at  = __webpack_require__(99)(false);
+	var $def = __webpack_require__(25)
+	  , $at  = __webpack_require__(95)(false);
 	$def($def.P, 'String', {
 	  // 21.1.3.3 String.prototype.codePointAt(pos)
 	  codePointAt: function codePointAt(pos){
@@ -2243,16 +7559,16 @@
 	});
 
 /***/ },
-/* 105 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def     = __webpack_require__(16)
-	  , toLength = __webpack_require__(28)
-	  , context  = __webpack_require__(106);
+	var $def     = __webpack_require__(25)
+	  , toLength = __webpack_require__(40)
+	  , context  = __webpack_require__(98);
 	
 	// should throw error on regex
-	$def($def.P + $def.F * !__webpack_require__(8)(function(){ 'q'.endsWith(/./); }), 'String', {
+	$def($def.P + $def.F * !__webpack_require__(46)(function(){ 'q'.endsWith(/./); }), 'String', {
 	  // 21.1.3.6 String.prototype.endsWith(searchString [, endPosition])
 	  endsWith: function endsWith(searchString /*, endPosition = @length */){
 	    var that = context(this, searchString, 'endsWith')
@@ -2265,12 +7581,12 @@
 	});
 
 /***/ },
-/* 106 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// helper for String#{startsWith, endsWith, includes}
-	var defined = __webpack_require__(27)
-	  , cof     = __webpack_require__(15);
+	var defined = __webpack_require__(22)
+	  , cof     = __webpack_require__(21);
 	
 	module.exports = function(that, searchString, NAME){
 	  if(cof(searchString) == 'RegExp')throw TypeError('String#' + NAME + " doesn't accept regex!");
@@ -2278,12 +7594,12 @@
 	};
 
 /***/ },
-/* 107 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def    = __webpack_require__(16)
-	  , context = __webpack_require__(106);
+	var $def    = __webpack_require__(25)
+	  , context = __webpack_require__(98);
 	
 	$def($def.P, 'String', {
 	  // 21.1.3.7 String.prototype.includes(searchString, position = 0)
@@ -2293,23 +7609,23 @@
 	});
 
 /***/ },
-/* 108 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.P, 'String', {
 	  // 21.1.3.13 String.prototype.repeat(count)
-	  repeat: __webpack_require__(109)
+	  repeat: __webpack_require__(101)
 	});
 
 /***/ },
-/* 109 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var toInteger = __webpack_require__(29)
-	  , defined   = __webpack_require__(27);
+	var toInteger = __webpack_require__(41)
+	  , defined   = __webpack_require__(22);
 	
 	module.exports = function repeat(count){
 	  var str = String(defined(this))
@@ -2321,16 +7637,16 @@
 	};
 
 /***/ },
-/* 110 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def     = __webpack_require__(16)
-	  , toLength = __webpack_require__(28)
-	  , context  = __webpack_require__(106);
+	var $def     = __webpack_require__(25)
+	  , toLength = __webpack_require__(40)
+	  , context  = __webpack_require__(98);
 	
 	// should throw error on regex
-	$def($def.P + $def.F * !__webpack_require__(8)(function(){ 'q'.startsWith(/./); }), 'String', {
+	$def($def.P + $def.F * !__webpack_require__(46)(function(){ 'q'.startsWith(/./); }), 'String', {
 	  // 21.1.3.18 String.prototype.startsWith(searchString [, position ])
 	  startsWith: function startsWith(searchString /*, position = 0 */){
 	    var that   = context(this, searchString, 'startsWith')
@@ -2341,21 +7657,20 @@
 	});
 
 /***/ },
-/* 111 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	var ctx         = __webpack_require__(23)
-	  , $def        = __webpack_require__(16)
-	  , toObject    = __webpack_require__(26)
-	  , call        = __webpack_require__(112)
-	  , isArrayIter = __webpack_require__(113)
-	  , toLength    = __webpack_require__(28)
-	  , getIterFn   = __webpack_require__(114);
-	$def($def.S + $def.F * !__webpack_require__(115)(function(iter){ Array.from(iter); }), 'Array', {
+	var ctx         = __webpack_require__(38)
+	  , $def        = __webpack_require__(25)
+	  , toObject    = __webpack_require__(19)
+	  , call        = __webpack_require__(105)
+	  , isArrayIter = __webpack_require__(104)
+	  , toLength    = __webpack_require__(40)
+	  , getIterFn   = __webpack_require__(106);
+	$def($def.S + $def.F * !__webpack_require__(107)(function(iter){ Array.from(iter); }), 'Array', {
 	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
 	  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
-	    var O       = toObject(arrayLike)
+	    var O       = toObject(arrayLike, true)
 	      , C       = typeof this == 'function' ? this : Array
 	      , mapfn   = arguments[1]
 	      , mapping = mapfn !== undefined
@@ -2379,49 +7694,55 @@
 	});
 
 /***/ },
-/* 112 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// call something on iterator step with safe closing on error
-	var anObject = __webpack_require__(30);
+	var Iterators = __webpack_require__(18)
+	  , ITERATOR  = __webpack_require__(9)('iterator');
+	module.exports = function(it){
+	  return ('Array' in Iterators ? Iterators.Array : Array.prototype[ITERATOR]) === it;
+	};
+
+/***/ },
+/* 105 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var anObject = __webpack_require__(42);
+	function close(iterator){
+	  var ret = iterator['return'];
+	  if(ret !== undefined)anObject(ret.call(iterator));
+	}
 	module.exports = function(iterator, fn, value, entries){
 	  try {
 	    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
-	  // 7.4.6 IteratorClose(iterator, completion)
 	  } catch(e){
-	    var ret = iterator['return'];
-	    if(ret !== undefined)anObject(ret.call(iterator));
+	    close(iterator);
 	    throw e;
 	  }
 	};
 
 /***/ },
-/* 113 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// check on default Array iterator
-	var Iterators = __webpack_require__(101)
-	  , ITERATOR  = __webpack_require__(37)('iterator');
-	module.exports = function(it){
-	  return (Iterators.Array || Array.prototype[ITERATOR]) === it;
+	var global    = __webpack_require__(11)
+	  , classof   = __webpack_require__(58)
+	  , ITERATOR  = __webpack_require__(9)('iterator')
+	  , Iterators = __webpack_require__(18);
+	module.exports = __webpack_require__(26).getIteratorMethod = function(it){
+	  var Symbol = global.Symbol;
+	  if(it != undefined){
+	    return it[Symbol && Symbol.iterator || '@@iterator']
+	      || it[ITERATOR]
+	      || Iterators[classof(it)];
+	  }
 	};
 
 /***/ },
-/* 114 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var classof   = __webpack_require__(49)
-	  , ITERATOR  = __webpack_require__(37)('iterator')
-	  , Iterators = __webpack_require__(101);
-	module.exports = __webpack_require__(17).getIteratorMethod = function(it){
-	  if(it != undefined)return it[ITERATOR] || it['@@iterator'] || Iterators[classof(it)];
-	};
-
-/***/ },
-/* 115 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SYMBOL_ITERATOR = __webpack_require__(37)('iterator')
+	var SYMBOL_ITERATOR = __webpack_require__(9)('iterator')
 	  , SAFE_CLOSING    = false;
 	try {
 	  var riter = [7][SYMBOL_ITERATOR]();
@@ -2442,11 +7763,10 @@
 	};
 
 /***/ },
-/* 116 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	$def($def.S, 'Array', {
 	  // 22.1.2.3 Array.of( ...items)
 	  of: function of(/* ...args */){
@@ -2460,96 +7780,37 @@
 	});
 
 /***/ },
-/* 117 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	var setUnscope = __webpack_require__(118)
-	  , step       = __webpack_require__(119)
-	  , Iterators  = __webpack_require__(101)
-	  , toIObject  = __webpack_require__(31);
-	
-	// 22.1.3.4 Array.prototype.entries()
-	// 22.1.3.13 Array.prototype.keys()
-	// 22.1.3.29 Array.prototype.values()
-	// 22.1.3.30 Array.prototype[@@iterator]()
-	__webpack_require__(100)(Array, 'Array', function(iterated, kind){
-	  this._t = toIObject(iterated); // target
-	  this._i = 0;                   // next index
-	  this._k = kind;                // kind
-	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-	}, function(){
-	  var O     = this._t
-	    , kind  = this._k
-	    , index = this._i++;
-	  if(!O || index >= O.length){
-	    this._t = undefined;
-	    return step(1);
-	  }
-	  if(kind == 'keys'  )return step(0, index);
-	  if(kind == 'values')return step(0, O[index]);
-	  return step(0, [index, O[index]]);
-	}, 'values');
-	
-	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
-	Iterators.Arguments = Iterators.Array;
-	
-	setUnscope('keys');
-	setUnscope('values');
-	setUnscope('entries');
+	__webpack_require__(110)(Array);
 
 /***/ },
-/* 118 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 22.1.3.31 Array.prototype[@@unscopables]
-	var UNSCOPABLES = __webpack_require__(37)('unscopables');
-	if(!(UNSCOPABLES in []))__webpack_require__(18)(Array.prototype, UNSCOPABLES, {});
-	module.exports = function(key){
-	  [][UNSCOPABLES][key] = true;
-	};
-
-/***/ },
-/* 119 */
-/***/ function(module, exports) {
-
-	module.exports = function(done, value){
-	  return {value: value, done: !!done};
-	};
-
-/***/ },
-/* 120 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(121)(Array);
-
-/***/ },
-/* 121 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var $       = __webpack_require__(6)
-	  , SPECIES = __webpack_require__(37)('species');
+	var $       = __webpack_require__(14)
+	  , SPECIES = __webpack_require__(9)('species');
 	module.exports = function(C){
-	  if(__webpack_require__(7) && !(SPECIES in C))$.setDesc(C, SPECIES, {
+	  if(__webpack_require__(16) && !(SPECIES in C))$.setDesc(C, SPECIES, {
 	    configurable: true,
 	    get: function(){ return this; }
 	  });
 	};
 
 /***/ },
-/* 122 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def     = __webpack_require__(16)
-	  , toObject = __webpack_require__(26)
-	  , toIndex  = __webpack_require__(32)
-	  , toLength = __webpack_require__(28);
+	var $def     = __webpack_require__(25)
+	  , toObject = __webpack_require__(19)
+	  , toIndex  = __webpack_require__(43)
+	  , toLength = __webpack_require__(40);
 	$def($def.P, 'Array', {
 	  // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
 	  copyWithin: function copyWithin(target/* = 0 */, start /* = 0, end = @length */){
-	    var O     = toObject(this)
+	    var O     = toObject(this, true)
 	      , len   = toLength(O.length)
 	      , to    = toIndex(target, len)
 	      , from  = toIndex(start, len)
@@ -2570,17 +7831,17 @@
 	    } return O;
 	  }
 	});
-	__webpack_require__(118)('copyWithin');
+	__webpack_require__(8)('copyWithin');
 
 /***/ },
-/* 123 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def     = __webpack_require__(16)
-	  , toObject = __webpack_require__(26)
-	  , toIndex  = __webpack_require__(32)
-	  , toLength = __webpack_require__(28);
+	var $def     = __webpack_require__(25)
+	  , toObject = __webpack_require__(19)
+	  , toIndex  = __webpack_require__(43)
+	  , toLength = __webpack_require__(40);
 	$def($def.P, 'Array', {
 	  // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
 	  fill: function fill(value /*, start = 0, end = @length */){
@@ -2593,18 +7854,18 @@
 	    return O;
 	  }
 	});
-	__webpack_require__(118)('fill');
+	__webpack_require__(8)('fill');
 
 /***/ },
-/* 124 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
 	var KEY    = 'find'
-	  , $def   = __webpack_require__(16)
+	  , $def   = __webpack_require__(25)
 	  , forced = true
-	  , $find  = __webpack_require__(22)(5);
+	  , $find  = __webpack_require__(37)(5);
 	// Shouldn't skip holes
 	if(KEY in [])Array(1)[KEY](function(){ forced = false; });
 	$def($def.P + $def.F * forced, 'Array', {
@@ -2612,18 +7873,18 @@
 	    return $find(this, callbackfn, arguments[1]);
 	  }
 	});
-	__webpack_require__(118)(KEY);
+	__webpack_require__(8)(KEY);
 
 /***/ },
-/* 125 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	// 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
 	var KEY    = 'findIndex'
-	  , $def   = __webpack_require__(16)
+	  , $def   = __webpack_require__(25)
 	  , forced = true
-	  , $find  = __webpack_require__(22)(6);
+	  , $find  = __webpack_require__(37)(6);
 	// Shouldn't skip holes
 	if(KEY in [])Array(1)[KEY](function(){ forced = false; });
 	$def($def.P + $def.F * forced, 'Array', {
@@ -2631,16 +7892,16 @@
 	    return $find(this, callbackfn, arguments[1]);
 	  }
 	});
-	__webpack_require__(118)(KEY);
+	__webpack_require__(8)(KEY);
 
 /***/ },
-/* 126 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $       = __webpack_require__(6)
+	var $       = __webpack_require__(14)
 	  , global  = __webpack_require__(11)
-	  , cof     = __webpack_require__(15)
-	  , $flags  = __webpack_require__(127)
+	  , cof     = __webpack_require__(21)
+	  , $flags  = __webpack_require__(116)
 	  , $RegExp = global.RegExp
 	  , Base    = $RegExp
 	  , proto   = $RegExp.prototype
@@ -2654,7 +7915,7 @@
 	    } catch(e){ /* empty */ }
 	  }();
 	
-	if(__webpack_require__(7)){
+	if(__webpack_require__(16)){
 	  if(!CORRECT_NEW || !ALLOWS_RE_WITH_FLAGS){
 	    $RegExp = function RegExp(pattern, flags){
 	      var patternIsRegExp  = cof(pattern) == 'RegExp'
@@ -2674,20 +7935,18 @@
 	    });
 	    proto.constructor = $RegExp;
 	    $RegExp.prototype = proto;
-	    __webpack_require__(19)(global, 'RegExp', $RegExp);
+	    __webpack_require__(27)(global, 'RegExp', $RegExp);
 	  }
 	}
 	
-	__webpack_require__(121)($RegExp);
+	__webpack_require__(110)($RegExp);
 
 /***/ },
-/* 127 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	// 21.2.5.3 get RegExp.prototype.flags
-	var anObject = __webpack_require__(30);
-	module.exports = function(){
+	var anObject = __webpack_require__(42);
+	module.exports = function flags(){
 	  var that   = anObject(this)
 	    , result = '';
 	  if(that.global)result += 'g';
@@ -2699,47 +7958,50 @@
 	};
 
 /***/ },
-/* 128 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 21.2.5.3 get RegExp.prototype.flags()
-	var $ = __webpack_require__(6);
-	if(__webpack_require__(7) && /./g.flags != 'g')$.setDesc(RegExp.prototype, 'flags', {
+	var $ = __webpack_require__(14);
+	if(__webpack_require__(16) && /./g.flags != 'g')$.setDesc(RegExp.prototype, 'flags', {
 	  configurable: true,
-	  get: __webpack_require__(127)
+	  get: __webpack_require__(116)
 	});
 
 /***/ },
-/* 129 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// @@match logic
-	__webpack_require__(130)('match', 1, function(defined, MATCH){
+	__webpack_require__(119)('match', 1, function(MATCH){
 	  // 21.1.3.11 String.prototype.match(regexp)
 	  return function match(regexp){
 	    'use strict';
-	    var O  = defined(this)
-	      , fn = regexp == undefined ? undefined : regexp[MATCH];
-	    return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[MATCH](String(O));
+	    var str = String(this)
+	      , fn  = regexp == undefined ? undefined : regexp[MATCH];
+	    return fn !== undefined ? fn.call(regexp, str) : new RegExp(regexp)[MATCH](str);
 	  };
 	});
 
 /***/ },
-/* 130 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	module.exports = function(KEY, length, exec){
-	  var defined  = __webpack_require__(27)
-	    , SYMBOL   = __webpack_require__(37)(KEY)
+	  var SYMBOL   = __webpack_require__(9)(KEY)
 	    , original = ''[KEY];
-	  if(__webpack_require__(8)(function(){
-	    var O = {};
-	    O[SYMBOL] = function(){ return 7; };
-	    return ''[KEY](O) != 7;
-	  })){
-	    __webpack_require__(19)(String.prototype, KEY, exec(defined, SYMBOL, original));
-	    __webpack_require__(18)(RegExp.prototype, SYMBOL, length == 2
+	  if(function(){
+	    try {
+	      var O = {};
+	      O[SYMBOL] = function(){ return 7; };
+	      return ''[KEY](O) != 7;
+	    } catch(e){
+	      return true;
+	    }
+	  }()){
+	    __webpack_require__(27)(String.prototype, KEY, exec(SYMBOL, original));
+	    __webpack_require__(13)(RegExp.prototype, SYMBOL, length == 2
 	      // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
 	      // 21.2.5.11 RegExp.prototype[@@split](string, limit)
 	      ? function(string, arg){ return original.call(string, this, arg); }
@@ -2751,87 +8013,85 @@
 	};
 
 /***/ },
-/* 131 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// @@replace logic
-	__webpack_require__(130)('replace', 2, function(defined, REPLACE, $replace){
+	__webpack_require__(119)('replace', 2, function(REPLACE, $replace){
 	  // 21.1.3.14 String.prototype.replace(searchValue, replaceValue)
 	  return function replace(searchValue, replaceValue){
 	    'use strict';
-	    var O  = defined(this)
-	      , fn = searchValue == undefined ? undefined : searchValue[REPLACE];
+	    var str = String(this)
+	      , fn  = searchValue == undefined ? undefined : searchValue[REPLACE];
 	    return fn !== undefined
-	      ? fn.call(searchValue, O, replaceValue)
-	      : $replace.call(String(O), searchValue, replaceValue);
+	      ? fn.call(searchValue, str, replaceValue)
+	      : $replace.call(str, searchValue, replaceValue);
 	  };
 	});
 
 /***/ },
-/* 132 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// @@search logic
-	__webpack_require__(130)('search', 1, function(defined, SEARCH){
+	__webpack_require__(119)('search', 1, function(SEARCH){
 	  // 21.1.3.15 String.prototype.search(regexp)
 	  return function search(regexp){
 	    'use strict';
-	    var O  = defined(this)
-	      , fn = regexp == undefined ? undefined : regexp[SEARCH];
-	    return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[SEARCH](String(O));
+	    var str = String(this)
+	      , fn  = regexp == undefined ? undefined : regexp[SEARCH];
+	    return fn !== undefined ? fn.call(regexp, str) : new RegExp(regexp)[SEARCH](str);
 	  };
 	});
 
 /***/ },
-/* 133 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// @@split logic
-	__webpack_require__(130)('split', 2, function(defined, SPLIT, $split){
+	__webpack_require__(119)('split', 2, function(SPLIT, $split){
 	  // 21.1.3.17 String.prototype.split(separator, limit)
 	  return function split(separator, limit){
 	    'use strict';
-	    var O  = defined(this)
-	      , fn = separator == undefined ? undefined : separator[SPLIT];
-	    return fn !== undefined
-	      ? fn.call(separator, O, limit)
-	      : $split.call(String(O), separator, limit);
+	    var str = String(this)
+	      , fn  = separator == undefined ? undefined : separator[SPLIT];
+	    return fn !== undefined ? fn.call(separator, str, limit) : $split.call(str, separator, limit);
 	  };
 	});
 
 /***/ },
-/* 134 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $          = __webpack_require__(6)
-	  , LIBRARY    = __webpack_require__(41)
+	var $          = __webpack_require__(14)
+	  , LIBRARY    = __webpack_require__(24)
 	  , global     = __webpack_require__(11)
-	  , ctx        = __webpack_require__(23)
-	  , classof    = __webpack_require__(49)
-	  , $def       = __webpack_require__(16)
-	  , isObject   = __webpack_require__(13)
-	  , anObject   = __webpack_require__(30)
-	  , aFunction  = __webpack_require__(24)
-	  , strictNew  = __webpack_require__(135)
-	  , forOf      = __webpack_require__(136)
-	  , setProto   = __webpack_require__(47).set
-	  , same       = __webpack_require__(45)
-	  , species    = __webpack_require__(121)
-	  , SPECIES    = __webpack_require__(37)('species')
-	  , RECORD     = __webpack_require__(20)('record')
+	  , ctx        = __webpack_require__(38)
+	  , classof    = __webpack_require__(58)
+	  , $def       = __webpack_require__(25)
+	  , isObject   = __webpack_require__(33)
+	  , anObject   = __webpack_require__(42)
+	  , aFunction  = __webpack_require__(39)
+	  , strictNew  = __webpack_require__(124)
+	  , forOf      = __webpack_require__(125)
+	  , setProto   = __webpack_require__(56).set
+	  , same       = __webpack_require__(54)
+	  , species    = __webpack_require__(110)
+	  , SPECIES    = __webpack_require__(9)('species')
+	  , RECORD     = __webpack_require__(12)('record')
 	  , PROMISE    = 'Promise'
 	  , process    = global.process
 	  , isNode     = classof(process) == 'process'
-	  , asap       = process && process.nextTick || __webpack_require__(137).set
+	  , asap       = process && process.nextTick || __webpack_require__(126).set
 	  , P          = global[PROMISE]
 	  , Wrapper;
 	
-	var testResolve = function(sub){
+	function testResolve(sub){
 	  var test = new P(function(){});
 	  if(sub)test.constructor = Object;
 	  return P.resolve(test) === test;
-	};
+	}
 	
 	var useNative = function(){
 	  var works = false;
@@ -2849,7 +8109,7 @@
 	      works = false;
 	    }
 	    // actual V8 bug, https://code.google.com/p/v8/issues/detail?id=4162
-	    if(works && __webpack_require__(7)){
+	    if(works && __webpack_require__(16)){
 	      var thenableThenGotten = false;
 	      P.resolve($.setDesc({}, 'then', {
 	        get: function(){ thenableThenGotten = true; }
@@ -2861,23 +8121,23 @@
 	}();
 	
 	// helpers
-	var isPromise = function(it){
+	function isPromise(it){
 	  return isObject(it) && (useNative ? classof(it) == 'Promise' : RECORD in it);
-	};
-	var sameConstructor = function(a, b){
+	}
+	function sameConstructor(a, b){
 	  // library wrapper special case
 	  if(LIBRARY && a === P && b === Wrapper)return true;
 	  return same(a, b);
-	};
-	var getConstructor = function(C){
+	}
+	function getConstructor(C){
 	  var S = anObject(C)[SPECIES];
 	  return S != undefined ? S : C;
-	};
-	var isThenable = function(it){
+	}
+	function isThenable(it){
 	  var then;
 	  return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
-	};
-	var notify = function(record, isReject){
+	}
+	function notify(record, isReject){
 	  if(record.n)return;
 	  record.n = true;
 	  var chain = record.c;
@@ -2886,7 +8146,7 @@
 	    var value = record.v
 	      , ok    = record.s == 1
 	      , i     = 0;
-	    var run = function(react){
+	    function run(react){
 	      var cb = ok ? react.ok : react.fail
 	        , ret, then;
 	      try {
@@ -2902,7 +8162,7 @@
 	      } catch(err){
 	        react.rej(err);
 	      }
-	    };
+	    }
 	    while(chain.length > i)run(chain[i++]); // variable length - can't use forEach
 	    chain.length = 0;
 	    record.n = false;
@@ -2920,8 +8180,8 @@
 	      });
 	    }, 1);
 	  });
-	};
-	var isUnhandled = function(promise){
+	}
+	function isUnhandled(promise){
 	  var record = promise[RECORD]
 	    , chain  = record.a || record.c
 	    , i      = 0
@@ -2931,8 +8191,8 @@
 	    react = chain[i++];
 	    if(react.fail || !isUnhandled(react.P))return false;
 	  } return true;
-	};
-	var $reject = function(value){
+	}
+	function $reject(value){
 	  var record = this;
 	  if(record.d)return;
 	  record.d = true;
@@ -2941,8 +8201,8 @@
 	  record.s = 2;
 	  record.a = record.c.slice();
 	  notify(record, true);
-	};
-	var $resolve = function(value){
+	}
+	function $resolve(value){
 	  var record = this
 	    , then;
 	  if(record.d)return;
@@ -2967,7 +8227,7 @@
 	  } catch(e){
 	    $reject.call({r: record, d: false}, e); // wrap
 	  }
-	};
+	}
 	
 	// constructor polyfill
 	if(!useNative){
@@ -2991,7 +8251,7 @@
 	      $reject.call(record, err);
 	    }
 	  };
-	  __webpack_require__(138)(P.prototype, {
+	  __webpack_require__(127)(P.prototype, {
 	    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
 	    then: function then(onFulfilled, onRejected){
 	      var S = anObject(anObject(this).constructor)[SPECIES];
@@ -3018,9 +8278,9 @@
 	
 	// export
 	$def($def.G + $def.W + $def.F * !useNative, {Promise: P});
-	__webpack_require__(36)(P, PROMISE);
+	__webpack_require__(30)(P, PROMISE);
 	species(P);
-	species(Wrapper = __webpack_require__(17)[PROMISE]);
+	species(Wrapper = __webpack_require__(26)[PROMISE]);
 	
 	// statics
 	$def($def.S + $def.F * !useNative, PROMISE, {
@@ -3036,7 +8296,7 @@
 	      ? x : new this(function(res){ res(x); });
 	  }
 	});
-	$def($def.S + $def.F * !(useNative && __webpack_require__(115)(function(iter){
+	$def($def.S + $def.F * !(useNative && __webpack_require__(107)(function(iter){
 	  P.all(iter)['catch'](function(){});
 	})), PROMISE, {
 	  // 25.4.4.1 Promise.all(iterable)
@@ -3068,7 +8328,7 @@
 	});
 
 /***/ },
-/* 135 */
+/* 124 */
 /***/ function(module, exports) {
 
 	module.exports = function(it, Constructor, name){
@@ -3077,15 +8337,15 @@
 	};
 
 /***/ },
-/* 136 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ctx         = __webpack_require__(23)
-	  , call        = __webpack_require__(112)
-	  , isArrayIter = __webpack_require__(113)
-	  , anObject    = __webpack_require__(30)
-	  , toLength    = __webpack_require__(28)
-	  , getIterFn   = __webpack_require__(114);
+	var ctx         = __webpack_require__(38)
+	  , call        = __webpack_require__(105)
+	  , isArrayIter = __webpack_require__(104)
+	  , anObject    = __webpack_require__(42)
+	  , toLength    = __webpack_require__(40)
+	  , getIterFn   = __webpack_require__(106);
 	module.exports = function(iterable, entries, fn, that){
 	  var iterFn = getIterFn(iterable)
 	    , f      = ctx(fn, that, entries ? 2 : 1)
@@ -3101,14 +8361,14 @@
 	};
 
 /***/ },
-/* 137 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var ctx                = __webpack_require__(23)
-	  , invoke             = __webpack_require__(21)
-	  , html               = __webpack_require__(10)
-	  , cel                = __webpack_require__(12)
+	var ctx                = __webpack_require__(38)
+	  , invoke             = __webpack_require__(36)
+	  , html               = __webpack_require__(34)
+	  , cel                = __webpack_require__(35)
 	  , global             = __webpack_require__(11)
 	  , process            = global.process
 	  , setTask            = global.setImmediate
@@ -3118,17 +8378,17 @@
 	  , queue              = {}
 	  , ONREADYSTATECHANGE = 'onreadystatechange'
 	  , defer, channel, port;
-	var run = function(){
+	function run(){
 	  var id = +this;
 	  if(queue.hasOwnProperty(id)){
 	    var fn = queue[id];
 	    delete queue[id];
 	    fn();
 	  }
-	};
-	var listner = function(event){
+	}
+	function listner(event){
 	  run.call(event.data);
-	};
+	}
 	// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
 	if(!setTask || !clearTask){
 	  setTask = function setImmediate(fn){
@@ -3144,23 +8404,23 @@
 	    delete queue[id];
 	  };
 	  // Node.js 0.8-
-	  if(__webpack_require__(15)(process) == 'process'){
+	  if(__webpack_require__(21)(process) == 'process'){
 	    defer = function(id){
 	      process.nextTick(ctx(run, id, 1));
 	    };
-	  // Browsers with MessageChannel, includes WebWorkers
+	  // Modern browsers, skip implementation for WebWorkers
+	  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
+	  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScripts){
+	    defer = function(id){
+	      global.postMessage(id, '*');
+	    };
+	    global.addEventListener('message', listner, false);
+	  // WebWorkers
 	  } else if(MessageChannel){
 	    channel = new MessageChannel;
 	    port    = channel.port2;
 	    channel.port1.onmessage = listner;
 	    defer = ctx(port.postMessage, port, 1);
-	  // Browsers with postMessage, skip WebWorkers
-	  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-	  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScript){
-	    defer = function(id){
-	      global.postMessage(id + '', '*');
-	    };
-	    global.addEventListener('message', listner, false);
 	  // IE8-
 	  } else if(ONREADYSTATECHANGE in cel('script')){
 	    defer = function(id){
@@ -3182,24 +8442,24 @@
 	};
 
 /***/ },
-/* 138 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $redef = __webpack_require__(19);
+	var $redef = __webpack_require__(27);
 	module.exports = function(target, src){
 	  for(var key in src)$redef(target, key, src[key]);
 	  return target;
 	};
 
 /***/ },
-/* 139 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var strong = __webpack_require__(140);
+	var strong = __webpack_require__(129);
 	
 	// 23.1 Map Objects
-	__webpack_require__(141)('Map', function(get){
+	__webpack_require__(130)('Map', function(get){
 	  return function Map(){ return get(this, arguments[0]); };
 	}, {
 	  // 23.1.3.6 Map.prototype.get(key)
@@ -3214,27 +8474,27 @@
 	}, strong, true);
 
 /***/ },
-/* 140 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $            = __webpack_require__(6)
-	  , hide         = __webpack_require__(18)
-	  , ctx          = __webpack_require__(23)
-	  , species      = __webpack_require__(121)
-	  , strictNew    = __webpack_require__(135)
-	  , defined      = __webpack_require__(27)
-	  , forOf        = __webpack_require__(136)
-	  , step         = __webpack_require__(119)
-	  , ID           = __webpack_require__(20)('id')
-	  , $has         = __webpack_require__(14)
-	  , isObject     = __webpack_require__(13)
+	var $            = __webpack_require__(14)
+	  , hide         = __webpack_require__(13)
+	  , ctx          = __webpack_require__(38)
+	  , species      = __webpack_require__(110)
+	  , strictNew    = __webpack_require__(124)
+	  , defined      = __webpack_require__(22)
+	  , forOf        = __webpack_require__(125)
+	  , step         = __webpack_require__(17)
+	  , ID           = __webpack_require__(12)('id')
+	  , $has         = __webpack_require__(28)
+	  , isObject     = __webpack_require__(33)
 	  , isExtensible = Object.isExtensible || isObject
-	  , SUPPORT_DESC = __webpack_require__(7)
+	  , SUPPORT_DESC = __webpack_require__(16)
 	  , SIZE         = SUPPORT_DESC ? '_s' : 'size'
 	  , id           = 0;
 	
-	var fastKey = function(it, create){
+	function fastKey(it, create){
 	  // return primitive with prefix
 	  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
 	  if(!$has(it, ID)){
@@ -3246,9 +8506,9 @@
 	    hide(it, ID, ++id);
 	  // return object id with prefix
 	  } return 'O' + it[ID];
-	};
+	}
 	
-	var getEntry = function(that, key){
+	function getEntry(that, key){
 	  // fast case
 	  var index = fastKey(key), entry;
 	  if(index !== 'F')return that._i[index];
@@ -3256,7 +8516,7 @@
 	  for(entry = that._f; entry; entry = entry.n){
 	    if(entry.k == key)return entry;
 	  }
-	};
+	}
 	
 	module.exports = {
 	  getConstructor: function(wrapper, NAME, IS_MAP, ADDER){
@@ -3268,7 +8528,7 @@
 	      that[SIZE] = 0;           // size
 	      if(iterable != undefined)forOf(iterable, IS_MAP, that[ADDER], that);
 	    });
-	    __webpack_require__(138)(C.prototype, {
+	    __webpack_require__(127)(C.prototype, {
 	      // 23.1.3.1 Map.prototype.clear()
 	      // 23.2.3.2 Set.prototype.clear()
 	      clear: function clear(){
@@ -3348,7 +8608,7 @@
 	  setStrong: function(C, NAME, IS_MAP){
 	    // add .keys, .values, .entries, [@@iterator]
 	    // 23.1.3.4, 23.1.3.8, 23.1.3.11, 23.1.3.12, 23.2.3.5, 23.2.3.8, 23.2.3.10, 23.2.3.11
-	    __webpack_require__(100)(C, NAME, function(iterated, kind){
+	    __webpack_require__(23)(C, NAME, function(iterated, kind){
 	      this._t = iterated;  // target
 	      this._k = kind;      // kind
 	      this._l = undefined; // previous
@@ -3372,20 +8632,20 @@
 	
 	    // add [@@species], 23.1.2.2, 23.2.2.2
 	    species(C);
-	    species(__webpack_require__(17)[NAME]); // for wrapper
+	    species(__webpack_require__(26)[NAME]); // for wrapper
 	  }
 	};
 
 /***/ },
-/* 141 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	var global     = __webpack_require__(11)
-	  , $def       = __webpack_require__(16)
-	  , BUGGY      = __webpack_require__(103)
-	  , forOf      = __webpack_require__(136)
-	  , strictNew  = __webpack_require__(135);
+	  , $def       = __webpack_require__(25)
+	  , BUGGY      = __webpack_require__(31)
+	  , forOf      = __webpack_require__(125)
+	  , strictNew  = __webpack_require__(124);
 	
 	module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
 	  var Base  = global[NAME]
@@ -3393,26 +8653,26 @@
 	    , ADDER = IS_MAP ? 'set' : 'add'
 	    , proto = C && C.prototype
 	    , O     = {};
-	  var fixMethod = function(KEY){
+	  function fixMethod(KEY){
 	    var fn = proto[KEY];
-	    __webpack_require__(19)(proto, KEY,
+	    __webpack_require__(27)(proto, KEY,
 	      KEY == 'delete' ? function(a){ return fn.call(this, a === 0 ? 0 : a); }
 	      : KEY == 'has' ? function has(a){ return fn.call(this, a === 0 ? 0 : a); }
 	      : KEY == 'get' ? function get(a){ return fn.call(this, a === 0 ? 0 : a); }
 	      : KEY == 'add' ? function add(a){ fn.call(this, a === 0 ? 0 : a); return this; }
 	      : function set(a, b){ fn.call(this, a === 0 ? 0 : a, b); return this; }
 	    );
-	  };
+	  }
 	  if(typeof C != 'function' || !(IS_WEAK || !BUGGY && proto.forEach && proto.entries)){
 	    // create collection constructor
 	    C = common.getConstructor(wrapper, NAME, IS_MAP, ADDER);
-	    __webpack_require__(138)(C.prototype, methods);
+	    __webpack_require__(127)(C.prototype, methods);
 	  } else {
 	    var inst  = new C
 	      , chain = inst[ADDER](IS_WEAK ? {} : -0, 1)
 	      , buggyZero;
 	    // wrap for init collections from iterable
-	    if(!__webpack_require__(115)(function(iter){ new C(iter); })){ // eslint-disable-line no-new
+	    if(!__webpack_require__(107)(function(iter){ new C(iter); })){ // eslint-disable-line no-new
 	      C = wrapper(function(target, iterable){
 	        strictNew(target, C, NAME);
 	        var that = new Base;
@@ -3437,7 +8697,7 @@
 	    if(IS_WEAK && proto.clear)delete proto.clear;
 	  }
 	
-	  __webpack_require__(36)(C, NAME);
+	  __webpack_require__(30)(C, NAME);
 	
 	  O[NAME] = C;
 	  $def($def.G + $def.W + $def.F * (C != Base), O);
@@ -3448,14 +8708,14 @@
 	};
 
 /***/ },
-/* 142 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var strong = __webpack_require__(140);
+	var strong = __webpack_require__(129);
 	
 	// 23.2 Set Objects
-	__webpack_require__(141)('Set', function(get){
+	__webpack_require__(130)('Set', function(get){
 	  return function Set(){ return get(this, arguments[0]); };
 	}, {
 	  // 23.2.3.1 Set.prototype.add(value)
@@ -3465,21 +8725,21 @@
 	}, strong);
 
 /***/ },
-/* 143 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $            = __webpack_require__(6)
-	  , weak         = __webpack_require__(144)
-	  , isObject     = __webpack_require__(13)
-	  , has          = __webpack_require__(14)
+	var $            = __webpack_require__(14)
+	  , weak         = __webpack_require__(133)
+	  , isObject     = __webpack_require__(33)
+	  , has          = __webpack_require__(28)
 	  , frozenStore  = weak.frozenStore
 	  , WEAK         = weak.WEAK
 	  , isExtensible = Object.isExtensible || isObject
 	  , tmp          = {};
 	
 	// 23.3 WeakMap Objects
-	var $WeakMap = __webpack_require__(141)('WeakMap', function(get){
+	var $WeakMap = __webpack_require__(130)('WeakMap', function(get){
 	  return function WeakMap(){ return get(this, arguments[0]); };
 	}, {
 	  // 23.3.3.3 WeakMap.prototype.get(key)
@@ -3500,7 +8760,7 @@
 	  $.each.call(['delete', 'has', 'get', 'set'], function(key){
 	    var proto  = $WeakMap.prototype
 	      , method = proto[key];
-	    __webpack_require__(19)(proto, key, function(a, b){
+	    __webpack_require__(27)(proto, key, function(a, b){
 	      // store frozen objects on leaky map
 	      if(isObject(a) && !isExtensible(a)){
 	        var result = frozenStore(this)[key](a, b);
@@ -3512,35 +8772,30 @@
 	}
 
 /***/ },
-/* 144 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var hide         = __webpack_require__(18)
-	  , anObject     = __webpack_require__(30)
-	  , strictNew    = __webpack_require__(135)
-	  , forOf        = __webpack_require__(136)
-	  , method       = __webpack_require__(22)
-	  , WEAK         = __webpack_require__(20)('weak')
-	  , isObject     = __webpack_require__(13)
-	  , $has         = __webpack_require__(14)
+	var hide         = __webpack_require__(13)
+	  , anObject     = __webpack_require__(42)
+	  , strictNew    = __webpack_require__(124)
+	  , forOf        = __webpack_require__(125)
+	  , method       = __webpack_require__(37)
+	  , WEAK         = __webpack_require__(12)('weak')
+	  , isObject     = __webpack_require__(33)
+	  , $has         = __webpack_require__(28)
 	  , isExtensible = Object.isExtensible || isObject
 	  , find         = method(5)
 	  , findIndex    = method(6)
 	  , id           = 0;
 	
 	// fallback for frozen keys
-	var frozenStore = function(that){
+	function frozenStore(that){
 	  return that._l || (that._l = new FrozenStore);
-	};
-	var FrozenStore = function(){
+	}
+	function FrozenStore(){
 	  this.a = [];
-	};
-	var findFrozen = function(store, key){
-	  return find(store.a, function(it){
-	    return it[0] === key;
-	  });
-	};
+	}
 	FrozenStore.prototype = {
 	  get: function(key){
 	    var entry = findFrozen(this, key);
@@ -3562,6 +8817,11 @@
 	    return !!~index;
 	  }
 	};
+	function findFrozen(store, key){
+	  return find(store.a, function(it){
+	    return it[0] === key;
+	  });
+	}
 	
 	module.exports = {
 	  getConstructor: function(wrapper, NAME, IS_MAP, ADDER){
@@ -3571,7 +8831,7 @@
 	      that._l = undefined; // leak store for frozen objects
 	      if(iterable != undefined)forOf(iterable, IS_MAP, that[ADDER], that);
 	    });
-	    __webpack_require__(138)(C.prototype, {
+	    __webpack_require__(127)(C.prototype, {
 	      // 23.3.3.2 WeakMap.prototype.delete(key)
 	      // 23.4.3.3 WeakSet.prototype.delete(value)
 	      'delete': function(key){
@@ -3602,14 +8862,14 @@
 	};
 
 /***/ },
-/* 145 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var weak = __webpack_require__(144);
+	var weak = __webpack_require__(133);
 	
 	// 23.4 WeakSet Objects
-	__webpack_require__(141)('WeakSet', function(get){
+	__webpack_require__(130)('WeakSet', function(get){
 	  return function WeakSet(){ return get(this, arguments[0]); };
 	}, {
 	  // 23.4.3.1 WeakSet.prototype.add(value)
@@ -3619,11 +8879,11 @@
 	}, weak, false, true);
 
 /***/ },
-/* 146 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.1 Reflect.apply(target, thisArgument, argumentsList)
-	var $def   = __webpack_require__(16)
+	var $def   = __webpack_require__(25)
 	  , _apply = Function.apply;
 	
 	$def($def.S, 'Reflect', {
@@ -3633,53 +8893,38 @@
 	});
 
 /***/ },
-/* 147 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.2 Reflect.construct(target, argumentsList [, newTarget])
-	var $         = __webpack_require__(6)
-	  , $def      = __webpack_require__(16)
-	  , aFunction = __webpack_require__(24)
-	  , anObject  = __webpack_require__(30)
-	  , isObject  = __webpack_require__(13)
-	  , bind      = Function.bind || __webpack_require__(17).Function.prototype.bind;
+	var $         = __webpack_require__(14)
+	  , $def      = __webpack_require__(25)
+	  , aFunction = __webpack_require__(39)
+	  , isObject  = __webpack_require__(33)
+	  , apply     = Function.apply
+	  , bind      = Function.bind || __webpack_require__(26).Function.prototype.bind;
 	
 	$def($def.S, 'Reflect', {
-	  construct: function construct(Target, args /*, newTarget*/){
-	    aFunction(Target);
-	    if(arguments.length < 3){
-	      // w/o newTarget, optimization for 0-4 arguments
-	      if(args != undefined)switch(anObject(args).length){
-	        case 0: return new Target;
-	        case 1: return new Target(args[0]);
-	        case 2: return new Target(args[0], args[1]);
-	        case 3: return new Target(args[0], args[1], args[2]);
-	        case 4: return new Target(args[0], args[1], args[2], args[3]);
-	      }
-	      // w/o newTarget, lot of arguments case
-	      var $args = [null];
-	      $args.push.apply($args, args);
-	      return new (bind.apply(Target, $args));
-	    }
-	    // with newTarget, not support built-in constructors
+	  construct: function construct(target, argumentsList /*, newTarget*/){
+	    if(arguments.length < 3)return new (bind.apply(target, [null].concat(argumentsList)))();
 	    var proto    = aFunction(arguments[2]).prototype
 	      , instance = $.create(isObject(proto) ? proto : Object.prototype)
-	      , result   = Function.apply.call(Target, instance, args);
+	      , result   = apply.call(target, instance, argumentsList);
 	    return isObject(result) ? result : instance;
 	  }
 	});
 
 /***/ },
-/* 148 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.3 Reflect.defineProperty(target, propertyKey, attributes)
-	var $        = __webpack_require__(6)
-	  , $def     = __webpack_require__(16)
-	  , anObject = __webpack_require__(30);
+	var $        = __webpack_require__(14)
+	  , $def     = __webpack_require__(25)
+	  , anObject = __webpack_require__(42);
 	
 	// MS Edge has broken Reflect.defineProperty - throwing instead of returning false
-	$def($def.S + $def.F * __webpack_require__(8)(function(){
+	$def($def.S + $def.F * __webpack_require__(46)(function(){
 	  Reflect.defineProperty($.setDesc({}, 1, {value: 1}), 1, {value: 2});
 	}), 'Reflect', {
 	  defineProperty: function defineProperty(target, propertyKey, attributes){
@@ -3694,13 +8939,13 @@
 	});
 
 /***/ },
-/* 149 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.4 Reflect.deleteProperty(target, propertyKey)
-	var $def     = __webpack_require__(16)
-	  , getDesc  = __webpack_require__(6).getDesc
-	  , anObject = __webpack_require__(30);
+	var $def     = __webpack_require__(25)
+	  , getDesc  = __webpack_require__(14).getDesc
+	  , anObject = __webpack_require__(42);
 	
 	$def($def.S, 'Reflect', {
 	  deleteProperty: function deleteProperty(target, propertyKey){
@@ -3710,24 +8955,26 @@
 	});
 
 /***/ },
-/* 150 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
 	// 26.1.5 Reflect.enumerate(target)
-	var $def     = __webpack_require__(16)
-	  , anObject = __webpack_require__(30);
-	var Enumerate = function(iterated){
+	var $def     = __webpack_require__(25)
+	  , anObject = __webpack_require__(42);
+	
+	function Enumerate(iterated){
 	  this._t = anObject(iterated); // target
+	  this._k = undefined;          // keys
 	  this._i = 0;                  // next index
-	  var keys = this._k = []       // keys
-	    , key;
-	  for(key in iterated)keys.push(key);
-	};
-	__webpack_require__(102)(Enumerate, 'Object', function(){
+	}
+	__webpack_require__(29)(Enumerate, 'Object', function(){
 	  var that = this
 	    , keys = that._k
 	    , key;
+	  if(keys == undefined){
+	    that._k = keys = [];
+	    for(key in that._t)keys.push(key);
+	  }
 	  do {
 	    if(that._i >= keys.length)return {value: undefined, done: true};
 	  } while(!((key = keys[that._i++]) in that._t));
@@ -3741,15 +8988,15 @@
 	});
 
 /***/ },
-/* 151 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.6 Reflect.get(target, propertyKey [, receiver])
-	var $        = __webpack_require__(6)
-	  , has      = __webpack_require__(14)
-	  , $def     = __webpack_require__(16)
-	  , isObject = __webpack_require__(13)
-	  , anObject = __webpack_require__(30);
+	var $        = __webpack_require__(14)
+	  , has      = __webpack_require__(28)
+	  , $def     = __webpack_require__(25)
+	  , isObject = __webpack_require__(33)
+	  , anObject = __webpack_require__(42);
 	
 	function get(target, propertyKey/*, receiver*/){
 	  var receiver = arguments.length < 3 ? target : arguments[2]
@@ -3766,13 +9013,13 @@
 	$def($def.S, 'Reflect', {get: get});
 
 /***/ },
-/* 152 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.7 Reflect.getOwnPropertyDescriptor(target, propertyKey)
-	var $        = __webpack_require__(6)
-	  , $def     = __webpack_require__(16)
-	  , anObject = __webpack_require__(30);
+	var $        = __webpack_require__(14)
+	  , $def     = __webpack_require__(25)
+	  , anObject = __webpack_require__(42);
 	
 	$def($def.S, 'Reflect', {
 	  getOwnPropertyDescriptor: function getOwnPropertyDescriptor(target, propertyKey){
@@ -3781,13 +9028,13 @@
 	});
 
 /***/ },
-/* 153 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.8 Reflect.getPrototypeOf(target)
-	var $def     = __webpack_require__(16)
-	  , getProto = __webpack_require__(6).getProto
-	  , anObject = __webpack_require__(30);
+	var $def     = __webpack_require__(25)
+	  , getProto = __webpack_require__(14).getProto
+	  , anObject = __webpack_require__(42);
 	
 	$def($def.S, 'Reflect', {
 	  getPrototypeOf: function getPrototypeOf(target){
@@ -3796,11 +9043,11 @@
 	});
 
 /***/ },
-/* 154 */
+/* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.9 Reflect.has(target, propertyKey)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
 	$def($def.S, 'Reflect', {
 	  has: function has(target, propertyKey){
@@ -3809,37 +9056,35 @@
 	});
 
 /***/ },
-/* 155 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.10 Reflect.isExtensible(target)
-	var $def          = __webpack_require__(16)
-	  , anObject      = __webpack_require__(30)
-	  , $isExtensible = Object.isExtensible;
+	var $def          = __webpack_require__(25)
+	  , anObject      = __webpack_require__(42)
+	  , _isExtensible = Object.isExtensible || __webpack_require__(33);
 	
 	$def($def.S, 'Reflect', {
 	  isExtensible: function isExtensible(target){
-	    anObject(target);
-	    return $isExtensible ? $isExtensible(target) : true;
+	    return _isExtensible(anObject(target));
 	  }
 	});
 
 /***/ },
-/* 156 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.11 Reflect.ownKeys(target)
-	var $def = __webpack_require__(16);
+	var $def = __webpack_require__(25);
 	
-	$def($def.S, 'Reflect', {ownKeys: __webpack_require__(157)});
+	$def($def.S, 'Reflect', {ownKeys: __webpack_require__(146)});
 
 /***/ },
-/* 157 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// all object keys, includes non-enumerable and symbols
-	var $        = __webpack_require__(6)
-	  , anObject = __webpack_require__(30);
+	var $        = __webpack_require__(14)
+	  , anObject = __webpack_require__(42);
 	module.exports = function ownKeys(it){
 	  var keys       = $.getNames(anObject(it))
 	    , getSymbols = $.getSymbols;
@@ -3847,19 +9092,19 @@
 	};
 
 /***/ },
-/* 158 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.12 Reflect.preventExtensions(target)
-	var $def               = __webpack_require__(16)
-	  , anObject           = __webpack_require__(30)
-	  , $preventExtensions = Object.preventExtensions;
+	var $def               = __webpack_require__(25)
+	  , anObject           = __webpack_require__(42)
+	  , _preventExtensions = Object.preventExtensions;
 	
 	$def($def.S, 'Reflect', {
 	  preventExtensions: function preventExtensions(target){
 	    anObject(target);
 	    try {
-	      if($preventExtensions)$preventExtensions(target);
+	      if(_preventExtensions)_preventExtensions(target);
 	      return true;
 	    } catch(e){
 	      return false;
@@ -3868,16 +9113,16 @@
 	});
 
 /***/ },
-/* 159 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.13 Reflect.set(target, propertyKey, V [, receiver])
-	var $          = __webpack_require__(6)
-	  , has        = __webpack_require__(14)
-	  , $def       = __webpack_require__(16)
-	  , createDesc = __webpack_require__(9)
-	  , anObject   = __webpack_require__(30)
-	  , isObject   = __webpack_require__(13);
+	var $          = __webpack_require__(14)
+	  , has        = __webpack_require__(28)
+	  , $def       = __webpack_require__(25)
+	  , createDesc = __webpack_require__(15)
+	  , anObject   = __webpack_require__(42)
+	  , isObject   = __webpack_require__(33);
 	
 	function set(target, propertyKey, V/*, receiver*/){
 	  var receiver = arguments.length < 4 ? target : arguments[3]
@@ -3902,12 +9147,12 @@
 	$def($def.S, 'Reflect', {set: set});
 
 /***/ },
-/* 160 */
+/* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 26.1.14 Reflect.setPrototypeOf(target, proto)
-	var $def     = __webpack_require__(16)
-	  , setProto = __webpack_require__(47);
+	var $def     = __webpack_require__(25)
+	  , setProto = __webpack_require__(56);
 	
 	if(setProto)$def($def.S, 'Reflect', {
 	  setPrototypeOf: function setPrototypeOf(target, proto){
@@ -3922,28 +9167,28 @@
 	});
 
 /***/ },
-/* 161 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def      = __webpack_require__(16)
-	  , $includes = __webpack_require__(33)(true);
+	var $def      = __webpack_require__(25)
+	  , $includes = __webpack_require__(44)(true);
 	$def($def.P, 'Array', {
 	  // https://github.com/domenic/Array.prototype.includes
 	  includes: function includes(el /*, fromIndex = 0 */){
 	    return $includes(this, el, arguments[1]);
 	  }
 	});
-	__webpack_require__(118)('includes');
+	__webpack_require__(8)('includes');
 
 /***/ },
-/* 162 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/mathiasbynens/String.prototype.at
 	'use strict';
-	var $def = __webpack_require__(16)
-	  , $at  = __webpack_require__(99)(true);
+	var $def = __webpack_require__(25)
+	  , $at  = __webpack_require__(95)(true);
 	$def($def.P, 'String', {
 	  at: function at(pos){
 	    return $at(this, pos);
@@ -3951,116 +9196,93 @@
 	});
 
 /***/ },
-/* 163 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def = __webpack_require__(16)
-	  , $pad = __webpack_require__(164);
+	var $def = __webpack_require__(25)
+	  , $pad = __webpack_require__(153);
 	$def($def.P, 'String', {
-	  padLeft: function padLeft(maxLength /*, fillString = ' ' */){
-	    return $pad(this, maxLength, arguments[1], true);
+	  lpad: function lpad(n){
+	    return $pad(this, n, arguments[1], true);
 	  }
 	});
 
 /***/ },
-/* 164 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// https://github.com/ljharb/proposal-string-pad-left-right
-	var toLength = __webpack_require__(28)
-	  , repeat   = __webpack_require__(109)
-	  , defined  = __webpack_require__(27);
+	// http://wiki.ecmascript.org/doku.php?id=strawman:string_padding
+	var toInteger = __webpack_require__(41)
+	  , repeat    = __webpack_require__(101)
+	  , defined   = __webpack_require__(22);
 	
-	module.exports = function(that, maxLength, fillString, left){
-	  var S            = String(defined(that))
-	    , stringLength = S.length
-	    , fillStr      = fillString === undefined ? ' ' : String(fillString)
-	    , intMaxLength = toLength(maxLength);
-	  if(intMaxLength <= stringLength)return S;
-	  if(fillStr == '')fillStr = ' ';
-	  var fillLen = intMaxLength - stringLength
-	    , stringFiller = repeat.call(fillStr, Math.ceil(fillLen / fillStr.length));
-	  if(stringFiller.length > fillLen)stringFiller = left
-	    ? stringFiller.slice(stringFiller.length - fillLen)
-	    : stringFiller.slice(0, fillLen);
-	  return left ? stringFiller + S : S + stringFiller;
+	module.exports = function(that, minLength, fillChar, left){
+	  // 1. Let O be CheckObjectCoercible(this value).
+	  // 2. Let S be ToString(O).
+	  var S = String(defined(that));
+	  // 4. If intMinLength is undefined, return S.
+	  if(minLength === undefined)return S;
+	  // 4. Let intMinLength be ToInteger(minLength).
+	  var intMinLength = toInteger(minLength);
+	  // 5. Let fillLen be the number of characters in S minus intMinLength.
+	  var fillLen = intMinLength - S.length;
+	  // 6. If fillLen < 0, then throw a RangeError exception.
+	  // 7. If fillLen is +∞, then throw a RangeError exception.
+	  if(fillLen < 0 || fillLen === Infinity){
+	    throw new RangeError('Cannot satisfy string length ' + minLength + ' for string: ' + S);
+	  }
+	  // 8. Let sFillStr be the string represented by fillStr.
+	  // 9. If sFillStr is undefined, let sFillStr be a space character.
+	  var sFillStr = fillChar === undefined ? ' ' : String(fillChar);
+	  // 10. Let sFillVal be a String made of sFillStr, repeated until fillLen is met.
+	  var sFillVal = repeat.call(sFillStr, Math.ceil(fillLen / sFillStr.length));
+	  // truncate if we overflowed
+	  if(sFillVal.length > fillLen)sFillVal = left
+	    ? sFillVal.slice(sFillVal.length - fillLen)
+	    : sFillVal.slice(0, fillLen);
+	  // 11. Return a string made from sFillVal, followed by S.
+	  // 11. Return a String made from S, followed by sFillVal.
+	  return left ? sFillVal.concat(S) : S.concat(sFillVal);
 	};
 
 /***/ },
-/* 165 */
+/* 154 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var $def = __webpack_require__(16)
-	  , $pad = __webpack_require__(164);
+	var $def = __webpack_require__(25)
+	  , $pad = __webpack_require__(153);
 	$def($def.P, 'String', {
-	  padRight: function padRight(maxLength /*, fillString = ' ' */){
-	    return $pad(this, maxLength, arguments[1], false);
+	  rpad: function rpad(n){
+	    return $pad(this, n, arguments[1], false);
 	  }
 	});
 
 /***/ },
-/* 166 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	// https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-	__webpack_require__(97)('trimLeft', function($trim){
-	  return function trimLeft(){
-	    return $trim(this, 1);
-	  };
-	});
-
-/***/ },
-/* 167 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	// https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-	__webpack_require__(97)('trimRight', function($trim){
-	  return function trimRight(){
-	    return $trim(this, 2);
-	  };
-	});
-
-/***/ },
-/* 168 */
+/* 155 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/benjamingr/RexExp.escape
-	var $def = __webpack_require__(16)
-	  , $re  = __webpack_require__(169)(/[\\^$*+?.()|[\]{}]/g, '\\$&');
+	var $def = __webpack_require__(25)
+	  , $re  = __webpack_require__(45)(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 	$def($def.S, 'RegExp', {escape: function escape(it){ return $re(it); }});
 
 
 /***/ },
-/* 169 */
-/***/ function(module, exports) {
-
-	module.exports = function(regExp, replace){
-	  var replacer = replace === Object(replace) ? function(part){
-	    return replace[part];
-	  } : replace;
-	  return function(it){
-	    return String(it).replace(regExp, replacer);
-	  };
-	};
-
-/***/ },
-/* 170 */
+/* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://gist.github.com/WebReflection/9353781
-	var $          = __webpack_require__(6)
-	  , $def       = __webpack_require__(16)
-	  , ownKeys    = __webpack_require__(157)
-	  , toIObject  = __webpack_require__(31)
-	  , createDesc = __webpack_require__(9);
+	var $          = __webpack_require__(14)
+	  , $def       = __webpack_require__(25)
+	  , ownKeys    = __webpack_require__(146)
+	  , toObject   = __webpack_require__(19)
+	  , createDesc = __webpack_require__(15);
 	
 	$def($def.S, 'Object', {
 	  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object){
-	    var O       = toIObject(object)
+	    var O       = toObject(object)
 	      , setDesc = $.setDesc
 	      , getDesc = $.getDesc
 	      , keys    = ownKeys(O)
@@ -4076,12 +9298,12 @@
 	});
 
 /***/ },
-/* 171 */
+/* 157 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// http://goo.gl/XkBrjD
-	var $def    = __webpack_require__(16)
-	  , $values = __webpack_require__(172)(false);
+	var $def    = __webpack_require__(25)
+	  , $values = __webpack_require__(158)(false);
 	
 	$def($def.S, 'Object', {
 	  values: function values(it){
@@ -4090,14 +9312,14 @@
 	});
 
 /***/ },
-/* 172 */
+/* 158 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $         = __webpack_require__(6)
-	  , toIObject = __webpack_require__(31);
+	var $        = __webpack_require__(14)
+	  , toObject = __webpack_require__(19);
 	module.exports = function(isEntries){
 	  return function(it){
-	    var O      = toIObject(it)
+	    var O      = toObject(it)
 	      , keys   = $.getKeys(O)
 	      , length = keys.length
 	      , i      = 0
@@ -4110,12 +9332,12 @@
 	};
 
 /***/ },
-/* 173 */
+/* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// http://goo.gl/XkBrjD
-	var $def     = __webpack_require__(16)
-	  , $entries = __webpack_require__(172)(true);
+	var $def     = __webpack_require__(25)
+	  , $entries = __webpack_require__(158)(true);
 	
 	$def($def.S, 'Object', {
 	  entries: function entries(it){
@@ -4124,21 +9346,21 @@
 	});
 
 /***/ },
-/* 174 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/DavidBruant/Map-Set.prototype.toJSON
-	var $def  = __webpack_require__(16);
+	var $def  = __webpack_require__(25);
 	
-	$def($def.P, 'Map', {toJSON: __webpack_require__(175)('Map')});
+	$def($def.P, 'Map', {toJSON: __webpack_require__(161)('Map')});
 
 /***/ },
-/* 175 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/DavidBruant/Map-Set.prototype.toJSON
-	var forOf   = __webpack_require__(136)
-	  , classof = __webpack_require__(49);
+	var forOf   = __webpack_require__(125)
+	  , classof = __webpack_require__(58);
 	module.exports = function(NAME){
 	  return function toJSON(){
 	    if(classof(this) != NAME)throw TypeError(NAME + "#toJSON isn't generic");
@@ -4149,29 +9371,29 @@
 	};
 
 /***/ },
-/* 176 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/DavidBruant/Map-Set.prototype.toJSON
-	var $def  = __webpack_require__(16);
+	var $def  = __webpack_require__(25);
 	
-	$def($def.P, 'Set', {toJSON: __webpack_require__(175)('Set')});
+	$def($def.P, 'Set', {toJSON: __webpack_require__(161)('Set')});
 
 /***/ },
-/* 177 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// JavaScript 1.6 / Strawman array statics shim
-	var $       = __webpack_require__(6)
-	  , $def    = __webpack_require__(16)
-	  , $Array  = __webpack_require__(17).Array || Array
+	var $       = __webpack_require__(14)
+	  , $def    = __webpack_require__(25)
+	  , $Array  = __webpack_require__(26).Array || Array
 	  , statics = {};
-	var setStatics = function(keys, length){
+	function setStatics(keys, length){
 	  $.each.call(keys.split(','), function(key){
 	    if(length == undefined && key in $Array)statics[key] = $Array[key];
-	    else if(key in [])statics[key] = __webpack_require__(23)(Function.call, [][key], length);
+	    else if(key in [])statics[key] = __webpack_require__(38)(Function.call, [][key], length);
 	  });
-	};
+	}
 	setStatics('pop,reverse,shift,keys,values,entries', 1);
 	setStatics('indexOf,every,some,forEach,map,filter,find,findIndex,includes', 3);
 	setStatics('join,slice,concat,push,splice,unshift,sort,lastIndexOf,' +
@@ -4179,17 +9401,17 @@
 	$def($def.S, 'Array', statics);
 
 /***/ },
-/* 178 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// ie9- setTimeout & setInterval additional parameters fix
 	var global     = __webpack_require__(11)
-	  , $def       = __webpack_require__(16)
-	  , invoke     = __webpack_require__(21)
-	  , partial    = __webpack_require__(179)
+	  , $def       = __webpack_require__(25)
+	  , invoke     = __webpack_require__(36)
+	  , partial    = __webpack_require__(165)
 	  , navigator  = global.navigator
 	  , MSIE       = !!navigator && /MSIE .\./.test(navigator.userAgent); // <- dirty ie9- check
-	var wrap = function(set){
+	function wrap(set){
 	  return MSIE ? function(fn, time /*, ...args */){
 	    return set(invoke(
 	      partial,
@@ -4197,20 +9419,20 @@
 	      typeof fn == 'function' ? fn : Function(fn)
 	    ), time);
 	  } : set;
-	};
+	}
 	$def($def.G + $def.B + $def.F * MSIE, {
 	  setTimeout:  wrap(global.setTimeout),
 	  setInterval: wrap(global.setInterval)
 	});
 
 /***/ },
-/* 179 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var path      = __webpack_require__(180)
-	  , invoke    = __webpack_require__(21)
-	  , aFunction = __webpack_require__(24);
+	var path      = __webpack_require__(166)
+	  , invoke    = __webpack_require__(36)
+	  , aFunction = __webpack_require__(39);
 	module.exports = function(/* ...pargs */){
 	  var fn     = aFunction(this)
 	    , length = arguments.length
@@ -4232,31 +9454,31 @@
 	};
 
 /***/ },
-/* 180 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(11);
 
 /***/ },
-/* 181 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $def  = __webpack_require__(16)
-	  , $task = __webpack_require__(137);
+	var $def  = __webpack_require__(25)
+	  , $task = __webpack_require__(126);
 	$def($def.G + $def.B, {
 	  setImmediate:   $task.set,
 	  clearImmediate: $task.clear
 	});
 
 /***/ },
-/* 182 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(117);
+	__webpack_require__(7);
 	var global      = __webpack_require__(11)
-	  , hide        = __webpack_require__(18)
-	  , Iterators   = __webpack_require__(101)
-	  , ITERATOR    = __webpack_require__(37)('iterator')
+	  , hide        = __webpack_require__(13)
+	  , Iterators   = __webpack_require__(18)
+	  , ITERATOR    = __webpack_require__(9)('iterator')
 	  , NL          = global.NodeList
 	  , HTC         = global.HTMLCollection
 	  , NLProto     = NL && NL.prototype
@@ -4266,7 +9488,7 @@
 	if(HTC && !(ITERATOR in HTCProto))hide(HTCProto, ITERATOR, ArrayValues);
 
 /***/ },
-/* 183 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {/**
@@ -4921,10 +10143,10 @@
 	  typeof self === "object" ? self : this
 	);
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(170)))
 
 /***/ },
-/* 184 */
+/* 170 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -5020,7 +10242,7 @@
 
 
 /***/ },
-/* 185 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -14236,7 +19458,7 @@
 
 
 /***/ },
-/* 186 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global, _) {/**
@@ -26591,10 +31813,10 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(187)(module), (function() { return this; }()), __webpack_require__(186)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(173)(module), (function() { return this; }()), __webpack_require__(172)))
 
 /***/ },
-/* 187 */
+/* 173 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -26610,19 +31832,19 @@
 
 
 /***/ },
-/* 188 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(189);
+	__webpack_require__(175);
 	module.exports = angular;
 
 
 /***/ },
-/* 189 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_provided_window_dot_jQuery) {/**
-	 * @license AngularJS v1.4.4
+	 * @license AngularJS v1.4.3
 	 * (c) 2010-2015 Google, Inc. http://angularjs.org
 	 * License: MIT
 	 */
@@ -26680,7 +31902,7 @@
 	      return match;
 	    });
 	
-	    message += '\nhttp://errors.angularjs.org/1.4.4/' +
+	    message += '\nhttp://errors.angularjs.org/1.4.3/' +
 	      (module ? module + '/' : '') + code;
 	
 	    for (i = SKIP_INDEXES, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
@@ -27046,8 +32268,6 @@
 	      if (deep && isObject(src)) {
 	        if (isDate(src)) {
 	          dst[key] = new Date(src.valueOf());
-	        } else if (isRegExp(src)) {
-	          dst[key] = new RegExp(src);
 	        } else {
 	          if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
 	          baseExtend(dst[key], [src], true);
@@ -27678,39 +32898,22 @@
 	}
 	
 	var csp = function() {
-	  if (!isDefined(csp.rules)) {
+	  if (isDefined(csp.isActive_)) return csp.isActive_;
 	
+	  var active = !!(document.querySelector('[ng-csp]') ||
+	                  document.querySelector('[data-ng-csp]'));
 	
-	    var ngCspElement = (document.querySelector('[ng-csp]') ||
-	                    document.querySelector('[data-ng-csp]'));
-	
-	    if (ngCspElement) {
-	      var ngCspAttribute = ngCspElement.getAttribute('ng-csp') ||
-	                    ngCspElement.getAttribute('data-ng-csp');
-	      csp.rules = {
-	        noUnsafeEval: !ngCspAttribute || (ngCspAttribute.indexOf('no-unsafe-eval') !== -1),
-	        noInlineStyle: !ngCspAttribute || (ngCspAttribute.indexOf('no-inline-style') !== -1)
-	      };
-	    } else {
-	      csp.rules = {
-	        noUnsafeEval: noUnsafeEval(),
-	        noInlineStyle: false
-	      };
-	    }
-	  }
-	
-	  return csp.rules;
-	
-	  function noUnsafeEval() {
+	  if (!active) {
 	    try {
 	      /* jshint -W031, -W054 */
 	      new Function('');
 	      /* jshint +W031, +W054 */
-	      return false;
 	    } catch (e) {
-	      return true;
+	      active = true;
 	    }
 	  }
+	
+	  return (csp.isActive_ = active);
 	};
 	
 	/**
@@ -27942,19 +33145,13 @@
 	 * @returns {Object.<string,boolean|Array>}
 	 */
 	function parseKeyValue(/**string*/keyValue) {
-	  var obj = {};
+	  var obj = {}, key_value, key;
 	  forEach((keyValue || "").split('&'), function(keyValue) {
-	    var splitPoint, key, val;
 	    if (keyValue) {
-	      key = keyValue = keyValue.replace(/\+/g,'%20');
-	      splitPoint = keyValue.indexOf('=');
-	      if (splitPoint !== -1) {
-	        key = keyValue.substring(0, splitPoint);
-	        val = keyValue.substring(splitPoint + 1);
-	      }
-	      key = tryDecodeURIComponent(key);
+	      key_value = keyValue.replace(/\+/g,'%20').split('=');
+	      key = tryDecodeURIComponent(key_value[0]);
 	      if (isDefined(key)) {
-	        val = isDefined(val) ? tryDecodeURIComponent(val) : true;
+	        var val = isDefined(key_value[1]) ? tryDecodeURIComponent(key_value[1]) : true;
 	        if (!hasOwnProperty.call(obj, key)) {
 	          obj[key] = val;
 	        } else if (isArray(obj[key])) {
@@ -28550,8 +33747,8 @@
 	     * All modules (angular core or 3rd party) that should be available to an application must be
 	     * registered using this mechanism.
 	     *
-	     * Passing one argument retrieves an existing {@link angular.Module},
-	     * whereas passing more than one argument creates a new {@link angular.Module}
+	     * When passed two or more arguments, a new module is created.  If passed only one argument, an
+	     * existing module (the name passed as the first argument to `module`) is retrieved.
 	     *
 	     *
 	     * # Module
@@ -28892,6 +34089,7 @@
 	/* global angularModule: true,
 	  version: true,
 	
+	  $LocaleProvider,
 	  $CompileProvider,
 	
 	  htmlAnchorDirective,
@@ -28908,6 +34106,7 @@
 	  ngClassDirective,
 	  ngClassEvenDirective,
 	  ngClassOddDirective,
+	  ngCspDirective,
 	  ngCloakDirective,
 	  ngControllerDirective,
 	  ngFormDirective,
@@ -28944,7 +34143,6 @@
 	
 	  $AnchorScrollProvider,
 	  $AnimateProvider,
-	  $CoreAnimateCssProvider,
 	  $$CoreAnimateQueueProvider,
 	  $$CoreAnimateRunnerProvider,
 	  $BrowserProvider,
@@ -28953,7 +34151,6 @@
 	  $DocumentProvider,
 	  $ExceptionHandlerProvider,
 	  $FilterProvider,
-	  $$ForceReflowProvider,
 	  $InterpolateProvider,
 	  $IntervalProvider,
 	  $$HashMapProvider,
@@ -28997,11 +34194,11 @@
 	 * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
 	 */
 	var version = {
-	  full: '1.4.4',    // all of these placeholder strings will be replaced by grunt's
+	  full: '1.4.3',    // all of these placeholder strings will be replaced by grunt's
 	  major: 1,    // package task
 	  minor: 4,
-	  dot: 4,
-	  codeName: 'pylon-requirement'
+	  dot: 3,
+	  codeName: 'foam-acceleration'
 	};
 	
 	
@@ -29040,6 +34237,11 @@
 	  });
 	
 	  angularModule = setupModuleLoader(window);
+	  try {
+	    angularModule('ngLocale');
+	  } catch (e) {
+	    angularModule('ngLocale', []).provider('$locale', $LocaleProvider);
+	  }
 	
 	  angularModule('ng', ['ngLocale'], ['$provide',
 	    function ngModule($provide) {
@@ -29102,7 +34304,6 @@
 	      $provide.provider({
 	        $anchorScroll: $AnchorScrollProvider,
 	        $animate: $AnimateProvider,
-	        $animateCss: $CoreAnimateCssProvider,
 	        $$animateQueue: $$CoreAnimateQueueProvider,
 	        $$AnimateRunner: $$CoreAnimateRunnerProvider,
 	        $browser: $BrowserProvider,
@@ -29111,7 +34312,6 @@
 	        $document: $DocumentProvider,
 	        $exceptionHandler: $ExceptionHandlerProvider,
 	        $filter: $FilterProvider,
-	        $$forceReflow: $$ForceReflowProvider,
 	        $interpolate: $InterpolateProvider,
 	        $interval: $IntervalProvider,
 	        $http: $HttpProvider,
@@ -30331,7 +35531,7 @@
 	 * Implicit module which gets automatically added to each {@link auto.$injector $injector}.
 	 */
 	
-	var FN_ARGS = /^[^\(]*\(\s*([^\)]*)\)/m;
+	var FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
 	var FN_ARG_SPLIT = /,/;
 	var FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
 	var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -30987,7 +36187,6 @@
 	  // Module Loading
 	  ////////////////////////////////////
 	  function loadModules(modulesToLoad) {
-	    assertArg(isUndefined(modulesToLoad) || isArray(modulesToLoad), 'modulesToLoad', 'not an array');
 	    var runBlocks = [], moduleFn;
 	    forEach(modulesToLoad, function(module) {
 	      if (loadedModules.get(module)) return;
@@ -31497,31 +36696,31 @@
 	    };
 	
 	    function addRemoveClassesPostDigest(element, add, remove) {
-	      var classVal, data = postDigestQueue.get(element);
+	      var data = postDigestQueue.get(element);
+	      var classVal;
 	
 	      if (!data) {
 	        postDigestQueue.put(element, data = {});
 	        postDigestElements.push(element);
 	      }
 	
-	      var updateData = function(classes, value) {
-	        var changed = false;
-	        if (classes) {
-	          classes = isString(classes) ? classes.split(' ') :
-	                    isArray(classes) ? classes : [];
-	          forEach(classes, function(className) {
-	            if (className) {
-	              changed = true;
-	              data[className] = value;
-	            }
-	          });
-	        }
-	        return changed;
-	      };
+	      if (add) {
+	        forEach(add.split(' '), function(className) {
+	          if (className) {
+	            data[className] = true;
+	          }
+	        });
+	      }
 	
-	      var classesAdded = updateData(add, true);
-	      var classesRemoved = updateData(remove, false);
-	      if ((!classesAdded && !classesRemoved) || postDigestElements.length > 1) return;
+	      if (remove) {
+	        forEach(remove.split(' '), function(className) {
+	          if (className) {
+	            data[className] = false;
+	          }
+	        });
+	      }
+	
+	      if (postDigestElements.length > 1) return;
 	
 	      $rootScope.$$postDigest(function() {
 	        forEach(postDigestElements, function(element) {
@@ -31980,88 +37179,15 @@
 	  }];
 	}];
 	
-	/**
-	 * @ngdoc service
-	 * @name $animateCss
-	 * @kind object
-	 *
-	 * @description
-	 * This is the core version of `$animateCss`. By default, only when the `ngAnimate` is included,
-	 * then the `$animateCss` service will actually perform animations.
-	 *
-	 * Click here {@link ngAnimate.$animateCss to read the documentation for $animateCss}.
-	 */
-	var $CoreAnimateCssProvider = function() {
-	  this.$get = ['$$rAF', '$q', function($$rAF, $q) {
-	
-	    var RAFPromise = function() {};
-	    RAFPromise.prototype = {
-	      done: function(cancel) {
-	        this.defer && this.defer[cancel === true ? 'reject' : 'resolve']();
-	      },
-	      end: function() {
-	        this.done();
-	      },
-	      cancel: function() {
-	        this.done(true);
-	      },
-	      getPromise: function() {
-	        if (!this.defer) {
-	          this.defer = $q.defer();
-	        }
-	        return this.defer.promise;
-	      },
-	      then: function(f1,f2) {
-	        return this.getPromise().then(f1,f2);
-	      },
-	      'catch': function(f1) {
-	        return this.getPromise().catch(f1);
-	      },
-	      'finally': function(f1) {
-	        return this.getPromise().finally(f1);
-	      }
-	    };
-	
-	    return function(element, options) {
-	      if (options.from) {
-	        element.css(options.from);
-	        options.from = null;
-	      }
-	
-	      var closed, runner = new RAFPromise();
-	      return {
-	        start: run,
-	        end: run
+	function $$AsyncCallbackProvider() {
+	  this.$get = ['$$rAF', '$timeout', function($$rAF, $timeout) {
+	    return $$rAF.supported
+	      ? function(fn) { return $$rAF(fn); }
+	      : function(fn) {
+	        return $timeout(fn, 0, false);
 	      };
-	
-	      function run() {
-	        $$rAF(function() {
-	          close();
-	          if (!closed) {
-	            runner.done();
-	          }
-	          closed = true;
-	        });
-	        return runner;
-	      }
-	
-	      function close() {
-	        if (options.addClass) {
-	          element.addClass(options.addClass);
-	          options.addClass = null;
-	        }
-	        if (options.removeClass) {
-	          element.removeClass(options.removeClass);
-	          options.removeClass = null;
-	        }
-	        if (options.to) {
-	          element.css(options.to);
-	          options.to = null;
-	        }
-	      }
-	    };
 	  }];
-	};
+	}
 	
 	/* global stripHash: true */
 	
@@ -33225,7 +38351,7 @@
 	 *     otherwise the {@link error:$compile:ctreq Missing Required Controller} error is thrown.
 	 *
 	 *     Note that you can also require the directive's own controller - it will be made available like
-	 *     any other controller.
+	 *     like any other controller.
 	 *
 	 *   * `transcludeFn` - A transclude linking function pre-bound to the correct transclusion scope.
 	 *     This is the same as the `$transclude`
@@ -33251,7 +38377,7 @@
 	 *
 	 * ### Transclusion
 	 *
-	 * Transclusion is the process of extracting a collection of DOM elements from one part of the DOM and
+	 * Transclusion is the process of extracting a collection of DOM element from one part of the DOM and
 	 * copying them to another part of the DOM, while maintaining their connection to the original AngularJS
 	 * scope from where they were taken.
 	 *
@@ -34006,7 +39132,7 @@
 	
 	        listeners.push(fn);
 	        $rootScope.$evalAsync(function() {
-	          if (!listeners.$$inter && attrs.hasOwnProperty(key) && !isUndefined(attrs[key])) {
+	          if (!listeners.$$inter && attrs.hasOwnProperty(key)) {
 	            // no one registered attribute interpolation function, so lets call it manually
 	            fn(attrs[key]);
 	          }
@@ -35385,19 +40511,24 @@
 	        lastValue,
 	        parentGet, parentSet, compare;
 	
+	        if (!hasOwnProperty.call(attrs, attrName)) {
+	          // In the case of user defined a binding with the same name as a method in Object.prototype but didn't set
+	          // the corresponding attribute. We need to make sure subsequent code won't access to the prototype function
+	          attrs[attrName] = undefined;
+	        }
+	
 	        switch (mode) {
 	
 	          case '@':
-	            if (!optional && !hasOwnProperty.call(attrs, attrName)) {
-	              destination[scopeName] = attrs[attrName] = void 0;
+	            if (!attrs[attrName] && !optional) {
+	              destination[scopeName] = undefined;
 	            }
+	
 	            attrs.$observe(attrName, function(value) {
-	              if (isString(value)) {
-	                destination[scopeName] = value;
-	              }
+	              destination[scopeName] = value;
 	            });
 	            attrs.$$observers[attrName].$$scope = scope;
-	            if (isString(attrs[attrName])) {
+	            if (attrs[attrName]) {
 	              // If the attribute has been provided then we trigger an interpolation to ensure
 	              // the value is there for use in the link fn
 	              destination[scopeName] = $interpolate(attrs[attrName])(scope);
@@ -35405,13 +40536,11 @@
 	            break;
 	
 	          case '=':
-	            if (!hasOwnProperty.call(attrs, attrName)) {
-	              if (optional) break;
-	              attrs[attrName] = void 0;
+	            if (optional && !attrs[attrName]) {
+	              return;
 	            }
-	            if (optional && !attrs[attrName]) break;
-	
 	            parentGet = $parse(attrs[attrName]);
+	
 	            if (parentGet.literal) {
 	              compare = equals;
 	            } else {
@@ -35450,8 +40579,7 @@
 	            break;
 	
 	          case '&':
-	            // Don't assign Object.prototype method to scope
-	            parentGet = attrs.hasOwnProperty(attrName) ? $parse(attrs[attrName]) : noop;
+	            parentGet = $parse(attrs[attrName]);
 	
 	            // Don't assign noop to destination if expression is not valid
 	            if (parentGet === noop && optional) break;
@@ -35828,29 +40956,6 @@
 	  }];
 	}
 	
-	var $$ForceReflowProvider = function() {
-	  this.$get = ['$document', function($document) {
-	    return function(domNode) {
-	      //the line below will force the browser to perform a repaint so
-	      //that all the animated elements within the animation frame will
-	      //be properly updated and drawn on screen. This is required to
-	      //ensure that the preparation animation is properly flushed so that
-	      //the active state picks up from there. DO NOT REMOVE THIS LINE.
-	      //DO NOT OPTIMIZE THIS LINE. THE MINIFIER WILL REMOVE IT OTHERWISE WHICH
-	      //WILL RESULT IN AN UNPREDICTABLE BUG THAT IS VERY HARD TO TRACK DOWN AND
-	      //WILL TAKE YEARS AWAY FROM YOUR LIFE.
-	      if (domNode) {
-	        if (!domNode.nodeType && domNode instanceof jqLite) {
-	          domNode = domNode[0];
-	        }
-	      } else {
-	        domNode = $document[0].body;
-	      }
-	      return domNode.offsetWidth + 1;
-	    };
-	  }];
-	};
-	
 	var APPLICATION_JSON = 'application/json';
 	var CONTENT_TYPE_APPLICATION_JSON = {'Content-Type': APPLICATION_JSON + ';charset=utf-8'};
 	var JSON_START = /^\[|^\{(?!\{)/;
@@ -35859,12 +40964,6 @@
 	  '{': /}$/
 	};
 	var JSON_PROTECTION_PREFIX = /^\)\]\}',?\n/;
-	var $httpMinErr = minErr('$http');
-	var $httpMinErrLegacyFn = function(method) {
-	  return function() {
-	    throw $httpMinErr('legacy', 'The method `{0}` on the promise returned from `$http` has been disabled.', method);
-	  };
-	};
 	
 	function serializeValue(v) {
 	  if (isObject(v)) {
@@ -35965,8 +41064,8 @@
 	      function serialize(toSerialize, prefix, topLevel) {
 	        if (toSerialize === null || isUndefined(toSerialize)) return;
 	        if (isArray(toSerialize)) {
-	          forEach(toSerialize, function(value, index) {
-	            serialize(value, prefix + '[' + (isObject(value) ? index : '') + ']');
+	          forEach(toSerialize, function(value) {
+	            serialize(value, prefix + '[]');
 	          });
 	        } else if (isObject(toSerialize) && !isDate(toSerialize)) {
 	          forEachSorted(toSerialize, function(value, key) {
@@ -36187,30 +41286,6 @@
 	    return useApplyAsync;
 	  };
 	
-	  var useLegacyPromise = true;
-	  /**
-	   * @ngdoc method
-	   * @name $httpProvider#useLegacyPromiseExtensions
-	   * @description
-	   *
-	   * Configure `$http` service to return promises without the shorthand methods `success` and `error`.
-	   * This should be used to make sure that applications work without these methods.
-	   *
-	   * Defaults to false. If no value is specified, returns the current configured value.
-	   *
-	   * @param {boolean=} value If true, `$http` will return a normal promise without the `success` and `error` methods.
-	   *
-	   * @returns {boolean|Object} If a value is specified, returns the $httpProvider for chaining.
-	   *    otherwise, returns the current configured value.
-	   **/
-	  this.useLegacyPromiseExtensions = function(value) {
-	    if (isDefined(value)) {
-	      useLegacyPromise = !!value;
-	      return this;
-	    }
-	    return useLegacyPromise;
-	  };
-	
 	  /**
 	   * @ngdoc property
 	   * @name $httpProvider#interceptors
@@ -36277,15 +41352,17 @@
 	     *
 	     * ## General usage
 	     * The `$http` service is a function which takes a single argument — a configuration object —
-	     * that is used to generate an HTTP request and returns  a {@link ng.$q promise}.
+	     * that is used to generate an HTTP request and returns  a {@link ng.$q promise}
+	     * with two $http specific methods: `success` and `error`.
 	     *
 	     * ```js
 	     *   // Simple GET request example :
 	     *   $http.get('/someUrl').
-	     *     then(function(response) {
+	     *     success(function(data, status, headers, config) {
 	     *       // this callback will be called asynchronously
 	     *       // when the response is available
-	     *     }, function(response) {
+	     *     }).
+	     *     error(function(data, status, headers, config) {
 	     *       // called asynchronously if an error occurs
 	     *       // or server returns response with an error status.
 	     *     });
@@ -36294,23 +41371,21 @@
 	     * ```js
 	     *   // Simple POST request example (passing data) :
 	     *   $http.post('/someUrl', {msg:'hello word!'}).
-	     *     then(function(response) {
+	     *     success(function(data, status, headers, config) {
 	     *       // this callback will be called asynchronously
 	     *       // when the response is available
-	     *     }, function(response) {
+	     *     }).
+	     *     error(function(data, status, headers, config) {
 	     *       // called asynchronously if an error occurs
 	     *       // or server returns response with an error status.
 	     *     });
 	     * ```
 	     *
-	     * The response object has these properties:
 	     *
-	     *   - **data** – `{string|Object}` – The response body transformed with the transform
-	     *     functions.
-	     *   - **status** – `{number}` – HTTP status code of the response.
-	     *   - **headers** – `{function([headerName])}` – Header getter function.
-	     *   - **config** – `{Object}` – The configuration object that was used to generate the request.
-	     *   - **statusText** – `{string}` – HTTP status text of the response.
+	     * Since the returned value of calling the $http function is a `promise`, you can also use
+	     * the `then` method to register callbacks, and these callbacks will receive a single argument –
+	     * an object representing the response. See the API signature and type info below for more
+	     * details.
 	     *
 	     * A response status code between 200 and 299 is considered a success status and
 	     * will result in the success callback being called. Note that if the response is a redirect,
@@ -36334,8 +41409,8 @@
 	     * request data must be passed in for POST/PUT requests.
 	     *
 	     * ```js
-	     *   $http.get('/someUrl').then(successCallback);
-	     *   $http.post('/someUrl', data).then(successCallback);
+	     *   $http.get('/someUrl').success(successCallback);
+	     *   $http.post('/someUrl', data).success(successCallback);
 	     * ```
 	     *
 	     * Complete list of shortcut methods:
@@ -36348,14 +41423,6 @@
 	     * - {@link ng.$http#jsonp $http.jsonp}
 	     * - {@link ng.$http#patch $http.patch}
 	     *
-	     *
-	     * ## Deprecation Notice
-	     * <div class="alert alert-danger">
-	     *   The `$http` legacy promise methods `success` and `error` have been deprecated.
-	     *   Use the standard `then` method instead.
-	     *   If {@link $httpProvider#useLegacyPromiseExtensions `$httpProvider.useLegacyPromiseExtensions`} is set to
-	     *   `false` then these methods will throw {@link $http:legacy `$http/legacy`} error.
-	     * </div>
 	     *
 	     * ## Setting HTTP Headers
 	     *
@@ -36400,7 +41467,7 @@
 	     *  data: { test: 'test' }
 	     * }
 	     *
-	     * $http(req).then(function(){...}, function(){...});
+	     * $http(req).success(function(){...}).error(function(){...});
 	     * ```
 	     *
 	     * ## Transforming Requests and Responses
@@ -36632,6 +41699,7 @@
 	     * In order to prevent collisions in environments where multiple Angular apps share the
 	     * same domain or subdomain, we recommend that each application uses unique cookie name.
 	     *
+	     *
 	     * @param {object} config Object describing the request to be made and how it should be
 	     *    processed. The object has following properties:
 	     *
@@ -36676,9 +41744,20 @@
 	     *    - **responseType** - `{string}` - see
 	     *      [XMLHttpRequest.responseType](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#xmlhttprequest-responsetype).
 	     *
-	     * @returns {HttpPromise} Returns a {@link ng.$q `Promise}` that will be resolved to a response object
-	     *                        when the request succeeds or fails.
+	     * @returns {HttpPromise} Returns a {@link ng.$q promise} object with the
+	     *   standard `then` method and two http specific methods: `success` and `error`. The `then`
+	     *   method takes two arguments a success and an error callback which will be called with a
+	     *   response object. The `success` and `error` methods take a single argument - a function that
+	     *   will be called when the request succeeds or fails respectively. The arguments passed into
+	     *   these functions are destructured representation of the response object passed into the
+	     *   `then` method. The response object has these properties:
 	     *
+	     *   - **data** – `{string|Object}` – The response body transformed with the transform
+	     *     functions.
+	     *   - **status** – `{number}` – HTTP status code of the response.
+	     *   - **headers** – `{function([headerName])}` – Header getter function.
+	     *   - **config** – `{Object}` – The configuration object that was used to generate the request.
+	     *   - **statusText** – `{string}` – HTTP status text of the response.
 	     *
 	     * @property {Array.<Object>} pendingRequests Array of config objects for currently pending
 	     *   requests. This is primarily meant to be used for debugging purposes.
@@ -36720,12 +41799,13 @@
 	          $scope.response = null;
 	
 	          $http({method: $scope.method, url: $scope.url, cache: $templateCache}).
-	            then(function(response) {
-	              $scope.status = response.status;
-	              $scope.data = response.data;
-	            }, function(response) {
-	              $scope.data = response.data || "Request failed";
-	              $scope.status = response.status;
+	            success(function(data, status) {
+	              $scope.status = status;
+	              $scope.data = data;
+	            }).
+	            error(function(data, status) {
+	              $scope.data = data || "Request failed";
+	              $scope.status = status;
 	          });
 	        };
 	
@@ -36830,28 +41910,23 @@
 	        promise = promise.then(thenFn, rejectFn);
 	      }
 	
-	      if (useLegacyPromise) {
-	        promise.success = function(fn) {
-	          assertArgFn(fn, 'fn');
+	      promise.success = function(fn) {
+	        assertArgFn(fn, 'fn');
 	
-	          promise.then(function(response) {
-	            fn(response.data, response.status, response.headers, config);
-	          });
-	          return promise;
-	        };
+	        promise.then(function(response) {
+	          fn(response.data, response.status, response.headers, config);
+	        });
+	        return promise;
+	      };
 	
-	        promise.error = function(fn) {
-	          assertArgFn(fn, 'fn');
+	      promise.error = function(fn) {
+	        assertArgFn(fn, 'fn');
 	
-	          promise.then(null, function(response) {
-	            fn(response.data, response.status, response.headers, config);
-	          });
-	          return promise;
-	        };
-	      } else {
-	        promise.success = $httpMinErrLegacyFn('success');
-	        promise.error = $httpMinErrLegacyFn('error');
-	      }
+	        promise.then(null, function(response) {
+	          fn(response.data, response.status, response.headers, config);
+	        });
+	        return promise;
+	      };
 	
 	      return promise;
 	
@@ -37230,7 +42305,7 @@
 	      xhr.onload = function requestLoaded() {
 	        var statusText = xhr.statusText || '';
 	
-	        // responseText is the old-school way of retrieving response (supported by IE9)
+	        // responseText is the old-school way of retrieving response (supported by IE8 & 9)
 	        // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
 	        var response = ('response' in xhr) ? xhr.response : xhr.responseText;
 	
@@ -37868,7 +42943,7 @@
 	      * @description
 	      * Cancels a task associated with the `promise`.
 	      *
-	      * @param {Promise=} promise returned by the `$interval` function.
+	      * @param {promise} promise returned by the `$interval` function.
 	      * @returns {boolean} Returns `true` if the task was successfully canceled.
 	      */
 	    interval.cancel = function(promise) {
@@ -37895,6 +42970,75 @@
 	 *
 	 * * `id` – `{string}` – locale id formatted as `languageId-countryId` (e.g. `en-us`)
 	 */
+	function $LocaleProvider() {
+	  this.$get = function() {
+	    return {
+	      id: 'en-us',
+	
+	      NUMBER_FORMATS: {
+	        DECIMAL_SEP: '.',
+	        GROUP_SEP: ',',
+	        PATTERNS: [
+	          { // Decimal Pattern
+	            minInt: 1,
+	            minFrac: 0,
+	            maxFrac: 3,
+	            posPre: '',
+	            posSuf: '',
+	            negPre: '-',
+	            negSuf: '',
+	            gSize: 3,
+	            lgSize: 3
+	          },{ //Currency Pattern
+	            minInt: 1,
+	            minFrac: 2,
+	            maxFrac: 2,
+	            posPre: '\u00A4',
+	            posSuf: '',
+	            negPre: '(\u00A4',
+	            negSuf: ')',
+	            gSize: 3,
+	            lgSize: 3
+	          }
+	        ],
+	        CURRENCY_SYM: '$'
+	      },
+	
+	      DATETIME_FORMATS: {
+	        MONTH:
+	            'January,February,March,April,May,June,July,August,September,October,November,December'
+	            .split(','),
+	        SHORTMONTH:  'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(','),
+	        DAY: 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday'.split(','),
+	        SHORTDAY: 'Sun,Mon,Tue,Wed,Thu,Fri,Sat'.split(','),
+	        AMPMS: ['AM','PM'],
+	        medium: 'MMM d, y h:mm:ss a',
+	        'short': 'M/d/yy h:mm a',
+	        fullDate: 'EEEE, MMMM d, y',
+	        longDate: 'MMMM d, y',
+	        mediumDate: 'MMM d, y',
+	        shortDate: 'M/d/yy',
+	        mediumTime: 'h:mm:ss a',
+	        shortTime: 'h:mm a',
+	        ERANAMES: [
+	          "Before Christ",
+	          "Anno Domini"
+	        ],
+	        ERAS: [
+	          "BC",
+	          "AD"
+	        ]
+	      },
+	
+	      pluralCat: function(num) {
+	        if (num === 1) {
+	          return 'one';
+	        }
+	        return 'other';
+	      }
+	    };
+	  };
+	}
 	
 	var PATH_MATCH = /^([^\?#]*)(\?([^#]*))?(#(.*))?$/,
 	    DEFAULT_PORTS = {'http': 80, 'https': 443, 'ftp': 21};
@@ -37985,12 +43129,12 @@
 	 *
 	 * @constructor
 	 * @param {string} appBase application base URL
-	 * @param {string} appBaseNoFile application base URL stripped of any filename
 	 * @param {string} basePrefix url path prefix
 	 */
-	function LocationHtml5Url(appBase, appBaseNoFile, basePrefix) {
+	function LocationHtml5Url(appBase, basePrefix) {
 	  this.$$html5 = true;
 	  basePrefix = basePrefix || '';
+	  var appBaseNoFile = stripFile(appBase);
 	  parseAbsoluteUrl(appBase, this);
 	
 	
@@ -38064,10 +43208,10 @@
 	 *
 	 * @constructor
 	 * @param {string} appBase application base URL
-	 * @param {string} appBaseNoFile application base URL stripped of any filename
 	 * @param {string} hashPrefix hashbang prefix
 	 */
-	function LocationHashbangUrl(appBase, appBaseNoFile, hashPrefix) {
+	function LocationHashbangUrl(appBase, hashPrefix) {
+	  var appBaseNoFile = stripFile(appBase);
 	
 	  parseAbsoluteUrl(appBase, this);
 	
@@ -38176,12 +43320,13 @@
 	 *
 	 * @constructor
 	 * @param {string} appBase application base URL
-	 * @param {string} appBaseNoFile application base URL stripped of any filename
 	 * @param {string} hashPrefix hashbang prefix
 	 */
-	function LocationHashbangInHtml5Url(appBase, appBaseNoFile, hashPrefix) {
+	function LocationHashbangInHtml5Url(appBase, hashPrefix) {
 	  this.$$html5 = true;
 	  LocationHashbangUrl.apply(this, arguments);
+	
+	  var appBaseNoFile = stripFile(appBase);
 	
 	  this.$$parseLinkUrl = function(url, relHref) {
 	    if (relHref && relHref[0] === '#') {
@@ -38212,7 +43357,7 @@
 	        hash = this.$$hash ? '#' + encodeUriSegment(this.$$hash) : '';
 	
 	    this.$$url = encodePath(this.$$path) + (search ? '?' + search : '') + hash;
-	    // include hashPrefix in $$absUrl when $$url is empty so IE9 does not reload page because of removal of '#'
+	    // include hashPrefix in $$absUrl when $$url is empty so IE8 & 9 do not reload page because of removal of '#'
 	    this.$$absUrl = appBase + hashPrefix + this.$$url;
 	  };
 	
@@ -38721,9 +43866,7 @@
 	      appBase = stripHash(initialUrl);
 	      LocationMode = LocationHashbangUrl;
 	    }
-	    var appBaseNoFile = stripFile(appBase);
-	
-	    $location = new LocationMode(appBase, appBaseNoFile, '#' + hashPrefix);
+	    $location = new LocationMode(appBase, '#' + hashPrefix);
 	    $location.$$parseLinkUrl(initialUrl, initialUrl);
 	
 	    $location.$$state = $browser.state();
@@ -38803,13 +43946,6 @@
 	
 	    // update $location when $browser url changes
 	    $browser.onUrlChange(function(newUrl, newState) {
-	
-	      if (isUndefined(beginsWith(appBaseNoFile, newUrl))) {
-	        // If we are navigating outside of the app then force a reload
-	        $window.location.href = newUrl;
-	        return;
-	      }
-	
 	      $rootScope.$evalAsync(function() {
 	        var oldUrl = $location.absUrl();
 	        var oldState = $location.$$state;
@@ -40659,6 +45795,29 @@
 	  }
 	};
 	
+	//////////////////////////////////////////////////
+	// Parser helper functions
+	//////////////////////////////////////////////////
+	
+	function setter(obj, path, setValue, fullExp) {
+	  ensureSafeObject(obj, fullExp);
+	
+	  var element = path.split('.'), key;
+	  for (var i = 0; element.length > 1; i++) {
+	    key = ensureSafeMemberName(element.shift(), fullExp);
+	    var propertyObj = ensureSafeObject(obj[key], fullExp);
+	    if (!propertyObj) {
+	      propertyObj = {};
+	      obj[key] = propertyObj;
+	    }
+	    obj = propertyObj;
+	  }
+	  key = ensureSafeMemberName(element.shift(), fullExp);
+	  ensureSafeObject(obj[key], fullExp);
+	  obj[key] = setValue;
+	  return setValue;
+	}
+	
 	var getterFnCacheDefault = createMap();
 	var getterFnCacheExpensive = createMap();
 	
@@ -40727,14 +45886,13 @@
 	  var cacheDefault = createMap();
 	  var cacheExpensive = createMap();
 	
-	  this.$get = ['$filter', function($filter) {
-	    var noUnsafeEval = csp().noUnsafeEval;
+	  this.$get = ['$filter', '$sniffer', function($filter, $sniffer) {
 	    var $parseOptions = {
-	          csp: noUnsafeEval,
+	          csp: $sniffer.csp,
 	          expensiveChecks: false
 	        },
 	        $parseOptionsExpensive = {
-	          csp: noUnsafeEval,
+	          csp: $sniffer.csp,
 	          expensiveChecks: true
 	        };
 	
@@ -41209,11 +46367,8 @@
 	    this.$$state = { status: 0 };
 	  }
 	
-	  extend(Promise.prototype, {
+	  Promise.prototype = {
 	    then: function(onFulfilled, onRejected, progressBack) {
-	      if (isUndefined(onFulfilled) && isUndefined(onRejected) && isUndefined(progressBack)) {
-	        return this;
-	      }
 	      var result = new Deferred();
 	
 	      this.$$state.pending = this.$$state.pending || [];
@@ -41234,7 +46389,7 @@
 	        return handleCallback(error, false, callback);
 	      }, progressBack);
 	    }
-	  });
+	  };
 	
 	  //Faster, more basic than angular.bind http://jsperf.com/angular-bind-vs-custom-vs-native
 	  function simpleBind(context, fn) {
@@ -41281,7 +46436,7 @@
 	    this.notify = simpleBind(this, this.notify);
 	  }
 	
-	  extend(Deferred.prototype, {
+	  Deferred.prototype = {
 	    resolve: function(val) {
 	      if (this.promise.$$state.status) return;
 	      if (val === this.promise) {
@@ -41344,7 +46499,7 @@
 	        });
 	      }
 	    }
-	  });
+	  };
 	
 	  /**
 	   * @ngdoc method
@@ -41427,9 +46582,6 @@
 	   * the promise comes from a source that can't be trusted.
 	   *
 	   * @param {*} value Value or a promise
-	   * @param {Function=} successCallback
-	   * @param {Function=} errorCallback
-	   * @param {Function=} progressCallback
 	   * @returns {Promise} Returns a promise of the passed value or promise
 	   */
 	
@@ -41449,9 +46601,6 @@
 	   * Alias of {@link ng.$q#when when} to maintain naming consistency with ES6.
 	   *
 	   * @param {*} value Value or a promise
-	   * @param {Function=} successCallback
-	   * @param {Function=} errorCallback
-	   * @param {Function=} progressCallback
 	   * @returns {Promise} Returns a promise of the passed value or promise
 	   */
 	  var resolve = when;
@@ -41707,9 +46856,12 @@
 	     * A root scope can be retrieved using the {@link ng.$rootScope $rootScope} key from the
 	     * {@link auto.$injector $injector}. Child scopes are created using the
 	     * {@link ng.$rootScope.Scope#$new $new()} method. (Most scopes are created automatically when
-	     * compiled HTML template is executed.) See also the {@link guide/scope Scopes guide} for
-	     * an in-depth introduction and usage examples.
+	     * compiled HTML template is executed.)
 	     *
+	     * Here is a simple scope snippet to show how you can interact with the scope.
+	     * ```html
+	     * <file src="./test/ng/rootScopeSpec.js" tag="docs1" />
+	     * ```
 	     *
 	     * # Inheritance
 	     * A scope can inherit from a parent scope, as in this example:
@@ -41871,9 +47023,9 @@
 	       *
 	       *
 	       * If you want to be notified whenever {@link ng.$rootScope.Scope#$digest $digest} is called,
-	       * you can register a `watchExpression` function with no `listener`. (Be prepared for
-	       * multiple calls to your `watchExpression` because it will execute multiple times in a
-	       * single {@link ng.$rootScope.Scope#$digest $digest} cycle if a change is detected.)
+	       * you can register a `watchExpression` function with no `listener`. (Since `watchExpression`
+	       * can execute multiple times per {@link ng.$rootScope.Scope#$digest $digest} cycle when a
+	       * change is detected, be prepared for multiple calls to your listener.)
 	       *
 	       * After a watcher is registered with the scope, the `listener` fn is called asynchronously
 	       * (via {@link ng.$rootScope.Scope#$evalAsync $evalAsync}) to initialize the
@@ -42635,14 +47787,11 @@
 	      $apply: function(expr) {
 	        try {
 	          beginPhase('$apply');
-	          try {
-	            return this.$eval(expr);
-	          } finally {
-	            clearPhase();
-	          }
+	          return this.$eval(expr);
 	        } catch (e) {
 	          $exceptionHandler(e);
 	        } finally {
+	          clearPhase();
 	          try {
 	            $rootScope.$digest();
 	          } catch (e) {
@@ -43558,10 +48707,10 @@
 	 *    - There are exactly **two wildcard sequences** - `*` and `**`.  All other characters
 	 *      match themselves.
 	 *    - `*`: matches zero or more occurrences of any character other than one of the following 6
-	 *      characters: '`:`', '`/`', '`.`', '`?`', '`&`' and '`;`'.  It's a useful wildcard for use
+	 *      characters: '`:`', '`/`', '`.`', '`?`', '`&`' and ';'.  It's a useful wildcard for use
 	 *      in a whitelist.
 	 *    - `**`: matches zero or more occurrences of *any* character.  As such, it's not
-	 *      appropriate for use in a scheme, domain, etc. as it would match too much.  (e.g.
+	 *      not appropriate to use in for a scheme, domain, etc. as it would match too much.  (e.g.
 	 *      http://**.example.com/ would match http://evil.com/?ignore=.example.com/ and that might
 	 *      not have been the intention.)  Its usage at the very end of the path is ok.  (e.g.
 	 *      http://foo.example.com/templates/**).
@@ -43569,11 +48718,11 @@
 	 *    - *Caveat*:  While regular expressions are powerful and offer great flexibility,  their syntax
 	 *      (and all the inevitable escaping) makes them *harder to maintain*.  It's easy to
 	 *      accidentally introduce a bug when one updates a complex expression (imho, all regexes should
-	 *      have good test coverage).  For instance, the use of `.` in the regex is correct only in a
+	 *      have good test coverage.).  For instance, the use of `.` in the regex is correct only in a
 	 *      small number of cases.  A `.` character in the regex used when matching the scheme or a
 	 *      subdomain could be matched against a `:` or literal `.` that was likely not intended.   It
 	 *      is highly recommended to use the string patterns and only fall back to regular expressions
-	 *      as a last resort.
+	 *      if they as a last resort.
 	 *    - The regular expression must be an instance of RegExp (i.e. not a string.)  It is
 	 *      matched against the **entire** *normalized / absolute URL* of the resource being tested
 	 *      (even when the RegExp did not have the `^` and `$` codes.)  In addition, any flags
@@ -43583,7 +48732,7 @@
 	 *      remember to escape your regular expression (and be aware that you might need more than
 	 *      one level of escaping depending on your templating engine and the way you interpolated
 	 *      the value.)  Do make use of your platform's escaping mechanism as it might be good
-	 *      enough before coding your own.  E.g. Ruby has
+	 *      enough before coding your own.  e.g. Ruby has
 	 *      [Regexp.escape(str)](http://www.ruby-doc.org/core-2.0.0/Regexp.html#method-c-escape)
 	 *      and Python has [re.escape](http://docs.python.org/library/re.html#re.escape).
 	 *      Javascript lacks a similar built in function for escaping.  Take a look at Google
@@ -44471,12 +49620,19 @@
 	 *
 	 * Implementation Notes for IE
 	 * ---------------------------
-	 * IE <= 10 normalizes the URL when assigned to the anchor node similar to the other
+	 * IE >= 8 and <= 10 normalizes the URL when assigned to the anchor node similar to the other
 	 * browsers.  However, the parsed components will not be set if the URL assigned did not specify
 	 * them.  (e.g. if you assign a.href = "foo", then a.protocol, a.host, etc. will be empty.)  We
 	 * work around that by performing the parsing in a 2nd step by taking a previously normalized
 	 * URL (e.g. by assigning to a.href) and assigning it a.href again.  This correctly populates the
 	 * properties such as protocol, hostname, port, etc.
+	 *
+	 * IE7 does not normalize the URL when assigned to an anchor node.  (Apparently, it does, if one
+	 * uses the inner HTML approach to assign the URL as part of an HTML snippet -
+	 * http://stackoverflow.com/a/472729)  However, setting img[src] does normalize the URL.
+	 * Unfortunately, setting img[src] to something like "javascript:foo" on IE throws an exception.
+	 * Since the primary usage for normalizing URLs is to sanitize such URLs, we can't use that
+	 * method and IE < 8 is unsupported.
 	 *
 	 * References:
 	 *   http://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement
@@ -44757,7 +49913,6 @@
 	   *    your filters, then you can use capitalization (`myappSubsectionFilterx`) or underscores
 	   *    (`myapp_subsection_filterx`).
 	   *    </div>
-	    * @param {Function} factory If the first argument was a string, a factory function for the filter to be registered.
 	   * @returns {Object} Registered filter instance, or if a map of filters was provided then a map
 	   *    of the registered filter instances.
 	   */
@@ -45105,9 +50260,9 @@
 	         }
 	         element(by.model('amount')).clear();
 	         element(by.model('amount')).sendKeys('-1234');
-	         expect(element(by.id('currency-default')).getText()).toBe('-$1,234.00');
-	         expect(element(by.id('currency-custom')).getText()).toBe('-USD$1,234.00');
-	         expect(element(by.id('currency-no-fractions')).getText()).toBe('-USD$1,234');
+	         expect(element(by.id('currency-default')).getText()).toBe('($1,234.00)');
+	         expect(element(by.id('currency-custom')).getText()).toBe('(USD$1,234.00)');
+	         expect(element(by.id('currency-no-fractions')).getText()).toBe('(USD$1,234)');
 	       });
 	     </file>
 	   </example>
@@ -45947,10 +51102,6 @@
 	    if (sortPredicate.length === 0) { sortPredicate = ['+']; }
 	
 	    var predicates = processPredicates(sortPredicate, reverseOrder);
-	    // Add a predicate at the end that evaluates to the element index. This makes the
-	    // sort stable as it works as a tie-breaker when all the input predicates cannot
-	    // distinguish between two elements.
-	    predicates.push({ get: function() { return {}; }, descending: reverseOrder ? -1 : 1});
 	
 	    // The next three lines are a version of a Swartzian Transform idiom from Perl
 	    // (sometimes called the Decorate-Sort-Undecorate idiom)
@@ -46996,7 +52147,7 @@
 	 *                       related scope, under this name.
 	 */
 	var formDirectiveFactory = function(isNgForm) {
-	  return ['$timeout', '$parse', function($timeout, $parse) {
+	  return ['$timeout', function($timeout) {
 	    var formDirective = {
 	      name: 'form',
 	      restrict: isNgForm ? 'EAC' : 'E',
@@ -47038,21 +52189,21 @@
 	            }
 	
 	            var parentFormCtrl = controller.$$parentForm;
-	            var setter = nameAttr ? getSetter(controller.$name) : noop;
 	
 	            if (nameAttr) {
-	              setter(scope, controller);
+	              setter(scope, controller.$name, controller, controller.$name);
 	              attr.$observe(nameAttr, function(newValue) {
 	                if (controller.$name === newValue) return;
-	                setter(scope, undefined);
+	                setter(scope, controller.$name, undefined, controller.$name);
 	                parentFormCtrl.$$renameControl(controller, newValue);
-	                setter = getSetter(controller.$name);
-	                setter(scope, controller);
+	                setter(scope, controller.$name, controller, controller.$name);
 	              });
 	            }
 	            formElement.on('$destroy', function() {
 	              parentFormCtrl.$removeControl(controller);
-	              setter(scope, undefined);
+	              if (nameAttr) {
+	                setter(scope, attr[nameAttr], undefined, controller.$name);
+	              }
 	              extend(controller, nullFormCtrl); //stop propagating child destruction handlers upwards
 	            });
 	          }
@@ -47061,14 +52212,6 @@
 	    };
 	
 	    return formDirective;
-	
-	    function getSetter(expression) {
-	      if (expression === '') {
-	        //create an assignable expression, so forms with an empty name can be renamed later
-	        return $parse('this[""]').assign;
-	      }
-	      return $parse(expression).assign || noop;
-	    }
 	  }];
 	};
 	
@@ -47081,7 +52224,7 @@
 	  DIRTY_CLASS: false,
 	  UNTOUCHED_CLASS: false,
 	  TOUCHED_CLASS: false,
-	  ngModelMinErr: false,
+	  $ngModelMinErr: false,
 	*/
 	
 	// Regex code is obtained from SO: https://stackoverflow.com/questions/3143070/javascript-regex-iso-datetime#answer-3143231
@@ -48203,11 +53346,7 @@
 	  element.on('change', listener);
 	
 	  ctrl.$render = function() {
-	    // Workaround for Firefox validation #12102.
-	    var value = ctrl.$isEmpty(ctrl.$viewValue) ? '' : ctrl.$viewValue;
-	    if (element.val() !== value) {
-	      element.val(value);
-	    }
+	    element.val(ctrl.$isEmpty(ctrl.$viewValue) ? '' : ctrl.$viewValue);
 	  };
 	}
 	
@@ -48318,7 +53457,7 @@
 	
 	    ctrl.$formatters.push(function(value) {
 	      if (value && !isDate(value)) {
-	        throw ngModelMinErr('datefmt', 'Expected `{0}` to be a date', value);
+	        throw $ngModelMinErr('datefmt', 'Expected `{0}` to be a date', value);
 	      }
 	      if (isValidDate(value)) {
 	        previousDate = value;
@@ -48394,7 +53533,7 @@
 	  ctrl.$formatters.push(function(value) {
 	    if (!ctrl.$isEmpty(value)) {
 	      if (!isNumber(value)) {
-	        throw ngModelMinErr('numfmt', 'Expected `{0}` to be a number', value);
+	        throw $ngModelMinErr('numfmt', 'Expected `{0}` to be a number', value);
 	      }
 	      value = value.toString();
 	    }
@@ -48487,7 +53626,7 @@
 	  if (isDefined(expression)) {
 	    parseFn = $parse(expression);
 	    if (!parseFn.constant) {
-	      throw ngModelMinErr('constexpr', 'Expected constant expression for `{0}`, but saw ' +
+	      throw minErr('ngModel')('constexpr', 'Expected constant expression for `{0}`, but saw ' +
 	                                   '`{1}`.', name, expression);
 	    }
 	    return parseFn(context);
@@ -49773,29 +54912,27 @@
 	 *
 	 * @element html
 	 * @description
-	 *
-	 * Angular has some features that can break certain
-	 * [CSP (Content Security Policy)](https://developer.mozilla.org/en/Security/CSP) rules.
-	 *
-	 * If you intend to implement these rules then you must tell Angular not to use these features.
+	 * Enables [CSP (Content Security Policy)](https://developer.mozilla.org/en/Security/CSP) support.
 	 *
 	 * This is necessary when developing things like Google Chrome Extensions or Universal Windows Apps.
 	 *
+	 * CSP forbids apps to use `eval` or `Function(string)` generated functions (among other things).
+	 * For Angular to be CSP compatible there are only two things that we need to do differently:
 	 *
-	 * The following rules affect Angular:
+	 * - don't use `Function` constructor to generate optimized value getters
+	 * - don't inject custom stylesheet into the document
 	 *
-	 * * `unsafe-eval`: this rule forbids apps to use `eval` or `Function(string)` generated functions
-	 * (among other things). Angular makes use of this in the {@link $parse} service to provide a 30%
-	 * increase in the speed of evaluating Angular expressions.
+	 * AngularJS uses `Function(string)` generated functions as a speed optimization. Applying the `ngCsp`
+	 * directive will cause Angular to use CSP compatibility mode. When this mode is on AngularJS will
+	 * evaluate all expressions up to 30% slower than in non-CSP mode, but no security violations will
+	 * be raised.
 	 *
-	 * * `unsafe-inline`: this rule forbids apps from inject custom styles into the document. Angular
-	 * makes use of this to include some CSS rules (e.g. {@link ngCloak} and {@link ngHide}).
-	 * To make these directives work when a CSP rule is blocking inline styles, you must link to the
-	 * `angular-csp.css` in your HTML manually.
+	 * CSP forbids JavaScript to inline stylesheet rules. In non CSP mode Angular automatically
+	 * includes some CSS rules (e.g. {@link ng.directive:ngCloak ngCloak}).
+	 * To make those directives work in CSP mode, include the `angular-csp.css` manually.
 	 *
-	 * If you do not provide `ngCsp` then Angular tries to autodetect if CSP is blocking unsafe-eval
-	 * and automatically deactivates this feature in the {@link $parse} service. This autodetection,
-	 * however, triggers a CSP error to be logged in the console:
+	 * Angular tries to autodetect if CSP is active and automatically turn on the CSP-safe mode. This
+	 * autodetection however triggers a CSP error to be logged in the console:
 	 *
 	 * ```
 	 * Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of
@@ -49804,38 +54941,10 @@
 	 * ```
 	 *
 	 * This error is harmless but annoying. To prevent the error from showing up, put the `ngCsp`
-	 * directive on an element of the HTML document that appears before the `<script>` tag that loads
-	 * the `angular.js` file.
+	 * directive on the root element of the application or on the `angular.js` script tag, whichever
+	 * appears first in the html document.
 	 *
 	 * *Note: This directive is only available in the `ng-csp` and `data-ng-csp` attribute form.*
-	 *
-	 * You can specify which of the CSP related Angular features should be deactivated by providing
-	 * a value for the `ng-csp` attribute. The options are as follows:
-	 *
-	 * * no-inline-style: this stops Angular from injecting CSS styles into the DOM
-	 *
-	 * * no-unsafe-eval: this stops Angular from optimising $parse with unsafe eval of strings
-	 *
-	 * You can use these values in the following combinations:
-	 *
-	 *
-	 * * No declaration means that Angular will assume that you can do inline styles, but it will do
-	 * a runtime check for unsafe-eval. E.g. `<body>`. This is backwardly compatible with previous versions
-	 * of Angular.
-	 *
-	 * * A simple `ng-csp` (or `data-ng-csp`) attribute will tell Angular to deactivate both inline
-	 * styles and unsafe eval. E.g. `<body ng-csp>`. This is backwardly compatible with previous versions
-	 * of Angular.
-	 *
-	 * * Specifying only `no-unsafe-eval` tells Angular that we must not use eval, but that we can inject
-	 * inline styles. E.g. `<body ng-csp="no-unsafe-eval">`.
-	 *
-	 * * Specifying only `no-inline-style` tells Angular that we must not inject styles, but that we can
-	 * run eval - no automcatic check for unsafe eval will occur. E.g. `<body ng-csp="no-inline-style">`
-	 *
-	 * * Specifying both `no-unsafe-eval` and `no-inline-style` tells Angular that we must not inject
-	 * styles nor use eval, which is the same as an empty: ng-csp.
-	 * E.g.`<body ng-csp="no-inline-style;no-unsafe-eval">`
 	 *
 	 * @example
 	 * This example shows how to apply the `ngCsp` directive to the `html` tag.
@@ -49968,7 +55077,7 @@
 	
 	// ngCsp is not implemented as a proper directive any more, because we need it be processed while we
 	// bootstrap the system (before $parse is instantiated), for this reason we just have
-	// the csp() fn that looks for the `ng-csp` attribute anywhere in the current doc
+	// the csp.isActive() fn that looks for ng-csp attribute anywhere in the current doc
 	
 	/**
 	 * @ngdoc directive
@@ -51084,7 +56193,8 @@
 	    TOUCHED_CLASS = 'ng-touched',
 	    PENDING_CLASS = 'ng-pending';
 	
-	var ngModelMinErr = minErr('ngModel');
+	
+	var $ngModelMinErr = new minErr('ngModel');
 	
 	/**
 	 * @ngdoc type
@@ -51335,7 +56445,7 @@
 	        }
 	      };
 	    } else if (!parsedNgModel.assign) {
-	      throw ngModelMinErr('nonassign', "Expression '{0}' is non-assignable. Element: {1}",
+	      throw $ngModelMinErr('nonassign', "Expression '{0}' is non-assignable. Element: {1}",
 	          $attr.ngModel, startingTag($element));
 	    }
 	  };
@@ -51666,7 +56776,7 @@
 	      forEach(ctrl.$asyncValidators, function(validator, name) {
 	        var promise = validator(modelValue, viewValue);
 	        if (!isPromiseLike(promise)) {
-	          throw ngModelMinErr("$asyncValidators",
+	          throw $ngModelMinErr("$asyncValidators",
 	            "Expected asynchronous validator to return a promise but got '{0}' instead.", promise);
 	        }
 	        setValidity(name, undefined);
@@ -52520,7 +57630,7 @@
 	 * Consider the following example:
 	 *
 	 * ```html
-	 * <select ng-options="item.subItem as item.label for item in values track by item.id" ng-model="selected"></select>
+	 * <select ng-options="item.subItem as item.label for item in values track by item.id" ng-model="selected">
 	 * ```
 	 *
 	 * ```js
@@ -52982,7 +58092,7 @@
 	
 	          forEach(selectedValues, function(value) {
 	            var option = options.selectValueMap[value];
-	            if (option && !option.disabled) selections.push(options.getViewValueFromOption(option));
+	            if (!option.disabled) selections.push(options.getViewValueFromOption(option));
 	          });
 	
 	          return selections;
@@ -55078,145 +60188,17 @@
 	  };
 	};
 	
-	if (window.angular.bootstrap) {
-	  //AngularJS is already loaded, so we can return here...
-	  console.log('WARNING: Tried to load angular more than once.');
-	  return;
-	}
-	
-	//try to bind to jquery now so that one can write jqLite(document).ready()
-	//but we will rebind on bootstrap again.
-	bindJQuery();
-	
-	publishExternalAPI(angular);
-	
-	angular.module("ngLocale", [], ["$provide", function($provide) {
-	var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
-	function getDecimals(n) {
-	  n = n + '';
-	  var i = n.indexOf('.');
-	  return (i == -1) ? 0 : n.length - i - 1;
-	}
-	
-	function getVF(n, opt_precision) {
-	  var v = opt_precision;
-	
-	  if (undefined === v) {
-	    v = Math.min(getDecimals(n), 3);
+	  if (window.angular.bootstrap) {
+	    //AngularJS is already loaded, so we can return here...
+	    console.log('WARNING: Tried to load angular more than once.');
+	    return;
 	  }
 	
-	  var base = Math.pow(10, v);
-	  var f = ((n * base) | 0) % base;
-	  return {v: v, f: f};
-	}
+	  //try to bind to jquery now so that one can write jqLite(document).ready()
+	  //but we will rebind on bootstrap again.
+	  bindJQuery();
 	
-	$provide.value("$locale", {
-	  "DATETIME_FORMATS": {
-	    "AMPMS": [
-	      "AM",
-	      "PM"
-	    ],
-	    "DAY": [
-	      "Sunday",
-	      "Monday",
-	      "Tuesday",
-	      "Wednesday",
-	      "Thursday",
-	      "Friday",
-	      "Saturday"
-	    ],
-	    "ERANAMES": [
-	      "Before Christ",
-	      "Anno Domini"
-	    ],
-	    "ERAS": [
-	      "BC",
-	      "AD"
-	    ],
-	    "FIRSTDAYOFWEEK": 6,
-	    "MONTH": [
-	      "January",
-	      "February",
-	      "March",
-	      "April",
-	      "May",
-	      "June",
-	      "July",
-	      "August",
-	      "September",
-	      "October",
-	      "November",
-	      "December"
-	    ],
-	    "SHORTDAY": [
-	      "Sun",
-	      "Mon",
-	      "Tue",
-	      "Wed",
-	      "Thu",
-	      "Fri",
-	      "Sat"
-	    ],
-	    "SHORTMONTH": [
-	      "Jan",
-	      "Feb",
-	      "Mar",
-	      "Apr",
-	      "May",
-	      "Jun",
-	      "Jul",
-	      "Aug",
-	      "Sep",
-	      "Oct",
-	      "Nov",
-	      "Dec"
-	    ],
-	    "WEEKENDRANGE": [
-	      5,
-	      6
-	    ],
-	    "fullDate": "EEEE, MMMM d, y",
-	    "longDate": "MMMM d, y",
-	    "medium": "MMM d, y h:mm:ss a",
-	    "mediumDate": "MMM d, y",
-	    "mediumTime": "h:mm:ss a",
-	    "short": "M/d/yy h:mm a",
-	    "shortDate": "M/d/yy",
-	    "shortTime": "h:mm a"
-	  },
-	  "NUMBER_FORMATS": {
-	    "CURRENCY_SYM": "$",
-	    "DECIMAL_SEP": ".",
-	    "GROUP_SEP": ",",
-	    "PATTERNS": [
-	      {
-	        "gSize": 3,
-	        "lgSize": 3,
-	        "maxFrac": 3,
-	        "minFrac": 0,
-	        "minInt": 1,
-	        "negPre": "-",
-	        "negSuf": "",
-	        "posPre": "",
-	        "posSuf": ""
-	      },
-	      {
-	        "gSize": 3,
-	        "lgSize": 3,
-	        "maxFrac": 2,
-	        "minFrac": 2,
-	        "minInt": 1,
-	        "negPre": "-\u00a4",
-	        "negSuf": "",
-	        "posPre": "\u00a4",
-	        "posSuf": ""
-	      }
-	    ]
-	  },
-	  "id": "en-us",
-	  "pluralCat": function(n, opt_precision) {  var i = n | 0;  var vf = getVF(n, opt_precision);  if (i == 1 && vf.v == 0) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
-	});
-	}]);
+	  publishExternalAPI(angular);
 	
 	  jqLite(document).ready(function() {
 	    angularInit(document, bootstrap);
@@ -55224,18 +60206,18 @@
 	
 	})(window, document);
 	
-	!window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(185)))
+	!window.angular.$$csp() && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(171)))
 
 /***/ },
-/* 190 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(191);
+	module.exports = __webpack_require__(177);
 
 
 /***/ },
-/* 191 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -55258,18 +60240,18 @@
 	
 	'use strict';
 	
-	var LinkedStateMixin = __webpack_require__(192);
-	var React = __webpack_require__(194);
+	var LinkedStateMixin = __webpack_require__(201);
+	var React = __webpack_require__(203);
 	var ReactComponentWithPureRenderMixin =
-	  __webpack_require__(349);
-	var ReactCSSTransitionGroup = __webpack_require__(350);
-	var ReactFragment = __webpack_require__(201);
-	var ReactTransitionGroup = __webpack_require__(351);
-	var ReactUpdates = __webpack_require__(217);
+	  __webpack_require__(335);
+	var ReactCSSTransitionGroup = __webpack_require__(336);
+	var ReactFragment = __webpack_require__(194);
+	var ReactTransitionGroup = __webpack_require__(337);
+	var ReactUpdates = __webpack_require__(178);
 	
-	var cx = __webpack_require__(359);
-	var cloneWithProps = __webpack_require__(353);
-	var update = __webpack_require__(360);
+	var cx = __webpack_require__(345);
+	var cloneWithProps = __webpack_require__(339);
+	var update = __webpack_require__(346);
 	
 	React.addons = {
 	  CSSTransitionGroup: ReactCSSTransitionGroup,
@@ -55285,3019 +60267,16 @@
 	};
 	
 	if ("production" !== process.env.NODE_ENV) {
-	  React.addons.Perf = __webpack_require__(341);
-	  React.addons.TestUtils = __webpack_require__(361);
+	  React.addons.Perf = __webpack_require__(327);
+	  React.addons.TestUtils = __webpack_require__(347);
 	}
 	
 	module.exports = React;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule LinkedStateMixin
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	var ReactLink = __webpack_require__(193);
-	var ReactStateSetters = __webpack_require__(348);
-	
-	/**
-	 * A simple mixin around ReactLink.forState().
-	 */
-	var LinkedStateMixin = {
-	  /**
-	   * Create a ReactLink that's linked to part of this component's state. The
-	   * ReactLink will have the current value of this.state[key] and will call
-	   * setState() when a change is requested.
-	   *
-	   * @param {string} key state key to update. Note: you may want to use keyOf()
-	   * if you're using Google Closure Compiler advanced mode.
-	   * @return {ReactLink} ReactLink instance linking to the state.
-	   */
-	  linkState: function(key) {
-	    return new ReactLink(
-	      this.state[key],
-	      ReactStateSetters.createStateKeySetter(this, key)
-	    );
-	  }
-	};
-	
-	module.exports = LinkedStateMixin;
-
-
-/***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactLink
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	/**
-	 * ReactLink encapsulates a common pattern in which a component wants to modify
-	 * a prop received from its parent. ReactLink allows the parent to pass down a
-	 * value coupled with a callback that, when invoked, expresses an intent to
-	 * modify that value. For example:
-	 *
-	 * React.createClass({
-	 *   getInitialState: function() {
-	 *     return {value: ''};
-	 *   },
-	 *   render: function() {
-	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
-	 *     return <input valueLink={valueLink} />;
-	 *   },
-	 *   this._handleValueChange: function(newValue) {
-	 *     this.setState({value: newValue});
-	 *   }
-	 * });
-	 *
-	 * We have provided some sugary mixins to make the creation and
-	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
-	 */
-	
-	var React = __webpack_require__(194);
-	
-	/**
-	 * @param {*} value current value of the link
-	 * @param {function} requestChange callback to request a change
-	 */
-	function ReactLink(value, requestChange) {
-	  this.value = value;
-	  this.requestChange = requestChange;
-	}
-	
-	/**
-	 * Creates a PropType that enforces the ReactLink API and optionally checks the
-	 * type of the value being passed inside the link. Example:
-	 *
-	 * MyComponent.propTypes = {
-	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
-	 * }
-	 */
-	function createLinkTypeChecker(linkType) {
-	  var shapes = {
-	    value: typeof linkType === 'undefined' ?
-	      React.PropTypes.any.isRequired :
-	      linkType.isRequired,
-	    requestChange: React.PropTypes.func.isRequired
-	  };
-	  return React.PropTypes.shape(shapes);
-	}
-	
-	ReactLink.PropTypes = {
-	  link: createLinkTypeChecker
-	};
-	
-	module.exports = ReactLink;
-
-
-/***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule React
-	 */
-	
-	/* globals __REACT_DEVTOOLS_GLOBAL_HOOK__*/
-	
-	'use strict';
-	
-	var EventPluginUtils = __webpack_require__(195);
-	var ReactChildren = __webpack_require__(199);
-	var ReactComponent = __webpack_require__(213);
-	var ReactClass = __webpack_require__(228);
-	var ReactContext = __webpack_require__(203);
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactElement = __webpack_require__(202);
-	var ReactElementValidator = __webpack_require__(223);
-	var ReactDOM = __webpack_require__(231);
-	var ReactDOMTextComponent = __webpack_require__(233);
-	var ReactDefaultInjection = __webpack_require__(282);
-	var ReactInstanceHandles = __webpack_require__(210);
-	var ReactMount = __webpack_require__(258);
-	var ReactPerf = __webpack_require__(219);
-	var ReactPropTypes = __webpack_require__(313);
-	var ReactReconciler = __webpack_require__(220);
-	var ReactServerRendering = __webpack_require__(345);
-	
-	var assign = __webpack_require__(204);
-	var findDOMNode = __webpack_require__(302);
-	var onlyChild = __webpack_require__(347);
-	
-	ReactDefaultInjection.inject();
-	
-	var createElement = ReactElement.createElement;
-	var createFactory = ReactElement.createFactory;
-	var cloneElement = ReactElement.cloneElement;
-	
-	if ("production" !== process.env.NODE_ENV) {
-	  createElement = ReactElementValidator.createElement;
-	  createFactory = ReactElementValidator.createFactory;
-	  cloneElement = ReactElementValidator.cloneElement;
-	}
-	
-	var render = ReactPerf.measure('React', 'render', ReactMount.render);
-	
-	var React = {
-	  Children: {
-	    map: ReactChildren.map,
-	    forEach: ReactChildren.forEach,
-	    count: ReactChildren.count,
-	    only: onlyChild
-	  },
-	  Component: ReactComponent,
-	  DOM: ReactDOM,
-	  PropTypes: ReactPropTypes,
-	  initializeTouchEvents: function(shouldUseTouch) {
-	    EventPluginUtils.useTouchEvents = shouldUseTouch;
-	  },
-	  createClass: ReactClass.createClass,
-	  createElement: createElement,
-	  cloneElement: cloneElement,
-	  createFactory: createFactory,
-	  createMixin: function(mixin) {
-	    // Currently a noop. Will be used to validate and trace mixins.
-	    return mixin;
-	  },
-	  constructAndRenderComponent: ReactMount.constructAndRenderComponent,
-	  constructAndRenderComponentByID: ReactMount.constructAndRenderComponentByID,
-	  findDOMNode: findDOMNode,
-	  render: render,
-	  renderToString: ReactServerRendering.renderToString,
-	  renderToStaticMarkup: ReactServerRendering.renderToStaticMarkup,
-	  unmountComponentAtNode: ReactMount.unmountComponentAtNode,
-	  isValidElement: ReactElement.isValidElement,
-	  withContext: ReactContext.withContext,
-	
-	  // Hook for JSX spread, don't use this for anything else.
-	  __spread: assign
-	};
-	
-	// Inject the runtime into a devtools global hook regardless of browser.
-	// Allows for debugging when the hook is injected on the page.
-	if (
-	  typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' &&
-	  typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.inject === 'function') {
-	  __REACT_DEVTOOLS_GLOBAL_HOOK__.inject({
-	    CurrentOwner: ReactCurrentOwner,
-	    InstanceHandles: ReactInstanceHandles,
-	    Mount: ReactMount,
-	    Reconciler: ReactReconciler,
-	    TextComponent: ReactDOMTextComponent
-	  });
-	}
-	
-	if ("production" !== process.env.NODE_ENV) {
-	  var ExecutionEnvironment = __webpack_require__(242);
-	  if (ExecutionEnvironment.canUseDOM && window.top === window.self) {
-	
-	    // If we're in Chrome, look for the devtools marker and provide a download
-	    // link if not installed.
-	    if (navigator.userAgent.indexOf('Chrome') > -1) {
-	      if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined') {
-	        console.debug(
-	          'Download the React DevTools for a better development experience: ' +
-	          'https://fb.me/react-devtools'
-	        );
-	      }
-	    }
-	
-	    var expectedFeatures = [
-	      // shims
-	      Array.isArray,
-	      Array.prototype.every,
-	      Array.prototype.forEach,
-	      Array.prototype.indexOf,
-	      Array.prototype.map,
-	      Date.now,
-	      Function.prototype.bind,
-	      Object.keys,
-	      String.prototype.split,
-	      String.prototype.trim,
-	
-	      // shams
-	      Object.create,
-	      Object.freeze
-	    ];
-	
-	    for (var i = 0; i < expectedFeatures.length; i++) {
-	      if (!expectedFeatures[i]) {
-	        console.error(
-	          'One or more ES5 shim/shams expected by React are not available: ' +
-	          'https://fb.me/react-warning-polyfills'
-	        );
-	        break;
-	      }
-	    }
-	  }
-	}
-	
-	React.version = '0.13.3';
-	
-	module.exports = React;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule EventPluginUtils
-	 */
-	
-	'use strict';
-	
-	var EventConstants = __webpack_require__(196);
-	
-	var invariant = __webpack_require__(198);
-	
-	/**
-	 * Injected dependencies:
-	 */
-	
-	/**
-	 * - `Mount`: [required] Module that can convert between React dom IDs and
-	 *   actual node references.
-	 */
-	var injection = {
-	  Mount: null,
-	  injectMount: function(InjectedMount) {
-	    injection.Mount = InjectedMount;
-	    if ("production" !== process.env.NODE_ENV) {
-	      ("production" !== process.env.NODE_ENV ? invariant(
-	        InjectedMount && InjectedMount.getNode,
-	        'EventPluginUtils.injection.injectMount(...): Injected Mount module ' +
-	        'is missing getNode.'
-	      ) : invariant(InjectedMount && InjectedMount.getNode));
-	    }
-	  }
-	};
-	
-	var topLevelTypes = EventConstants.topLevelTypes;
-	
-	function isEndish(topLevelType) {
-	  return topLevelType === topLevelTypes.topMouseUp ||
-	         topLevelType === topLevelTypes.topTouchEnd ||
-	         topLevelType === topLevelTypes.topTouchCancel;
-	}
-	
-	function isMoveish(topLevelType) {
-	  return topLevelType === topLevelTypes.topMouseMove ||
-	         topLevelType === topLevelTypes.topTouchMove;
-	}
-	function isStartish(topLevelType) {
-	  return topLevelType === topLevelTypes.topMouseDown ||
-	         topLevelType === topLevelTypes.topTouchStart;
-	}
-	
-	
-	var validateEventDispatches;
-	if ("production" !== process.env.NODE_ENV) {
-	  validateEventDispatches = function(event) {
-	    var dispatchListeners = event._dispatchListeners;
-	    var dispatchIDs = event._dispatchIDs;
-	
-	    var listenersIsArr = Array.isArray(dispatchListeners);
-	    var idsIsArr = Array.isArray(dispatchIDs);
-	    var IDsLen = idsIsArr ? dispatchIDs.length : dispatchIDs ? 1 : 0;
-	    var listenersLen = listenersIsArr ?
-	      dispatchListeners.length :
-	      dispatchListeners ? 1 : 0;
-	
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      idsIsArr === listenersIsArr && IDsLen === listenersLen,
-	      'EventPluginUtils: Invalid `event`.'
-	    ) : invariant(idsIsArr === listenersIsArr && IDsLen === listenersLen));
-	  };
-	}
-	
-	/**
-	 * Invokes `cb(event, listener, id)`. Avoids using call if no scope is
-	 * provided. The `(listener,id)` pair effectively forms the "dispatch" but are
-	 * kept separate to conserve memory.
-	 */
-	function forEachEventDispatch(event, cb) {
-	  var dispatchListeners = event._dispatchListeners;
-	  var dispatchIDs = event._dispatchIDs;
-	  if ("production" !== process.env.NODE_ENV) {
-	    validateEventDispatches(event);
-	  }
-	  if (Array.isArray(dispatchListeners)) {
-	    for (var i = 0; i < dispatchListeners.length; i++) {
-	      if (event.isPropagationStopped()) {
-	        break;
-	      }
-	      // Listeners and IDs are two parallel arrays that are always in sync.
-	      cb(event, dispatchListeners[i], dispatchIDs[i]);
-	    }
-	  } else if (dispatchListeners) {
-	    cb(event, dispatchListeners, dispatchIDs);
-	  }
-	}
-	
-	/**
-	 * Default implementation of PluginModule.executeDispatch().
-	 * @param {SyntheticEvent} SyntheticEvent to handle
-	 * @param {function} Application-level callback
-	 * @param {string} domID DOM id to pass to the callback.
-	 */
-	function executeDispatch(event, listener, domID) {
-	  event.currentTarget = injection.Mount.getNode(domID);
-	  var returnValue = listener(event, domID);
-	  event.currentTarget = null;
-	  return returnValue;
-	}
-	
-	/**
-	 * Standard/simple iteration through an event's collected dispatches.
-	 */
-	function executeDispatchesInOrder(event, cb) {
-	  forEachEventDispatch(event, cb);
-	  event._dispatchListeners = null;
-	  event._dispatchIDs = null;
-	}
-	
-	/**
-	 * Standard/simple iteration through an event's collected dispatches, but stops
-	 * at the first dispatch execution returning true, and returns that id.
-	 *
-	 * @return id of the first dispatch execution who's listener returns true, or
-	 * null if no listener returned true.
-	 */
-	function executeDispatchesInOrderStopAtTrueImpl(event) {
-	  var dispatchListeners = event._dispatchListeners;
-	  var dispatchIDs = event._dispatchIDs;
-	  if ("production" !== process.env.NODE_ENV) {
-	    validateEventDispatches(event);
-	  }
-	  if (Array.isArray(dispatchListeners)) {
-	    for (var i = 0; i < dispatchListeners.length; i++) {
-	      if (event.isPropagationStopped()) {
-	        break;
-	      }
-	      // Listeners and IDs are two parallel arrays that are always in sync.
-	      if (dispatchListeners[i](event, dispatchIDs[i])) {
-	        return dispatchIDs[i];
-	      }
-	    }
-	  } else if (dispatchListeners) {
-	    if (dispatchListeners(event, dispatchIDs)) {
-	      return dispatchIDs;
-	    }
-	  }
-	  return null;
-	}
-	
-	/**
-	 * @see executeDispatchesInOrderStopAtTrueImpl
-	 */
-	function executeDispatchesInOrderStopAtTrue(event) {
-	  var ret = executeDispatchesInOrderStopAtTrueImpl(event);
-	  event._dispatchIDs = null;
-	  event._dispatchListeners = null;
-	  return ret;
-	}
-	
-	/**
-	 * Execution of a "direct" dispatch - there must be at most one dispatch
-	 * accumulated on the event or it is considered an error. It doesn't really make
-	 * sense for an event with multiple dispatches (bubbled) to keep track of the
-	 * return values at each dispatch execution, but it does tend to make sense when
-	 * dealing with "direct" dispatches.
-	 *
-	 * @return The return value of executing the single dispatch.
-	 */
-	function executeDirectDispatch(event) {
-	  if ("production" !== process.env.NODE_ENV) {
-	    validateEventDispatches(event);
-	  }
-	  var dispatchListener = event._dispatchListeners;
-	  var dispatchID = event._dispatchIDs;
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    !Array.isArray(dispatchListener),
-	    'executeDirectDispatch(...): Invalid `event`.'
-	  ) : invariant(!Array.isArray(dispatchListener)));
-	  var res = dispatchListener ?
-	    dispatchListener(event, dispatchID) :
-	    null;
-	  event._dispatchListeners = null;
-	  event._dispatchIDs = null;
-	  return res;
-	}
-	
-	/**
-	 * @param {SyntheticEvent} event
-	 * @return {bool} True iff number of dispatches accumulated is greater than 0.
-	 */
-	function hasDispatches(event) {
-	  return !!event._dispatchListeners;
-	}
-	
-	/**
-	 * General utilities that are useful in creating custom Event Plugins.
-	 */
-	var EventPluginUtils = {
-	  isEndish: isEndish,
-	  isMoveish: isMoveish,
-	  isStartish: isStartish,
-	
-	  executeDirectDispatch: executeDirectDispatch,
-	  executeDispatch: executeDispatch,
-	  executeDispatchesInOrder: executeDispatchesInOrder,
-	  executeDispatchesInOrderStopAtTrue: executeDispatchesInOrderStopAtTrue,
-	  hasDispatches: hasDispatches,
-	  injection: injection,
-	  useTouchEvents: false
-	};
-	
-	module.exports = EventPluginUtils;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 196 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule EventConstants
-	 */
-	
-	'use strict';
-	
-	var keyMirror = __webpack_require__(197);
-	
-	var PropagationPhases = keyMirror({bubbled: null, captured: null});
-	
-	/**
-	 * Types of raw signals from the browser caught at the top level.
-	 */
-	var topLevelTypes = keyMirror({
-	  topBlur: null,
-	  topChange: null,
-	  topClick: null,
-	  topCompositionEnd: null,
-	  topCompositionStart: null,
-	  topCompositionUpdate: null,
-	  topContextMenu: null,
-	  topCopy: null,
-	  topCut: null,
-	  topDoubleClick: null,
-	  topDrag: null,
-	  topDragEnd: null,
-	  topDragEnter: null,
-	  topDragExit: null,
-	  topDragLeave: null,
-	  topDragOver: null,
-	  topDragStart: null,
-	  topDrop: null,
-	  topError: null,
-	  topFocus: null,
-	  topInput: null,
-	  topKeyDown: null,
-	  topKeyPress: null,
-	  topKeyUp: null,
-	  topLoad: null,
-	  topMouseDown: null,
-	  topMouseMove: null,
-	  topMouseOut: null,
-	  topMouseOver: null,
-	  topMouseUp: null,
-	  topPaste: null,
-	  topReset: null,
-	  topScroll: null,
-	  topSelectionChange: null,
-	  topSubmit: null,
-	  topTextInput: null,
-	  topTouchCancel: null,
-	  topTouchEnd: null,
-	  topTouchMove: null,
-	  topTouchStart: null,
-	  topWheel: null
-	});
-	
-	var EventConstants = {
-	  topLevelTypes: topLevelTypes,
-	  PropagationPhases: PropagationPhases
-	};
-	
-	module.exports = EventConstants;
-
-
-/***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule keyMirror
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	var invariant = __webpack_require__(198);
-	
-	/**
-	 * Constructs an enumeration with keys equal to their value.
-	 *
-	 * For example:
-	 *
-	 *   var COLORS = keyMirror({blue: null, red: null});
-	 *   var myColor = COLORS.blue;
-	 *   var isColorValid = !!COLORS[myColor];
-	 *
-	 * The last line could not be performed if the values of the generated enum were
-	 * not equal to their keys.
-	 *
-	 *   Input:  {key1: val1, key2: val2}
-	 *   Output: {key1: key1, key2: key2}
-	 *
-	 * @param {object} obj
-	 * @return {object}
-	 */
-	var keyMirror = function(obj) {
-	  var ret = {};
-	  var key;
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    obj instanceof Object && !Array.isArray(obj),
-	    'keyMirror(...): Argument must be an object.'
-	  ) : invariant(obj instanceof Object && !Array.isArray(obj)));
-	  for (key in obj) {
-	    if (!obj.hasOwnProperty(key)) {
-	      continue;
-	    }
-	    ret[key] = key;
-	  }
-	  return ret;
-	};
-	
-	module.exports = keyMirror;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 198 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule invariant
-	 */
-	
-	"use strict";
-	
-	/**
-	 * Use invariant() to assert state which your program assumes to be true.
-	 *
-	 * Provide sprintf-style format (only %s is supported) and arguments
-	 * to provide information about what broke and what you were
-	 * expecting.
-	 *
-	 * The invariant message will be stripped in production, but the invariant
-	 * will remain to ensure logic does not differ in production.
-	 */
-	
-	var invariant = function(condition, format, a, b, c, d, e, f) {
-	  if ("production" !== process.env.NODE_ENV) {
-	    if (format === undefined) {
-	      throw new Error('invariant requires an error message argument');
-	    }
-	  }
-	
-	  if (!condition) {
-	    var error;
-	    if (format === undefined) {
-	      error = new Error(
-	        'Minified exception occurred; use the non-minified dev environment ' +
-	        'for the full error message and additional helpful warnings.'
-	      );
-	    } else {
-	      var args = [a, b, c, d, e, f];
-	      var argIndex = 0;
-	      error = new Error(
-	        'Invariant Violation: ' +
-	        format.replace(/%s/g, function() { return args[argIndex++]; })
-	      );
-	    }
-	
-	    error.framesToPop = 1; // we don't care about invariant's own frame
-	    throw error;
-	  }
-	};
-	
-	module.exports = invariant;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 199 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactChildren
-	 */
-	
-	'use strict';
-	
-	var PooledClass = __webpack_require__(200);
-	var ReactFragment = __webpack_require__(201);
-	
-	var traverseAllChildren = __webpack_require__(209);
-	var warning = __webpack_require__(206);
-	
-	var twoArgumentPooler = PooledClass.twoArgumentPooler;
-	var threeArgumentPooler = PooledClass.threeArgumentPooler;
-	
-	/**
-	 * PooledClass representing the bookkeeping associated with performing a child
-	 * traversal. Allows avoiding binding callbacks.
-	 *
-	 * @constructor ForEachBookKeeping
-	 * @param {!function} forEachFunction Function to perform traversal with.
-	 * @param {?*} forEachContext Context to perform context with.
-	 */
-	function ForEachBookKeeping(forEachFunction, forEachContext) {
-	  this.forEachFunction = forEachFunction;
-	  this.forEachContext = forEachContext;
-	}
-	PooledClass.addPoolingTo(ForEachBookKeeping, twoArgumentPooler);
-	
-	function forEachSingleChild(traverseContext, child, name, i) {
-	  var forEachBookKeeping = traverseContext;
-	  forEachBookKeeping.forEachFunction.call(
-	    forEachBookKeeping.forEachContext, child, i);
-	}
-	
-	/**
-	 * Iterates through children that are typically specified as `props.children`.
-	 *
-	 * The provided forEachFunc(child, index) will be called for each
-	 * leaf child.
-	 *
-	 * @param {?*} children Children tree container.
-	 * @param {function(*, int)} forEachFunc.
-	 * @param {*} forEachContext Context for forEachContext.
-	 */
-	function forEachChildren(children, forEachFunc, forEachContext) {
-	  if (children == null) {
-	    return children;
-	  }
-	
-	  var traverseContext =
-	    ForEachBookKeeping.getPooled(forEachFunc, forEachContext);
-	  traverseAllChildren(children, forEachSingleChild, traverseContext);
-	  ForEachBookKeeping.release(traverseContext);
-	}
-	
-	/**
-	 * PooledClass representing the bookkeeping associated with performing a child
-	 * mapping. Allows avoiding binding callbacks.
-	 *
-	 * @constructor MapBookKeeping
-	 * @param {!*} mapResult Object containing the ordered map of results.
-	 * @param {!function} mapFunction Function to perform mapping with.
-	 * @param {?*} mapContext Context to perform mapping with.
-	 */
-	function MapBookKeeping(mapResult, mapFunction, mapContext) {
-	  this.mapResult = mapResult;
-	  this.mapFunction = mapFunction;
-	  this.mapContext = mapContext;
-	}
-	PooledClass.addPoolingTo(MapBookKeeping, threeArgumentPooler);
-	
-	function mapSingleChildIntoContext(traverseContext, child, name, i) {
-	  var mapBookKeeping = traverseContext;
-	  var mapResult = mapBookKeeping.mapResult;
-	
-	  var keyUnique = !mapResult.hasOwnProperty(name);
-	  if ("production" !== process.env.NODE_ENV) {
-	    ("production" !== process.env.NODE_ENV ? warning(
-	      keyUnique,
-	      'ReactChildren.map(...): Encountered two children with the same key, ' +
-	      '`%s`. Child keys must be unique; when two children share a key, only ' +
-	      'the first child will be used.',
-	      name
-	    ) : null);
-	  }
-	
-	  if (keyUnique) {
-	    var mappedChild =
-	      mapBookKeeping.mapFunction.call(mapBookKeeping.mapContext, child, i);
-	    mapResult[name] = mappedChild;
-	  }
-	}
-	
-	/**
-	 * Maps children that are typically specified as `props.children`.
-	 *
-	 * The provided mapFunction(child, key, index) will be called for each
-	 * leaf child.
-	 *
-	 * TODO: This may likely break any calls to `ReactChildren.map` that were
-	 * previously relying on the fact that we guarded against null children.
-	 *
-	 * @param {?*} children Children tree container.
-	 * @param {function(*, int)} mapFunction.
-	 * @param {*} mapContext Context for mapFunction.
-	 * @return {object} Object containing the ordered map of results.
-	 */
-	function mapChildren(children, func, context) {
-	  if (children == null) {
-	    return children;
-	  }
-	
-	  var mapResult = {};
-	  var traverseContext = MapBookKeeping.getPooled(mapResult, func, context);
-	  traverseAllChildren(children, mapSingleChildIntoContext, traverseContext);
-	  MapBookKeeping.release(traverseContext);
-	  return ReactFragment.create(mapResult);
-	}
-	
-	function forEachSingleChildDummy(traverseContext, child, name, i) {
-	  return null;
-	}
-	
-	/**
-	 * Count the number of children that are typically specified as
-	 * `props.children`.
-	 *
-	 * @param {?*} children Children tree container.
-	 * @return {number} The number of children.
-	 */
-	function countChildren(children, context) {
-	  return traverseAllChildren(children, forEachSingleChildDummy, null);
-	}
-	
-	var ReactChildren = {
-	  forEach: forEachChildren,
-	  map: mapChildren,
-	  count: countChildren
-	};
-	
-	module.exports = ReactChildren;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 200 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule PooledClass
-	 */
-	
-	'use strict';
-	
-	var invariant = __webpack_require__(198);
-	
-	/**
-	 * Static poolers. Several custom versions for each potential number of
-	 * arguments. A completely generic pooler is easy to implement, but would
-	 * require accessing the `arguments` object. In each of these, `this` refers to
-	 * the Class itself, not an instance. If any others are needed, simply add them
-	 * here, or in their own files.
-	 */
-	var oneArgumentPooler = function(copyFieldsFrom) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, copyFieldsFrom);
-	    return instance;
-	  } else {
-	    return new Klass(copyFieldsFrom);
-	  }
-	};
-	
-	var twoArgumentPooler = function(a1, a2) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2);
-	  }
-	};
-	
-	var threeArgumentPooler = function(a1, a2, a3) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3);
-	  }
-	};
-	
-	var fiveArgumentPooler = function(a1, a2, a3, a4, a5) {
-	  var Klass = this;
-	  if (Klass.instancePool.length) {
-	    var instance = Klass.instancePool.pop();
-	    Klass.call(instance, a1, a2, a3, a4, a5);
-	    return instance;
-	  } else {
-	    return new Klass(a1, a2, a3, a4, a5);
-	  }
-	};
-	
-	var standardReleaser = function(instance) {
-	  var Klass = this;
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    instance instanceof Klass,
-	    'Trying to release an instance into a pool of a different type.'
-	  ) : invariant(instance instanceof Klass));
-	  if (instance.destructor) {
-	    instance.destructor();
-	  }
-	  if (Klass.instancePool.length < Klass.poolSize) {
-	    Klass.instancePool.push(instance);
-	  }
-	};
-	
-	var DEFAULT_POOL_SIZE = 10;
-	var DEFAULT_POOLER = oneArgumentPooler;
-	
-	/**
-	 * Augments `CopyConstructor` to be a poolable class, augmenting only the class
-	 * itself (statically) not adding any prototypical fields. Any CopyConstructor
-	 * you give this may have a `poolSize` property, and will look for a
-	 * prototypical `destructor` on instances (optional).
-	 *
-	 * @param {Function} CopyConstructor Constructor that can be used to reset.
-	 * @param {Function} pooler Customizable pooler.
-	 */
-	var addPoolingTo = function(CopyConstructor, pooler) {
-	  var NewKlass = CopyConstructor;
-	  NewKlass.instancePool = [];
-	  NewKlass.getPooled = pooler || DEFAULT_POOLER;
-	  if (!NewKlass.poolSize) {
-	    NewKlass.poolSize = DEFAULT_POOL_SIZE;
-	  }
-	  NewKlass.release = standardReleaser;
-	  return NewKlass;
-	};
-	
-	var PooledClass = {
-	  addPoolingTo: addPoolingTo,
-	  oneArgumentPooler: oneArgumentPooler,
-	  twoArgumentPooler: twoArgumentPooler,
-	  threeArgumentPooler: threeArgumentPooler,
-	  fiveArgumentPooler: fiveArgumentPooler
-	};
-	
-	module.exports = PooledClass;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	* @providesModule ReactFragment
-	*/
-	
-	'use strict';
-	
-	var ReactElement = __webpack_require__(202);
-	
-	var warning = __webpack_require__(206);
-	
-	/**
-	 * We used to allow keyed objects to serve as a collection of ReactElements,
-	 * or nested sets. This allowed us a way to explicitly key a set a fragment of
-	 * components. This is now being replaced with an opaque data structure.
-	 * The upgrade path is to call React.addons.createFragment({ key: value }) to
-	 * create a keyed fragment. The resulting data structure is opaque, for now.
-	 */
-	
-	if ("production" !== process.env.NODE_ENV) {
-	  var fragmentKey = '_reactFragment';
-	  var didWarnKey = '_reactDidWarn';
-	  var canWarnForReactFragment = false;
-	
-	  try {
-	    // Feature test. Don't even try to issue this warning if we can't use
-	    // enumerable: false.
-	
-	    var dummy = function() {
-	      return 1;
-	    };
-	
-	    Object.defineProperty(
-	      {},
-	      fragmentKey,
-	      {enumerable: false, value: true}
-	    );
-	
-	    Object.defineProperty(
-	      {},
-	      'key',
-	      {enumerable: true, get: dummy}
-	    );
-	
-	    canWarnForReactFragment = true;
-	  } catch (x) { }
-	
-	  var proxyPropertyAccessWithWarning = function(obj, key) {
-	    Object.defineProperty(obj, key, {
-	      enumerable: true,
-	      get: function() {
-	        ("production" !== process.env.NODE_ENV ? warning(
-	          this[didWarnKey],
-	          'A ReactFragment is an opaque type. Accessing any of its ' +
-	          'properties is deprecated. Pass it to one of the React.Children ' +
-	          'helpers.'
-	        ) : null);
-	        this[didWarnKey] = true;
-	        return this[fragmentKey][key];
-	      },
-	      set: function(value) {
-	        ("production" !== process.env.NODE_ENV ? warning(
-	          this[didWarnKey],
-	          'A ReactFragment is an immutable opaque type. Mutating its ' +
-	          'properties is deprecated.'
-	        ) : null);
-	        this[didWarnKey] = true;
-	        this[fragmentKey][key] = value;
-	      }
-	    });
-	  };
-	
-	  var issuedWarnings = {};
-	
-	  var didWarnForFragment = function(fragment) {
-	    // We use the keys and the type of the value as a heuristic to dedupe the
-	    // warning to avoid spamming too much.
-	    var fragmentCacheKey = '';
-	    for (var key in fragment) {
-	      fragmentCacheKey += key + ':' + (typeof fragment[key]) + ',';
-	    }
-	    var alreadyWarnedOnce = !!issuedWarnings[fragmentCacheKey];
-	    issuedWarnings[fragmentCacheKey] = true;
-	    return alreadyWarnedOnce;
-	  };
-	}
-	
-	var ReactFragment = {
-	  // Wrap a keyed object in an opaque proxy that warns you if you access any
-	  // of its properties.
-	  create: function(object) {
-	    if ("production" !== process.env.NODE_ENV) {
-	      if (typeof object !== 'object' || !object || Array.isArray(object)) {
-	        ("production" !== process.env.NODE_ENV ? warning(
-	          false,
-	          'React.addons.createFragment only accepts a single object.',
-	          object
-	        ) : null);
-	        return object;
-	      }
-	      if (ReactElement.isValidElement(object)) {
-	        ("production" !== process.env.NODE_ENV ? warning(
-	          false,
-	          'React.addons.createFragment does not accept a ReactElement ' +
-	          'without a wrapper object.'
-	        ) : null);
-	        return object;
-	      }
-	      if (canWarnForReactFragment) {
-	        var proxy = {};
-	        Object.defineProperty(proxy, fragmentKey, {
-	          enumerable: false,
-	          value: object
-	        });
-	        Object.defineProperty(proxy, didWarnKey, {
-	          writable: true,
-	          enumerable: false,
-	          value: false
-	        });
-	        for (var key in object) {
-	          proxyPropertyAccessWithWarning(proxy, key);
-	        }
-	        Object.preventExtensions(proxy);
-	        return proxy;
-	      }
-	    }
-	    return object;
-	  },
-	  // Extract the original keyed object from the fragment opaque type. Warn if
-	  // a plain object is passed here.
-	  extract: function(fragment) {
-	    if ("production" !== process.env.NODE_ENV) {
-	      if (canWarnForReactFragment) {
-	        if (!fragment[fragmentKey]) {
-	          ("production" !== process.env.NODE_ENV ? warning(
-	            didWarnForFragment(fragment),
-	            'Any use of a keyed object should be wrapped in ' +
-	            'React.addons.createFragment(object) before being passed as a ' +
-	            'child.'
-	          ) : null);
-	          return fragment;
-	        }
-	        return fragment[fragmentKey];
-	      }
-	    }
-	    return fragment;
-	  },
-	  // Check if this is a fragment and if so, extract the keyed object. If it
-	  // is a fragment-like object, warn that it should be wrapped. Ignore if we
-	  // can't determine what kind of object this is.
-	  extractIfFragment: function(fragment) {
-	    if ("production" !== process.env.NODE_ENV) {
-	      if (canWarnForReactFragment) {
-	        // If it is the opaque type, return the keyed object.
-	        if (fragment[fragmentKey]) {
-	          return fragment[fragmentKey];
-	        }
-	        // Otherwise, check each property if it has an element, if it does
-	        // it is probably meant as a fragment, so we can warn early. Defer,
-	        // the warning to extract.
-	        for (var key in fragment) {
-	          if (fragment.hasOwnProperty(key) &&
-	              ReactElement.isValidElement(fragment[key])) {
-	            // This looks like a fragment object, we should provide an
-	            // early warning.
-	            return ReactFragment.extract(fragment);
-	          }
-	        }
-	      }
-	    }
-	    return fragment;
-	  }
-	};
-	
-	module.exports = ReactFragment;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 202 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactElement
-	 */
-	
-	'use strict';
-	
-	var ReactContext = __webpack_require__(203);
-	var ReactCurrentOwner = __webpack_require__(208);
-	
-	var assign = __webpack_require__(204);
-	var warning = __webpack_require__(206);
-	
-	var RESERVED_PROPS = {
-	  key: true,
-	  ref: true
-	};
-	
-	/**
-	 * Warn for mutations.
-	 *
-	 * @internal
-	 * @param {object} object
-	 * @param {string} key
-	 */
-	function defineWarningProperty(object, key) {
-	  Object.defineProperty(object, key, {
-	
-	    configurable: false,
-	    enumerable: true,
-	
-	    get: function() {
-	      if (!this._store) {
-	        return null;
-	      }
-	      return this._store[key];
-	    },
-	
-	    set: function(value) {
-	      ("production" !== process.env.NODE_ENV ? warning(
-	        false,
-	        'Don\'t set the %s property of the React element. Instead, ' +
-	        'specify the correct value when initially creating the element.',
-	        key
-	      ) : null);
-	      this._store[key] = value;
-	    }
-	
-	  });
-	}
-	
-	/**
-	 * This is updated to true if the membrane is successfully created.
-	 */
-	var useMutationMembrane = false;
-	
-	/**
-	 * Warn for mutations.
-	 *
-	 * @internal
-	 * @param {object} element
-	 */
-	function defineMutationMembrane(prototype) {
-	  try {
-	    var pseudoFrozenProperties = {
-	      props: true
-	    };
-	    for (var key in pseudoFrozenProperties) {
-	      defineWarningProperty(prototype, key);
-	    }
-	    useMutationMembrane = true;
-	  } catch (x) {
-	    // IE will fail on defineProperty
-	  }
-	}
-	
-	/**
-	 * Base constructor for all React elements. This is only used to make this
-	 * work with a dynamic instanceof check. Nothing should live on this prototype.
-	 *
-	 * @param {*} type
-	 * @param {string|object} ref
-	 * @param {*} key
-	 * @param {*} props
-	 * @internal
-	 */
-	var ReactElement = function(type, key, ref, owner, context, props) {
-	  // Built-in properties that belong on the element
-	  this.type = type;
-	  this.key = key;
-	  this.ref = ref;
-	
-	  // Record the component responsible for creating this element.
-	  this._owner = owner;
-	
-	  // TODO: Deprecate withContext, and then the context becomes accessible
-	  // through the owner.
-	  this._context = context;
-	
-	  if ("production" !== process.env.NODE_ENV) {
-	    // The validation flag and props are currently mutative. We put them on
-	    // an external backing store so that we can freeze the whole object.
-	    // This can be replaced with a WeakMap once they are implemented in
-	    // commonly used development environments.
-	    this._store = {props: props, originalProps: assign({}, props)};
-	
-	    // To make comparing ReactElements easier for testing purposes, we make
-	    // the validation flag non-enumerable (where possible, which should
-	    // include every environment we run tests in), so the test framework
-	    // ignores it.
-	    try {
-	      Object.defineProperty(this._store, 'validated', {
-	        configurable: false,
-	        enumerable: false,
-	        writable: true
-	      });
-	    } catch (x) {
-	    }
-	    this._store.validated = false;
-	
-	    // We're not allowed to set props directly on the object so we early
-	    // return and rely on the prototype membrane to forward to the backing
-	    // store.
-	    if (useMutationMembrane) {
-	      Object.freeze(this);
-	      return;
-	    }
-	  }
-	
-	  this.props = props;
-	};
-	
-	// We intentionally don't expose the function on the constructor property.
-	// ReactElement should be indistinguishable from a plain object.
-	ReactElement.prototype = {
-	  _isReactElement: true
-	};
-	
-	if ("production" !== process.env.NODE_ENV) {
-	  defineMutationMembrane(ReactElement.prototype);
-	}
-	
-	ReactElement.createElement = function(type, config, children) {
-	  var propName;
-	
-	  // Reserved names are extracted
-	  var props = {};
-	
-	  var key = null;
-	  var ref = null;
-	
-	  if (config != null) {
-	    ref = config.ref === undefined ? null : config.ref;
-	    key = config.key === undefined ? null : '' + config.key;
-	    // Remaining properties are added to a new props object
-	    for (propName in config) {
-	      if (config.hasOwnProperty(propName) &&
-	          !RESERVED_PROPS.hasOwnProperty(propName)) {
-	        props[propName] = config[propName];
-	      }
-	    }
-	  }
-	
-	  // Children can be more than one argument, and those are transferred onto
-	  // the newly allocated props object.
-	  var childrenLength = arguments.length - 2;
-	  if (childrenLength === 1) {
-	    props.children = children;
-	  } else if (childrenLength > 1) {
-	    var childArray = Array(childrenLength);
-	    for (var i = 0; i < childrenLength; i++) {
-	      childArray[i] = arguments[i + 2];
-	    }
-	    props.children = childArray;
-	  }
-	
-	  // Resolve default props
-	  if (type && type.defaultProps) {
-	    var defaultProps = type.defaultProps;
-	    for (propName in defaultProps) {
-	      if (typeof props[propName] === 'undefined') {
-	        props[propName] = defaultProps[propName];
-	      }
-	    }
-	  }
-	
-	  return new ReactElement(
-	    type,
-	    key,
-	    ref,
-	    ReactCurrentOwner.current,
-	    ReactContext.current,
-	    props
-	  );
-	};
-	
-	ReactElement.createFactory = function(type) {
-	  var factory = ReactElement.createElement.bind(null, type);
-	  // Expose the type on the factory and the prototype so that it can be
-	  // easily accessed on elements. E.g. <Foo />.type === Foo.type.
-	  // This should not be named `constructor` since this may not be the function
-	  // that created the element, and it may not even be a constructor.
-	  // Legacy hook TODO: Warn if this is accessed
-	  factory.type = type;
-	  return factory;
-	};
-	
-	ReactElement.cloneAndReplaceProps = function(oldElement, newProps) {
-	  var newElement = new ReactElement(
-	    oldElement.type,
-	    oldElement.key,
-	    oldElement.ref,
-	    oldElement._owner,
-	    oldElement._context,
-	    newProps
-	  );
-	
-	  if ("production" !== process.env.NODE_ENV) {
-	    // If the key on the original is valid, then the clone is valid
-	    newElement._store.validated = oldElement._store.validated;
-	  }
-	  return newElement;
-	};
-	
-	ReactElement.cloneElement = function(element, config, children) {
-	  var propName;
-	
-	  // Original props are copied
-	  var props = assign({}, element.props);
-	
-	  // Reserved names are extracted
-	  var key = element.key;
-	  var ref = element.ref;
-	
-	  // Owner will be preserved, unless ref is overridden
-	  var owner = element._owner;
-	
-	  if (config != null) {
-	    if (config.ref !== undefined) {
-	      // Silently steal the ref from the parent.
-	      ref = config.ref;
-	      owner = ReactCurrentOwner.current;
-	    }
-	    if (config.key !== undefined) {
-	      key = '' + config.key;
-	    }
-	    // Remaining properties override existing props
-	    for (propName in config) {
-	      if (config.hasOwnProperty(propName) &&
-	          !RESERVED_PROPS.hasOwnProperty(propName)) {
-	        props[propName] = config[propName];
-	      }
-	    }
-	  }
-	
-	  // Children can be more than one argument, and those are transferred onto
-	  // the newly allocated props object.
-	  var childrenLength = arguments.length - 2;
-	  if (childrenLength === 1) {
-	    props.children = children;
-	  } else if (childrenLength > 1) {
-	    var childArray = Array(childrenLength);
-	    for (var i = 0; i < childrenLength; i++) {
-	      childArray[i] = arguments[i + 2];
-	    }
-	    props.children = childArray;
-	  }
-	
-	  return new ReactElement(
-	    element.type,
-	    key,
-	    ref,
-	    owner,
-	    element._context,
-	    props
-	  );
-	};
-	
-	/**
-	 * @param {?object} object
-	 * @return {boolean} True if `object` is a valid component.
-	 * @final
-	 */
-	ReactElement.isValidElement = function(object) {
-	  // ReactTestUtils is often used outside of beforeEach where as React is
-	  // within it. This leads to two different instances of React on the same
-	  // page. To identify a element from a different React instance we use
-	  // a flag instead of an instanceof check.
-	  var isElement = !!(object && object._isReactElement);
-	  // if (isElement && !(object instanceof ReactElement)) {
-	  // This is an indicator that you're using multiple versions of React at the
-	  // same time. This will screw with ownership and stuff. Fix it, please.
-	  // TODO: We could possibly warn here.
-	  // }
-	  return isElement;
-	};
-	
-	module.exports = ReactElement;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactContext
-	 */
-	
-	'use strict';
-	
-	var assign = __webpack_require__(204);
-	var emptyObject = __webpack_require__(205);
-	var warning = __webpack_require__(206);
-	
-	var didWarn = false;
-	
-	/**
-	 * Keeps track of the current context.
-	 *
-	 * The context is automatically passed down the component ownership hierarchy
-	 * and is accessible via `this.context` on ReactCompositeComponents.
-	 */
-	var ReactContext = {
-	
-	  /**
-	   * @internal
-	   * @type {object}
-	   */
-	  current: emptyObject,
-	
-	  /**
-	   * Temporarily extends the current context while executing scopedCallback.
-	   *
-	   * A typical use case might look like
-	   *
-	   *  render: function() {
-	   *    var children = ReactContext.withContext({foo: 'foo'}, () => (
-	   *
-	   *    ));
-	   *    return <div>{children}</div>;
-	   *  }
-	   *
-	   * @param {object} newContext New context to merge into the existing context
-	   * @param {function} scopedCallback Callback to run with the new context
-	   * @return {ReactComponent|array<ReactComponent>}
-	   */
-	  withContext: function(newContext, scopedCallback) {
-	    if ("production" !== process.env.NODE_ENV) {
-	      ("production" !== process.env.NODE_ENV ? warning(
-	        didWarn,
-	        'withContext is deprecated and will be removed in a future version. ' +
-	        'Use a wrapper component with getChildContext instead.'
-	      ) : null);
-	
-	      didWarn = true;
-	    }
-	
-	    var result;
-	    var previousContext = ReactContext.current;
-	    ReactContext.current = assign({}, previousContext, newContext);
-	    try {
-	      result = scopedCallback();
-	    } finally {
-	      ReactContext.current = previousContext;
-	    }
-	    return result;
-	  }
-	
-	};
-	
-	module.exports = ReactContext;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 204 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule Object.assign
-	 */
-	
-	// https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign
-	
-	'use strict';
-	
-	function assign(target, sources) {
-	  if (target == null) {
-	    throw new TypeError('Object.assign target cannot be null or undefined');
-	  }
-	
-	  var to = Object(target);
-	  var hasOwnProperty = Object.prototype.hasOwnProperty;
-	
-	  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
-	    var nextSource = arguments[nextIndex];
-	    if (nextSource == null) {
-	      continue;
-	    }
-	
-	    var from = Object(nextSource);
-	
-	    // We don't currently support accessors nor proxies. Therefore this
-	    // copy cannot throw. If we ever supported this then we must handle
-	    // exceptions and side-effects. We don't support symbols so they won't
-	    // be transferred.
-	
-	    for (var key in from) {
-	      if (hasOwnProperty.call(from, key)) {
-	        to[key] = from[key];
-	      }
-	    }
-	  }
-	
-	  return to;
-	}
-	
-	module.exports = assign;
-
-
-/***/ },
-/* 205 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule emptyObject
-	 */
-	
-	"use strict";
-	
-	var emptyObject = {};
-	
-	if ("production" !== process.env.NODE_ENV) {
-	  Object.freeze(emptyObject);
-	}
-	
-	module.exports = emptyObject;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 206 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule warning
-	 */
-	
-	"use strict";
-	
-	var emptyFunction = __webpack_require__(207);
-	
-	/**
-	 * Similar to invariant but only logs a warning if the condition is not met.
-	 * This can be used to log issues in development environments in critical
-	 * paths. Removing the logging code for production environments will keep the
-	 * same logic and follow the same code paths.
-	 */
-	
-	var warning = emptyFunction;
-	
-	if ("production" !== process.env.NODE_ENV) {
-	  warning = function(condition, format ) {for (var args=[],$__0=2,$__1=arguments.length;$__0<$__1;$__0++) args.push(arguments[$__0]);
-	    if (format === undefined) {
-	      throw new Error(
-	        '`warning(condition, format, ...args)` requires a warning ' +
-	        'message argument'
-	      );
-	    }
-	
-	    if (format.length < 10 || /^[s\W]*$/.test(format)) {
-	      throw new Error(
-	        'The warning format should be able to uniquely identify this ' +
-	        'warning. Please, use a more descriptive format than: ' + format
-	      );
-	    }
-	
-	    if (format.indexOf('Failed Composite propType: ') === 0) {
-	      return; // Ignore CompositeComponent proptype check.
-	    }
-	
-	    if (!condition) {
-	      var argIndex = 0;
-	      var message = 'Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];});
-	      console.warn(message);
-	      try {
-	        // --- Welcome to debugging React ---
-	        // This error was thrown as a convenience so that you can use this stack
-	        // to find the callsite that caused this warning to fire.
-	        throw new Error(message);
-	      } catch(x) {}
-	    }
-	  };
-	}
-	
-	module.exports = warning;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 207 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule emptyFunction
-	 */
-	
-	function makeEmptyFunction(arg) {
-	  return function() {
-	    return arg;
-	  };
-	}
-	
-	/**
-	 * This function accepts and discards inputs; it has no side effects. This is
-	 * primarily useful idiomatically for overridable function endpoints which
-	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
-	 */
-	function emptyFunction() {}
-	
-	emptyFunction.thatReturns = makeEmptyFunction;
-	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
-	emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
-	emptyFunction.thatReturnsNull = makeEmptyFunction(null);
-	emptyFunction.thatReturnsThis = function() { return this; };
-	emptyFunction.thatReturnsArgument = function(arg) { return arg; };
-	
-	module.exports = emptyFunction;
-
-
-/***/ },
-/* 208 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactCurrentOwner
-	 */
-	
-	'use strict';
-	
-	/**
-	 * Keeps track of the current owner.
-	 *
-	 * The current owner is the component who should own any components that are
-	 * currently being constructed.
-	 *
-	 * The depth indicate how many composite components are above this render level.
-	 */
-	var ReactCurrentOwner = {
-	
-	  /**
-	   * @internal
-	   * @type {ReactComponent}
-	   */
-	  current: null
-	
-	};
-	
-	module.exports = ReactCurrentOwner;
-
-
-/***/ },
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule traverseAllChildren
-	 */
-	
-	'use strict';
-	
-	var ReactElement = __webpack_require__(202);
-	var ReactFragment = __webpack_require__(201);
-	var ReactInstanceHandles = __webpack_require__(210);
-	
-	var getIteratorFn = __webpack_require__(212);
-	var invariant = __webpack_require__(198);
-	var warning = __webpack_require__(206);
-	
-	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
-	var SUBSEPARATOR = ':';
-	
-	/**
-	 * TODO: Test that a single child and an array with one item have the same key
-	 * pattern.
-	 */
-	
-	var userProvidedKeyEscaperLookup = {
-	  '=': '=0',
-	  '.': '=1',
-	  ':': '=2'
-	};
-	
-	var userProvidedKeyEscapeRegex = /[=.:]/g;
-	
-	var didWarnAboutMaps = false;
-	
-	function userProvidedKeyEscaper(match) {
-	  return userProvidedKeyEscaperLookup[match];
-	}
-	
-	/**
-	 * Generate a key string that identifies a component within a set.
-	 *
-	 * @param {*} component A component that could contain a manual key.
-	 * @param {number} index Index that is used if a manual key is not provided.
-	 * @return {string}
-	 */
-	function getComponentKey(component, index) {
-	  if (component && component.key != null) {
-	    // Explicit key
-	    return wrapUserProvidedKey(component.key);
-	  }
-	  // Implicit key determined by the index in the set
-	  return index.toString(36);
-	}
-	
-	/**
-	 * Escape a component key so that it is safe to use in a reactid.
-	 *
-	 * @param {*} key Component key to be escaped.
-	 * @return {string} An escaped string.
-	 */
-	function escapeUserProvidedKey(text) {
-	  return ('' + text).replace(
-	    userProvidedKeyEscapeRegex,
-	    userProvidedKeyEscaper
-	  );
-	}
-	
-	/**
-	 * Wrap a `key` value explicitly provided by the user to distinguish it from
-	 * implicitly-generated keys generated by a component's index in its parent.
-	 *
-	 * @param {string} key Value of a user-provided `key` attribute
-	 * @return {string}
-	 */
-	function wrapUserProvidedKey(key) {
-	  return '$' + escapeUserProvidedKey(key);
-	}
-	
-	/**
-	 * @param {?*} children Children tree container.
-	 * @param {!string} nameSoFar Name of the key path so far.
-	 * @param {!number} indexSoFar Number of children encountered until this point.
-	 * @param {!function} callback Callback to invoke with each child found.
-	 * @param {?*} traverseContext Used to pass information throughout the traversal
-	 * process.
-	 * @return {!number} The number of children in this subtree.
-	 */
-	function traverseAllChildrenImpl(
-	  children,
-	  nameSoFar,
-	  indexSoFar,
-	  callback,
-	  traverseContext
-	) {
-	  var type = typeof children;
-	
-	  if (type === 'undefined' || type === 'boolean') {
-	    // All of the above are perceived as null.
-	    children = null;
-	  }
-	
-	  if (children === null ||
-	      type === 'string' ||
-	      type === 'number' ||
-	      ReactElement.isValidElement(children)) {
-	    callback(
-	      traverseContext,
-	      children,
-	      // If it's the only child, treat the name as if it was wrapped in an array
-	      // so that it's consistent if the number of children grows.
-	      nameSoFar === '' ? SEPARATOR + getComponentKey(children, 0) : nameSoFar,
-	      indexSoFar
-	    );
-	    return 1;
-	  }
-	
-	  var child, nextName, nextIndex;
-	  var subtreeCount = 0; // Count of children found in the current subtree.
-	
-	  if (Array.isArray(children)) {
-	    for (var i = 0; i < children.length; i++) {
-	      child = children[i];
-	      nextName = (
-	        (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
-	        getComponentKey(child, i)
-	      );
-	      nextIndex = indexSoFar + subtreeCount;
-	      subtreeCount += traverseAllChildrenImpl(
-	        child,
-	        nextName,
-	        nextIndex,
-	        callback,
-	        traverseContext
-	      );
-	    }
-	  } else {
-	    var iteratorFn = getIteratorFn(children);
-	    if (iteratorFn) {
-	      var iterator = iteratorFn.call(children);
-	      var step;
-	      if (iteratorFn !== children.entries) {
-	        var ii = 0;
-	        while (!(step = iterator.next()).done) {
-	          child = step.value;
-	          nextName = (
-	            (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
-	            getComponentKey(child, ii++)
-	          );
-	          nextIndex = indexSoFar + subtreeCount;
-	          subtreeCount += traverseAllChildrenImpl(
-	            child,
-	            nextName,
-	            nextIndex,
-	            callback,
-	            traverseContext
-	          );
-	        }
-	      } else {
-	        if ("production" !== process.env.NODE_ENV) {
-	          ("production" !== process.env.NODE_ENV ? warning(
-	            didWarnAboutMaps,
-	            'Using Maps as children is not yet fully supported. It is an ' +
-	            'experimental feature that might be removed. Convert it to a ' +
-	            'sequence / iterable of keyed ReactElements instead.'
-	          ) : null);
-	          didWarnAboutMaps = true;
-	        }
-	        // Iterator will provide entry [k,v] tuples rather than values.
-	        while (!(step = iterator.next()).done) {
-	          var entry = step.value;
-	          if (entry) {
-	            child = entry[1];
-	            nextName = (
-	              (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
-	              wrapUserProvidedKey(entry[0]) + SUBSEPARATOR +
-	              getComponentKey(child, 0)
-	            );
-	            nextIndex = indexSoFar + subtreeCount;
-	            subtreeCount += traverseAllChildrenImpl(
-	              child,
-	              nextName,
-	              nextIndex,
-	              callback,
-	              traverseContext
-	            );
-	          }
-	        }
-	      }
-	    } else if (type === 'object') {
-	      ("production" !== process.env.NODE_ENV ? invariant(
-	        children.nodeType !== 1,
-	        'traverseAllChildren(...): Encountered an invalid child; DOM ' +
-	        'elements are not valid children of React components.'
-	      ) : invariant(children.nodeType !== 1));
-	      var fragment = ReactFragment.extract(children);
-	      for (var key in fragment) {
-	        if (fragment.hasOwnProperty(key)) {
-	          child = fragment[key];
-	          nextName = (
-	            (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
-	            wrapUserProvidedKey(key) + SUBSEPARATOR +
-	            getComponentKey(child, 0)
-	          );
-	          nextIndex = indexSoFar + subtreeCount;
-	          subtreeCount += traverseAllChildrenImpl(
-	            child,
-	            nextName,
-	            nextIndex,
-	            callback,
-	            traverseContext
-	          );
-	        }
-	      }
-	    }
-	  }
-	
-	  return subtreeCount;
-	}
-	
-	/**
-	 * Traverses children that are typically specified as `props.children`, but
-	 * might also be specified through attributes:
-	 *
-	 * - `traverseAllChildren(this.props.children, ...)`
-	 * - `traverseAllChildren(this.props.leftPanelChildren, ...)`
-	 *
-	 * The `traverseContext` is an optional argument that is passed through the
-	 * entire traversal. It can be used to store accumulations or anything else that
-	 * the callback might find relevant.
-	 *
-	 * @param {?*} children Children tree object.
-	 * @param {!function} callback To invoke upon traversing each child.
-	 * @param {?*} traverseContext Context for traversal.
-	 * @return {!number} The number of children in this subtree.
-	 */
-	function traverseAllChildren(children, callback, traverseContext) {
-	  if (children == null) {
-	    return 0;
-	  }
-	
-	  return traverseAllChildrenImpl(children, '', 0, callback, traverseContext);
-	}
-	
-	module.exports = traverseAllChildren;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 210 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactInstanceHandles
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	var ReactRootIndex = __webpack_require__(211);
-	
-	var invariant = __webpack_require__(198);
-	
-	var SEPARATOR = '.';
-	var SEPARATOR_LENGTH = SEPARATOR.length;
-	
-	/**
-	 * Maximum depth of traversals before we consider the possibility of a bad ID.
-	 */
-	var MAX_TREE_DEPTH = 100;
-	
-	/**
-	 * Creates a DOM ID prefix to use when mounting React components.
-	 *
-	 * @param {number} index A unique integer
-	 * @return {string} React root ID.
-	 * @internal
-	 */
-	function getReactRootIDString(index) {
-	  return SEPARATOR + index.toString(36);
-	}
-	
-	/**
-	 * Checks if a character in the supplied ID is a separator or the end.
-	 *
-	 * @param {string} id A React DOM ID.
-	 * @param {number} index Index of the character to check.
-	 * @return {boolean} True if the character is a separator or end of the ID.
-	 * @private
-	 */
-	function isBoundary(id, index) {
-	  return id.charAt(index) === SEPARATOR || index === id.length;
-	}
-	
-	/**
-	 * Checks if the supplied string is a valid React DOM ID.
-	 *
-	 * @param {string} id A React DOM ID, maybe.
-	 * @return {boolean} True if the string is a valid React DOM ID.
-	 * @private
-	 */
-	function isValidID(id) {
-	  return id === '' || (
-	    id.charAt(0) === SEPARATOR && id.charAt(id.length - 1) !== SEPARATOR
-	  );
-	}
-	
-	/**
-	 * Checks if the first ID is an ancestor of or equal to the second ID.
-	 *
-	 * @param {string} ancestorID
-	 * @param {string} descendantID
-	 * @return {boolean} True if `ancestorID` is an ancestor of `descendantID`.
-	 * @internal
-	 */
-	function isAncestorIDOf(ancestorID, descendantID) {
-	  return (
-	    descendantID.indexOf(ancestorID) === 0 &&
-	    isBoundary(descendantID, ancestorID.length)
-	  );
-	}
-	
-	/**
-	 * Gets the parent ID of the supplied React DOM ID, `id`.
-	 *
-	 * @param {string} id ID of a component.
-	 * @return {string} ID of the parent, or an empty string.
-	 * @private
-	 */
-	function getParentID(id) {
-	  return id ? id.substr(0, id.lastIndexOf(SEPARATOR)) : '';
-	}
-	
-	/**
-	 * Gets the next DOM ID on the tree path from the supplied `ancestorID` to the
-	 * supplied `destinationID`. If they are equal, the ID is returned.
-	 *
-	 * @param {string} ancestorID ID of an ancestor node of `destinationID`.
-	 * @param {string} destinationID ID of the destination node.
-	 * @return {string} Next ID on the path from `ancestorID` to `destinationID`.
-	 * @private
-	 */
-	function getNextDescendantID(ancestorID, destinationID) {
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    isValidID(ancestorID) && isValidID(destinationID),
-	    'getNextDescendantID(%s, %s): Received an invalid React DOM ID.',
-	    ancestorID,
-	    destinationID
-	  ) : invariant(isValidID(ancestorID) && isValidID(destinationID)));
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    isAncestorIDOf(ancestorID, destinationID),
-	    'getNextDescendantID(...): React has made an invalid assumption about ' +
-	    'the DOM hierarchy. Expected `%s` to be an ancestor of `%s`.',
-	    ancestorID,
-	    destinationID
-	  ) : invariant(isAncestorIDOf(ancestorID, destinationID)));
-	  if (ancestorID === destinationID) {
-	    return ancestorID;
-	  }
-	  // Skip over the ancestor and the immediate separator. Traverse until we hit
-	  // another separator or we reach the end of `destinationID`.
-	  var start = ancestorID.length + SEPARATOR_LENGTH;
-	  var i;
-	  for (i = start; i < destinationID.length; i++) {
-	    if (isBoundary(destinationID, i)) {
-	      break;
-	    }
-	  }
-	  return destinationID.substr(0, i);
-	}
-	
-	/**
-	 * Gets the nearest common ancestor ID of two IDs.
-	 *
-	 * Using this ID scheme, the nearest common ancestor ID is the longest common
-	 * prefix of the two IDs that immediately preceded a "marker" in both strings.
-	 *
-	 * @param {string} oneID
-	 * @param {string} twoID
-	 * @return {string} Nearest common ancestor ID, or the empty string if none.
-	 * @private
-	 */
-	function getFirstCommonAncestorID(oneID, twoID) {
-	  var minLength = Math.min(oneID.length, twoID.length);
-	  if (minLength === 0) {
-	    return '';
-	  }
-	  var lastCommonMarkerIndex = 0;
-	  // Use `<=` to traverse until the "EOL" of the shorter string.
-	  for (var i = 0; i <= minLength; i++) {
-	    if (isBoundary(oneID, i) && isBoundary(twoID, i)) {
-	      lastCommonMarkerIndex = i;
-	    } else if (oneID.charAt(i) !== twoID.charAt(i)) {
-	      break;
-	    }
-	  }
-	  var longestCommonID = oneID.substr(0, lastCommonMarkerIndex);
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    isValidID(longestCommonID),
-	    'getFirstCommonAncestorID(%s, %s): Expected a valid React DOM ID: %s',
-	    oneID,
-	    twoID,
-	    longestCommonID
-	  ) : invariant(isValidID(longestCommonID)));
-	  return longestCommonID;
-	}
-	
-	/**
-	 * Traverses the parent path between two IDs (either up or down). The IDs must
-	 * not be the same, and there must exist a parent path between them. If the
-	 * callback returns `false`, traversal is stopped.
-	 *
-	 * @param {?string} start ID at which to start traversal.
-	 * @param {?string} stop ID at which to end traversal.
-	 * @param {function} cb Callback to invoke each ID with.
-	 * @param {?boolean} skipFirst Whether or not to skip the first node.
-	 * @param {?boolean} skipLast Whether or not to skip the last node.
-	 * @private
-	 */
-	function traverseParentPath(start, stop, cb, arg, skipFirst, skipLast) {
-	  start = start || '';
-	  stop = stop || '';
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    start !== stop,
-	    'traverseParentPath(...): Cannot traverse from and to the same ID, `%s`.',
-	    start
-	  ) : invariant(start !== stop));
-	  var traverseUp = isAncestorIDOf(stop, start);
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    traverseUp || isAncestorIDOf(start, stop),
-	    'traverseParentPath(%s, %s, ...): Cannot traverse from two IDs that do ' +
-	    'not have a parent path.',
-	    start,
-	    stop
-	  ) : invariant(traverseUp || isAncestorIDOf(start, stop)));
-	  // Traverse from `start` to `stop` one depth at a time.
-	  var depth = 0;
-	  var traverse = traverseUp ? getParentID : getNextDescendantID;
-	  for (var id = start; /* until break */; id = traverse(id, stop)) {
-	    var ret;
-	    if ((!skipFirst || id !== start) && (!skipLast || id !== stop)) {
-	      ret = cb(id, traverseUp, arg);
-	    }
-	    if (ret === false || id === stop) {
-	      // Only break //after// visiting `stop`.
-	      break;
-	    }
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      depth++ < MAX_TREE_DEPTH,
-	      'traverseParentPath(%s, %s, ...): Detected an infinite loop while ' +
-	      'traversing the React DOM ID tree. This may be due to malformed IDs: %s',
-	      start, stop
-	    ) : invariant(depth++ < MAX_TREE_DEPTH));
-	  }
-	}
-	
-	/**
-	 * Manages the IDs assigned to DOM representations of React components. This
-	 * uses a specific scheme in order to traverse the DOM efficiently (e.g. in
-	 * order to simulate events).
-	 *
-	 * @internal
-	 */
-	var ReactInstanceHandles = {
-	
-	  /**
-	   * Constructs a React root ID
-	   * @return {string} A React root ID.
-	   */
-	  createReactRootID: function() {
-	    return getReactRootIDString(ReactRootIndex.createReactRootIndex());
-	  },
-	
-	  /**
-	   * Constructs a React ID by joining a root ID with a name.
-	   *
-	   * @param {string} rootID Root ID of a parent component.
-	   * @param {string} name A component's name (as flattened children).
-	   * @return {string} A React ID.
-	   * @internal
-	   */
-	  createReactID: function(rootID, name) {
-	    return rootID + name;
-	  },
-	
-	  /**
-	   * Gets the DOM ID of the React component that is the root of the tree that
-	   * contains the React component with the supplied DOM ID.
-	   *
-	   * @param {string} id DOM ID of a React component.
-	   * @return {?string} DOM ID of the React component that is the root.
-	   * @internal
-	   */
-	  getReactRootIDFromNodeID: function(id) {
-	    if (id && id.charAt(0) === SEPARATOR && id.length > 1) {
-	      var index = id.indexOf(SEPARATOR, 1);
-	      return index > -1 ? id.substr(0, index) : id;
-	    }
-	    return null;
-	  },
-	
-	  /**
-	   * Traverses the ID hierarchy and invokes the supplied `cb` on any IDs that
-	   * should would receive a `mouseEnter` or `mouseLeave` event.
-	   *
-	   * NOTE: Does not invoke the callback on the nearest common ancestor because
-	   * nothing "entered" or "left" that element.
-	   *
-	   * @param {string} leaveID ID being left.
-	   * @param {string} enterID ID being entered.
-	   * @param {function} cb Callback to invoke on each entered/left ID.
-	   * @param {*} upArg Argument to invoke the callback with on left IDs.
-	   * @param {*} downArg Argument to invoke the callback with on entered IDs.
-	   * @internal
-	   */
-	  traverseEnterLeave: function(leaveID, enterID, cb, upArg, downArg) {
-	    var ancestorID = getFirstCommonAncestorID(leaveID, enterID);
-	    if (ancestorID !== leaveID) {
-	      traverseParentPath(leaveID, ancestorID, cb, upArg, false, true);
-	    }
-	    if (ancestorID !== enterID) {
-	      traverseParentPath(ancestorID, enterID, cb, downArg, true, false);
-	    }
-	  },
-	
-	  /**
-	   * Simulates the traversal of a two-phase, capture/bubble event dispatch.
-	   *
-	   * NOTE: This traversal happens on IDs without touching the DOM.
-	   *
-	   * @param {string} targetID ID of the target node.
-	   * @param {function} cb Callback to invoke.
-	   * @param {*} arg Argument to invoke the callback with.
-	   * @internal
-	   */
-	  traverseTwoPhase: function(targetID, cb, arg) {
-	    if (targetID) {
-	      traverseParentPath('', targetID, cb, arg, true, false);
-	      traverseParentPath(targetID, '', cb, arg, false, true);
-	    }
-	  },
-	
-	  /**
-	   * Traverse a node ID, calling the supplied `cb` for each ancestor ID. For
-	   * example, passing `.0.$row-0.1` would result in `cb` getting called
-	   * with `.0`, `.0.$row-0`, and `.0.$row-0.1`.
-	   *
-	   * NOTE: This traversal happens on IDs without touching the DOM.
-	   *
-	   * @param {string} targetID ID of the target node.
-	   * @param {function} cb Callback to invoke.
-	   * @param {*} arg Argument to invoke the callback with.
-	   * @internal
-	   */
-	  traverseAncestors: function(targetID, cb, arg) {
-	    traverseParentPath('', targetID, cb, arg, true, false);
-	  },
-	
-	  /**
-	   * Exposed for unit testing.
-	   * @private
-	   */
-	  _getFirstCommonAncestorID: getFirstCommonAncestorID,
-	
-	  /**
-	   * Exposed for unit testing.
-	   * @private
-	   */
-	  _getNextDescendantID: getNextDescendantID,
-	
-	  isAncestorIDOf: isAncestorIDOf,
-	
-	  SEPARATOR: SEPARATOR
-	
-	};
-	
-	module.exports = ReactInstanceHandles;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 211 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactRootIndex
-	 * @typechecks
-	 */
-	
-	'use strict';
-	
-	var ReactRootIndexInjection = {
-	  /**
-	   * @param {function} _createReactRootIndex
-	   */
-	  injectCreateReactRootIndex: function(_createReactRootIndex) {
-	    ReactRootIndex.createReactRootIndex = _createReactRootIndex;
-	  }
-	};
-	
-	var ReactRootIndex = {
-	  createReactRootIndex: null,
-	  injection: ReactRootIndexInjection
-	};
-	
-	module.exports = ReactRootIndex;
-
-
-/***/ },
-/* 212 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule getIteratorFn
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	/* global Symbol */
-	var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-	var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
-	
-	/**
-	 * Returns the iterator method function contained on the iterable object.
-	 *
-	 * Be sure to invoke the function with the iterable as context:
-	 *
-	 *     var iteratorFn = getIteratorFn(myIterable);
-	 *     if (iteratorFn) {
-	 *       var iterator = iteratorFn.call(myIterable);
-	 *       ...
-	 *     }
-	 *
-	 * @param {?object} maybeIterable
-	 * @return {?function}
-	 */
-	function getIteratorFn(maybeIterable) {
-	  var iteratorFn = maybeIterable && (
-	    (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL])
-	  );
-	  if (typeof iteratorFn === 'function') {
-	    return iteratorFn;
-	  }
-	}
-	
-	module.exports = getIteratorFn;
-
-
-/***/ },
-/* 213 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactComponent
-	 */
-	
-	'use strict';
-	
-	var ReactUpdateQueue = __webpack_require__(214);
-	
-	var invariant = __webpack_require__(198);
-	var warning = __webpack_require__(206);
-	
-	/**
-	 * Base class helpers for the updating state of a component.
-	 */
-	function ReactComponent(props, context) {
-	  this.props = props;
-	  this.context = context;
-	}
-	
-	/**
-	 * Sets a subset of the state. Always use this to mutate
-	 * state. You should treat `this.state` as immutable.
-	 *
-	 * There is no guarantee that `this.state` will be immediately updated, so
-	 * accessing `this.state` after calling this method may return the old value.
-	 *
-	 * There is no guarantee that calls to `setState` will run synchronously,
-	 * as they may eventually be batched together.  You can provide an optional
-	 * callback that will be executed when the call to setState is actually
-	 * completed.
-	 *
-	 * When a function is provided to setState, it will be called at some point in
-	 * the future (not synchronously). It will be called with the up to date
-	 * component arguments (state, props, context). These values can be different
-	 * from this.* because your function may be called after receiveProps but before
-	 * shouldComponentUpdate, and this new state, props, and context will not yet be
-	 * assigned to this.
-	 *
-	 * @param {object|function} partialState Next partial state or function to
-	 *        produce next partial state to be merged with current state.
-	 * @param {?function} callback Called after state is updated.
-	 * @final
-	 * @protected
-	 */
-	ReactComponent.prototype.setState = function(partialState, callback) {
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    typeof partialState === 'object' ||
-	    typeof partialState === 'function' ||
-	    partialState == null,
-	    'setState(...): takes an object of state variables to update or a ' +
-	    'function which returns an object of state variables.'
-	  ) : invariant(typeof partialState === 'object' ||
-	  typeof partialState === 'function' ||
-	  partialState == null));
-	  if ("production" !== process.env.NODE_ENV) {
-	    ("production" !== process.env.NODE_ENV ? warning(
-	      partialState != null,
-	      'setState(...): You passed an undefined or null state object; ' +
-	      'instead, use forceUpdate().'
-	    ) : null);
-	  }
-	  ReactUpdateQueue.enqueueSetState(this, partialState);
-	  if (callback) {
-	    ReactUpdateQueue.enqueueCallback(this, callback);
-	  }
-	};
-	
-	/**
-	 * Forces an update. This should only be invoked when it is known with
-	 * certainty that we are **not** in a DOM transaction.
-	 *
-	 * You may want to call this when you know that some deeper aspect of the
-	 * component's state has changed but `setState` was not called.
-	 *
-	 * This will not invoke `shouldComponentUpdate`, but it will invoke
-	 * `componentWillUpdate` and `componentDidUpdate`.
-	 *
-	 * @param {?function} callback Called after update is complete.
-	 * @final
-	 * @protected
-	 */
-	ReactComponent.prototype.forceUpdate = function(callback) {
-	  ReactUpdateQueue.enqueueForceUpdate(this);
-	  if (callback) {
-	    ReactUpdateQueue.enqueueCallback(this, callback);
-	  }
-	};
-	
-	/**
-	 * Deprecated APIs. These APIs used to exist on classic React classes but since
-	 * we would like to deprecate them, we're not going to move them over to this
-	 * modern base class. Instead, we define a getter that warns if it's accessed.
-	 */
-	if ("production" !== process.env.NODE_ENV) {
-	  var deprecatedAPIs = {
-	    getDOMNode: [
-	      'getDOMNode',
-	      'Use React.findDOMNode(component) instead.'
-	    ],
-	    isMounted: [
-	      'isMounted',
-	      'Instead, make sure to clean up subscriptions and pending requests in ' +
-	      'componentWillUnmount to prevent memory leaks.'
-	    ],
-	    replaceProps: [
-	      'replaceProps',
-	      'Instead, call React.render again at the top level.'
-	    ],
-	    replaceState: [
-	      'replaceState',
-	      'Refactor your code to use setState instead (see ' +
-	      'https://github.com/facebook/react/issues/3236).'
-	    ],
-	    setProps: [
-	      'setProps',
-	      'Instead, call React.render again at the top level.'
-	    ]
-	  };
-	  var defineDeprecationWarning = function(methodName, info) {
-	    try {
-	      Object.defineProperty(ReactComponent.prototype, methodName, {
-	        get: function() {
-	          ("production" !== process.env.NODE_ENV ? warning(
-	            false,
-	            '%s(...) is deprecated in plain JavaScript React classes. %s',
-	            info[0],
-	            info[1]
-	          ) : null);
-	          return undefined;
-	        }
-	      });
-	    } catch (x) {
-	      // IE will fail on defineProperty (es5-shim/sham too)
-	    }
-	  };
-	  for (var fnName in deprecatedAPIs) {
-	    if (deprecatedAPIs.hasOwnProperty(fnName)) {
-	      defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
-	    }
-	  }
-	}
-	
-	module.exports = ReactComponent;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 214 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactUpdateQueue
-	 */
-	
-	'use strict';
-	
-	var ReactLifeCycle = __webpack_require__(215);
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactElement = __webpack_require__(202);
-	var ReactInstanceMap = __webpack_require__(216);
-	var ReactUpdates = __webpack_require__(217);
-	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
-	var warning = __webpack_require__(206);
-	
-	function enqueueUpdate(internalInstance) {
-	  if (internalInstance !== ReactLifeCycle.currentlyMountingInstance) {
-	    // If we're in a componentWillMount handler, don't enqueue a rerender
-	    // because ReactUpdates assumes we're in a browser context (which is
-	    // wrong for server rendering) and we're about to do a render anyway.
-	    // See bug in #1740.
-	    ReactUpdates.enqueueUpdate(internalInstance);
-	  }
-	}
-	
-	function getInternalInstanceReadyForUpdate(publicInstance, callerName) {
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    ReactCurrentOwner.current == null,
-	    '%s(...): Cannot update during an existing state transition ' +
-	    '(such as within `render`). Render methods should be a pure function ' +
-	    'of props and state.',
-	    callerName
-	  ) : invariant(ReactCurrentOwner.current == null));
-	
-	  var internalInstance = ReactInstanceMap.get(publicInstance);
-	  if (!internalInstance) {
-	    if ("production" !== process.env.NODE_ENV) {
-	      // Only warn when we have a callerName. Otherwise we should be silent.
-	      // We're probably calling from enqueueCallback. We don't want to warn
-	      // there because we already warned for the corresponding lifecycle method.
-	      ("production" !== process.env.NODE_ENV ? warning(
-	        !callerName,
-	        '%s(...): Can only update a mounted or mounting component. ' +
-	        'This usually means you called %s() on an unmounted ' +
-	        'component. This is a no-op.',
-	        callerName,
-	        callerName
-	      ) : null);
-	    }
-	    return null;
-	  }
-	
-	  if (internalInstance === ReactLifeCycle.currentlyUnmountingInstance) {
-	    return null;
-	  }
-	
-	  return internalInstance;
-	}
-	
-	/**
-	 * ReactUpdateQueue allows for state updates to be scheduled into a later
-	 * reconciliation step.
-	 */
-	var ReactUpdateQueue = {
-	
-	  /**
-	   * Enqueue a callback that will be executed after all the pending updates
-	   * have processed.
-	   *
-	   * @param {ReactClass} publicInstance The instance to use as `this` context.
-	   * @param {?function} callback Called after state is updated.
-	   * @internal
-	   */
-	  enqueueCallback: function(publicInstance, callback) {
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      typeof callback === 'function',
-	      'enqueueCallback(...): You called `setProps`, `replaceProps`, ' +
-	      '`setState`, `replaceState`, or `forceUpdate` with a callback that ' +
-	      'isn\'t callable.'
-	    ) : invariant(typeof callback === 'function'));
-	    var internalInstance = getInternalInstanceReadyForUpdate(publicInstance);
-	
-	    // Previously we would throw an error if we didn't have an internal
-	    // instance. Since we want to make it a no-op instead, we mirror the same
-	    // behavior we have in other enqueue* methods.
-	    // We also need to ignore callbacks in componentWillMount. See
-	    // enqueueUpdates.
-	    if (!internalInstance ||
-	        internalInstance === ReactLifeCycle.currentlyMountingInstance) {
-	      return null;
-	    }
-	
-	    if (internalInstance._pendingCallbacks) {
-	      internalInstance._pendingCallbacks.push(callback);
-	    } else {
-	      internalInstance._pendingCallbacks = [callback];
-	    }
-	    // TODO: The callback here is ignored when setState is called from
-	    // componentWillMount. Either fix it or disallow doing so completely in
-	    // favor of getInitialState. Alternatively, we can disallow
-	    // componentWillMount during server-side rendering.
-	    enqueueUpdate(internalInstance);
-	  },
-	
-	  enqueueCallbackInternal: function(internalInstance, callback) {
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      typeof callback === 'function',
-	      'enqueueCallback(...): You called `setProps`, `replaceProps`, ' +
-	      '`setState`, `replaceState`, or `forceUpdate` with a callback that ' +
-	      'isn\'t callable.'
-	    ) : invariant(typeof callback === 'function'));
-	    if (internalInstance._pendingCallbacks) {
-	      internalInstance._pendingCallbacks.push(callback);
-	    } else {
-	      internalInstance._pendingCallbacks = [callback];
-	    }
-	    enqueueUpdate(internalInstance);
-	  },
-	
-	  /**
-	   * Forces an update. This should only be invoked when it is known with
-	   * certainty that we are **not** in a DOM transaction.
-	   *
-	   * You may want to call this when you know that some deeper aspect of the
-	   * component's state has changed but `setState` was not called.
-	   *
-	   * This will not invoke `shouldUpdateComponent`, but it will invoke
-	   * `componentWillUpdate` and `componentDidUpdate`.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @internal
-	   */
-	  enqueueForceUpdate: function(publicInstance) {
-	    var internalInstance = getInternalInstanceReadyForUpdate(
-	      publicInstance,
-	      'forceUpdate'
-	    );
-	
-	    if (!internalInstance) {
-	      return;
-	    }
-	
-	    internalInstance._pendingForceUpdate = true;
-	
-	    enqueueUpdate(internalInstance);
-	  },
-	
-	  /**
-	   * Replaces all of the state. Always use this or `setState` to mutate state.
-	   * You should treat `this.state` as immutable.
-	   *
-	   * There is no guarantee that `this.state` will be immediately updated, so
-	   * accessing `this.state` after calling this method may return the old value.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @param {object} completeState Next state.
-	   * @internal
-	   */
-	  enqueueReplaceState: function(publicInstance, completeState) {
-	    var internalInstance = getInternalInstanceReadyForUpdate(
-	      publicInstance,
-	      'replaceState'
-	    );
-	
-	    if (!internalInstance) {
-	      return;
-	    }
-	
-	    internalInstance._pendingStateQueue = [completeState];
-	    internalInstance._pendingReplaceState = true;
-	
-	    enqueueUpdate(internalInstance);
-	  },
-	
-	  /**
-	   * Sets a subset of the state. This only exists because _pendingState is
-	   * internal. This provides a merging strategy that is not available to deep
-	   * properties which is confusing. TODO: Expose pendingState or don't use it
-	   * during the merge.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @param {object} partialState Next partial state to be merged with state.
-	   * @internal
-	   */
-	  enqueueSetState: function(publicInstance, partialState) {
-	    var internalInstance = getInternalInstanceReadyForUpdate(
-	      publicInstance,
-	      'setState'
-	    );
-	
-	    if (!internalInstance) {
-	      return;
-	    }
-	
-	    var queue =
-	      internalInstance._pendingStateQueue ||
-	      (internalInstance._pendingStateQueue = []);
-	    queue.push(partialState);
-	
-	    enqueueUpdate(internalInstance);
-	  },
-	
-	  /**
-	   * Sets a subset of the props.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @param {object} partialProps Subset of the next props.
-	   * @internal
-	   */
-	  enqueueSetProps: function(publicInstance, partialProps) {
-	    var internalInstance = getInternalInstanceReadyForUpdate(
-	      publicInstance,
-	      'setProps'
-	    );
-	
-	    if (!internalInstance) {
-	      return;
-	    }
-	
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      internalInstance._isTopLevel,
-	      'setProps(...): You called `setProps` on a ' +
-	      'component with a parent. This is an anti-pattern since props will ' +
-	      'get reactively updated when rendered. Instead, change the owner\'s ' +
-	      '`render` method to pass the correct value as props to the component ' +
-	      'where it is created.'
-	    ) : invariant(internalInstance._isTopLevel));
-	
-	    // Merge with the pending element if it exists, otherwise with existing
-	    // element props.
-	    var element = internalInstance._pendingElement ||
-	                  internalInstance._currentElement;
-	    var props = assign({}, element.props, partialProps);
-	    internalInstance._pendingElement = ReactElement.cloneAndReplaceProps(
-	      element,
-	      props
-	    );
-	
-	    enqueueUpdate(internalInstance);
-	  },
-	
-	  /**
-	   * Replaces all of the props.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @param {object} props New props.
-	   * @internal
-	   */
-	  enqueueReplaceProps: function(publicInstance, props) {
-	    var internalInstance = getInternalInstanceReadyForUpdate(
-	      publicInstance,
-	      'replaceProps'
-	    );
-	
-	    if (!internalInstance) {
-	      return;
-	    }
-	
-	    ("production" !== process.env.NODE_ENV ? invariant(
-	      internalInstance._isTopLevel,
-	      'replaceProps(...): You called `replaceProps` on a ' +
-	      'component with a parent. This is an anti-pattern since props will ' +
-	      'get reactively updated when rendered. Instead, change the owner\'s ' +
-	      '`render` method to pass the correct value as props to the component ' +
-	      'where it is created.'
-	    ) : invariant(internalInstance._isTopLevel));
-	
-	    // Merge with the pending element if it exists, otherwise with existing
-	    // element props.
-	    var element = internalInstance._pendingElement ||
-	                  internalInstance._currentElement;
-	    internalInstance._pendingElement = ReactElement.cloneAndReplaceProps(
-	      element,
-	      props
-	    );
-	
-	    enqueueUpdate(internalInstance);
-	  },
-	
-	  enqueueElementInternal: function(internalInstance, newElement) {
-	    internalInstance._pendingElement = newElement;
-	    enqueueUpdate(internalInstance);
-	  }
-	
-	};
-	
-	module.exports = ReactUpdateQueue;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
-
-/***/ },
-/* 215 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactLifeCycle
-	 */
-	
-	'use strict';
-	
-	/**
-	 * This module manages the bookkeeping when a component is in the process
-	 * of being mounted or being unmounted. This is used as a way to enforce
-	 * invariants (or warnings) when it is not recommended to call
-	 * setState/forceUpdate.
-	 *
-	 * currentlyMountingInstance: During the construction phase, it is not possible
-	 * to trigger an update since the instance is not fully mounted yet. However, we
-	 * currently allow this as a convenience for mutating the initial state.
-	 *
-	 * currentlyUnmountingInstance: During the unmounting phase, the instance is
-	 * still mounted and can therefore schedule an update. However, this is not
-	 * recommended and probably an error since it's about to be unmounted.
-	 * Therefore we still want to trigger in an error for that case.
-	 */
-	
-	var ReactLifeCycle = {
-	  currentlyMountingInstance: null,
-	  currentlyUnmountingInstance: null
-	};
-	
-	module.exports = ReactLifeCycle;
-
-
-/***/ },
-/* 216 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactInstanceMap
-	 */
-	
-	'use strict';
-	
-	/**
-	 * `ReactInstanceMap` maintains a mapping from a public facing stateful
-	 * instance (key) and the internal representation (value). This allows public
-	 * methods to accept the user facing instance as an argument and map them back
-	 * to internal methods.
-	 */
-	
-	// TODO: Replace this with ES6: var ReactInstanceMap = new Map();
-	var ReactInstanceMap = {
-	
-	  /**
-	   * This API should be called `delete` but we'd have to make sure to always
-	   * transform these to strings for IE support. When this transform is fully
-	   * supported we can rename it.
-	   */
-	  remove: function(key) {
-	    key._reactInternalInstance = undefined;
-	  },
-	
-	  get: function(key) {
-	    return key._reactInternalInstance;
-	  },
-	
-	  has: function(key) {
-	    return key._reactInternalInstance !== undefined;
-	  },
-	
-	  set: function(key, value) {
-	    key._reactInternalInstance = value;
-	  }
-	
-	};
-	
-	module.exports = ReactInstanceMap;
-
-
-/***/ },
-/* 217 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -58313,16 +60292,16 @@
 	
 	'use strict';
 	
-	var CallbackQueue = __webpack_require__(218);
-	var PooledClass = __webpack_require__(200);
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactPerf = __webpack_require__(219);
-	var ReactReconciler = __webpack_require__(220);
-	var Transaction = __webpack_require__(227);
+	var CallbackQueue = __webpack_require__(179);
+	var PooledClass = __webpack_require__(180);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactPerf = __webpack_require__(184);
+	var ReactReconciler = __webpack_require__(185);
+	var Transaction = __webpack_require__(200);
 	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
-	var warning = __webpack_require__(206);
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
+	var warning = __webpack_require__(192);
 	
 	var dirtyComponents = [];
 	var asapCallbackQueue = CallbackQueue.getPooled();
@@ -58579,10 +60558,10 @@
 	
 	module.exports = ReactUpdates;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 218 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -58598,10 +60577,10 @@
 	
 	'use strict';
 	
-	var PooledClass = __webpack_require__(200);
+	var PooledClass = __webpack_require__(180);
 	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * A specialized pseudo-event module to help keep track of components waiting to
@@ -58682,10 +60661,280 @@
 	
 	module.exports = CallbackQueue;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 219 */
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule PooledClass
+	 */
+	
+	'use strict';
+	
+	var invariant = __webpack_require__(181);
+	
+	/**
+	 * Static poolers. Several custom versions for each potential number of
+	 * arguments. A completely generic pooler is easy to implement, but would
+	 * require accessing the `arguments` object. In each of these, `this` refers to
+	 * the Class itself, not an instance. If any others are needed, simply add them
+	 * here, or in their own files.
+	 */
+	var oneArgumentPooler = function(copyFieldsFrom) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, copyFieldsFrom);
+	    return instance;
+	  } else {
+	    return new Klass(copyFieldsFrom);
+	  }
+	};
+	
+	var twoArgumentPooler = function(a1, a2) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2);
+	  }
+	};
+	
+	var threeArgumentPooler = function(a1, a2, a3) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2, a3);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2, a3);
+	  }
+	};
+	
+	var fiveArgumentPooler = function(a1, a2, a3, a4, a5) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2, a3, a4, a5);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2, a3, a4, a5);
+	  }
+	};
+	
+	var standardReleaser = function(instance) {
+	  var Klass = this;
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    instance instanceof Klass,
+	    'Trying to release an instance into a pool of a different type.'
+	  ) : invariant(instance instanceof Klass));
+	  if (instance.destructor) {
+	    instance.destructor();
+	  }
+	  if (Klass.instancePool.length < Klass.poolSize) {
+	    Klass.instancePool.push(instance);
+	  }
+	};
+	
+	var DEFAULT_POOL_SIZE = 10;
+	var DEFAULT_POOLER = oneArgumentPooler;
+	
+	/**
+	 * Augments `CopyConstructor` to be a poolable class, augmenting only the class
+	 * itself (statically) not adding any prototypical fields. Any CopyConstructor
+	 * you give this may have a `poolSize` property, and will look for a
+	 * prototypical `destructor` on instances (optional).
+	 *
+	 * @param {Function} CopyConstructor Constructor that can be used to reset.
+	 * @param {Function} pooler Customizable pooler.
+	 */
+	var addPoolingTo = function(CopyConstructor, pooler) {
+	  var NewKlass = CopyConstructor;
+	  NewKlass.instancePool = [];
+	  NewKlass.getPooled = pooler || DEFAULT_POOLER;
+	  if (!NewKlass.poolSize) {
+	    NewKlass.poolSize = DEFAULT_POOL_SIZE;
+	  }
+	  NewKlass.release = standardReleaser;
+	  return NewKlass;
+	};
+	
+	var PooledClass = {
+	  addPoolingTo: addPoolingTo,
+	  oneArgumentPooler: oneArgumentPooler,
+	  twoArgumentPooler: twoArgumentPooler,
+	  threeArgumentPooler: threeArgumentPooler,
+	  fiveArgumentPooler: fiveArgumentPooler
+	};
+	
+	module.exports = PooledClass;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule invariant
+	 */
+	
+	"use strict";
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var invariant = function(condition, format, a, b, c, d, e, f) {
+	  if ("production" !== process.env.NODE_ENV) {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  }
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error(
+	        'Minified exception occurred; use the non-minified dev environment ' +
+	        'for the full error message and additional helpful warnings.'
+	      );
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(
+	        'Invariant Violation: ' +
+	        format.replace(/%s/g, function() { return args[argIndex++]; })
+	      );
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+	
+	module.exports = invariant;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 182 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule Object.assign
+	 */
+	
+	// https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign
+	
+	'use strict';
+	
+	function assign(target, sources) {
+	  if (target == null) {
+	    throw new TypeError('Object.assign target cannot be null or undefined');
+	  }
+	
+	  var to = Object(target);
+	  var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+	    var nextSource = arguments[nextIndex];
+	    if (nextSource == null) {
+	      continue;
+	    }
+	
+	    var from = Object(nextSource);
+	
+	    // We don't currently support accessors nor proxies. Therefore this
+	    // copy cannot throw. If we ever supported this then we must handle
+	    // exceptions and side-effects. We don't support symbols so they won't
+	    // be transferred.
+	
+	    for (var key in from) {
+	      if (hasOwnProperty.call(from, key)) {
+	        to[key] = from[key];
+	      }
+	    }
+	  }
+	
+	  return to;
+	}
+	
+	module.exports = assign;
+
+
+/***/ },
+/* 183 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactCurrentOwner
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Keeps track of the current owner.
+	 *
+	 * The current owner is the component who should own any components that are
+	 * currently being constructed.
+	 *
+	 * The depth indicate how many composite components are above this render level.
+	 */
+	var ReactCurrentOwner = {
+	
+	  /**
+	   * @internal
+	   * @type {ReactComponent}
+	   */
+	  current: null
+	
+	};
+	
+	module.exports = ReactCurrentOwner;
+
+
+/***/ },
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -58789,10 +61038,10 @@
 	
 	module.exports = ReactPerf;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 220 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -58808,8 +61057,8 @@
 	
 	'use strict';
 	
-	var ReactRef = __webpack_require__(221);
-	var ReactElementValidator = __webpack_require__(223);
+	var ReactRef = __webpack_require__(186);
+	var ReactElementValidator = __webpack_require__(188);
 	
 	/**
 	 * Helper to call ReactRef.attachRefs with this composite component, split out
@@ -58916,10 +61165,10 @@
 	
 	module.exports = ReactReconciler;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 221 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -58935,7 +61184,7 @@
 	
 	'use strict';
 	
-	var ReactOwner = __webpack_require__(222);
+	var ReactOwner = __webpack_require__(187);
 	
 	var ReactRef = {};
 	
@@ -58994,7 +61243,7 @@
 
 
 /***/ },
-/* 222 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -59010,7 +61259,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * ReactOwners are capable of storing references to owned components.
@@ -59106,10 +61355,10 @@
 	
 	module.exports = ReactOwner;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 223 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -59132,16 +61381,16 @@
 	
 	'use strict';
 	
-	var ReactElement = __webpack_require__(202);
-	var ReactFragment = __webpack_require__(201);
-	var ReactPropTypeLocations = __webpack_require__(224);
-	var ReactPropTypeLocationNames = __webpack_require__(225);
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactNativeComponent = __webpack_require__(226);
+	var ReactElement = __webpack_require__(189);
+	var ReactFragment = __webpack_require__(194);
+	var ReactPropTypeLocations = __webpack_require__(195);
+	var ReactPropTypeLocationNames = __webpack_require__(197);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactNativeComponent = __webpack_require__(198);
 	
-	var getIteratorFn = __webpack_require__(212);
-	var invariant = __webpack_require__(198);
-	var warning = __webpack_require__(206);
+	var getIteratorFn = __webpack_require__(199);
+	var invariant = __webpack_require__(181);
+	var warning = __webpack_require__(192);
 	
 	function getDeclarationErrorAddendum() {
 	  if (ReactCurrentOwner.current) {
@@ -59574,10 +61823,721 @@
 	
 	module.exports = ReactElementValidator;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 224 */
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactElement
+	 */
+	
+	'use strict';
+	
+	var ReactContext = __webpack_require__(190);
+	var ReactCurrentOwner = __webpack_require__(183);
+	
+	var assign = __webpack_require__(182);
+	var warning = __webpack_require__(192);
+	
+	var RESERVED_PROPS = {
+	  key: true,
+	  ref: true
+	};
+	
+	/**
+	 * Warn for mutations.
+	 *
+	 * @internal
+	 * @param {object} object
+	 * @param {string} key
+	 */
+	function defineWarningProperty(object, key) {
+	  Object.defineProperty(object, key, {
+	
+	    configurable: false,
+	    enumerable: true,
+	
+	    get: function() {
+	      if (!this._store) {
+	        return null;
+	      }
+	      return this._store[key];
+	    },
+	
+	    set: function(value) {
+	      ("production" !== process.env.NODE_ENV ? warning(
+	        false,
+	        'Don\'t set the %s property of the React element. Instead, ' +
+	        'specify the correct value when initially creating the element.',
+	        key
+	      ) : null);
+	      this._store[key] = value;
+	    }
+	
+	  });
+	}
+	
+	/**
+	 * This is updated to true if the membrane is successfully created.
+	 */
+	var useMutationMembrane = false;
+	
+	/**
+	 * Warn for mutations.
+	 *
+	 * @internal
+	 * @param {object} element
+	 */
+	function defineMutationMembrane(prototype) {
+	  try {
+	    var pseudoFrozenProperties = {
+	      props: true
+	    };
+	    for (var key in pseudoFrozenProperties) {
+	      defineWarningProperty(prototype, key);
+	    }
+	    useMutationMembrane = true;
+	  } catch (x) {
+	    // IE will fail on defineProperty
+	  }
+	}
+	
+	/**
+	 * Base constructor for all React elements. This is only used to make this
+	 * work with a dynamic instanceof check. Nothing should live on this prototype.
+	 *
+	 * @param {*} type
+	 * @param {string|object} ref
+	 * @param {*} key
+	 * @param {*} props
+	 * @internal
+	 */
+	var ReactElement = function(type, key, ref, owner, context, props) {
+	  // Built-in properties that belong on the element
+	  this.type = type;
+	  this.key = key;
+	  this.ref = ref;
+	
+	  // Record the component responsible for creating this element.
+	  this._owner = owner;
+	
+	  // TODO: Deprecate withContext, and then the context becomes accessible
+	  // through the owner.
+	  this._context = context;
+	
+	  if ("production" !== process.env.NODE_ENV) {
+	    // The validation flag and props are currently mutative. We put them on
+	    // an external backing store so that we can freeze the whole object.
+	    // This can be replaced with a WeakMap once they are implemented in
+	    // commonly used development environments.
+	    this._store = {props: props, originalProps: assign({}, props)};
+	
+	    // To make comparing ReactElements easier for testing purposes, we make
+	    // the validation flag non-enumerable (where possible, which should
+	    // include every environment we run tests in), so the test framework
+	    // ignores it.
+	    try {
+	      Object.defineProperty(this._store, 'validated', {
+	        configurable: false,
+	        enumerable: false,
+	        writable: true
+	      });
+	    } catch (x) {
+	    }
+	    this._store.validated = false;
+	
+	    // We're not allowed to set props directly on the object so we early
+	    // return and rely on the prototype membrane to forward to the backing
+	    // store.
+	    if (useMutationMembrane) {
+	      Object.freeze(this);
+	      return;
+	    }
+	  }
+	
+	  this.props = props;
+	};
+	
+	// We intentionally don't expose the function on the constructor property.
+	// ReactElement should be indistinguishable from a plain object.
+	ReactElement.prototype = {
+	  _isReactElement: true
+	};
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  defineMutationMembrane(ReactElement.prototype);
+	}
+	
+	ReactElement.createElement = function(type, config, children) {
+	  var propName;
+	
+	  // Reserved names are extracted
+	  var props = {};
+	
+	  var key = null;
+	  var ref = null;
+	
+	  if (config != null) {
+	    ref = config.ref === undefined ? null : config.ref;
+	    key = config.key === undefined ? null : '' + config.key;
+	    // Remaining properties are added to a new props object
+	    for (propName in config) {
+	      if (config.hasOwnProperty(propName) &&
+	          !RESERVED_PROPS.hasOwnProperty(propName)) {
+	        props[propName] = config[propName];
+	      }
+	    }
+	  }
+	
+	  // Children can be more than one argument, and those are transferred onto
+	  // the newly allocated props object.
+	  var childrenLength = arguments.length - 2;
+	  if (childrenLength === 1) {
+	    props.children = children;
+	  } else if (childrenLength > 1) {
+	    var childArray = Array(childrenLength);
+	    for (var i = 0; i < childrenLength; i++) {
+	      childArray[i] = arguments[i + 2];
+	    }
+	    props.children = childArray;
+	  }
+	
+	  // Resolve default props
+	  if (type && type.defaultProps) {
+	    var defaultProps = type.defaultProps;
+	    for (propName in defaultProps) {
+	      if (typeof props[propName] === 'undefined') {
+	        props[propName] = defaultProps[propName];
+	      }
+	    }
+	  }
+	
+	  return new ReactElement(
+	    type,
+	    key,
+	    ref,
+	    ReactCurrentOwner.current,
+	    ReactContext.current,
+	    props
+	  );
+	};
+	
+	ReactElement.createFactory = function(type) {
+	  var factory = ReactElement.createElement.bind(null, type);
+	  // Expose the type on the factory and the prototype so that it can be
+	  // easily accessed on elements. E.g. <Foo />.type === Foo.type.
+	  // This should not be named `constructor` since this may not be the function
+	  // that created the element, and it may not even be a constructor.
+	  // Legacy hook TODO: Warn if this is accessed
+	  factory.type = type;
+	  return factory;
+	};
+	
+	ReactElement.cloneAndReplaceProps = function(oldElement, newProps) {
+	  var newElement = new ReactElement(
+	    oldElement.type,
+	    oldElement.key,
+	    oldElement.ref,
+	    oldElement._owner,
+	    oldElement._context,
+	    newProps
+	  );
+	
+	  if ("production" !== process.env.NODE_ENV) {
+	    // If the key on the original is valid, then the clone is valid
+	    newElement._store.validated = oldElement._store.validated;
+	  }
+	  return newElement;
+	};
+	
+	ReactElement.cloneElement = function(element, config, children) {
+	  var propName;
+	
+	  // Original props are copied
+	  var props = assign({}, element.props);
+	
+	  // Reserved names are extracted
+	  var key = element.key;
+	  var ref = element.ref;
+	
+	  // Owner will be preserved, unless ref is overridden
+	  var owner = element._owner;
+	
+	  if (config != null) {
+	    if (config.ref !== undefined) {
+	      // Silently steal the ref from the parent.
+	      ref = config.ref;
+	      owner = ReactCurrentOwner.current;
+	    }
+	    if (config.key !== undefined) {
+	      key = '' + config.key;
+	    }
+	    // Remaining properties override existing props
+	    for (propName in config) {
+	      if (config.hasOwnProperty(propName) &&
+	          !RESERVED_PROPS.hasOwnProperty(propName)) {
+	        props[propName] = config[propName];
+	      }
+	    }
+	  }
+	
+	  // Children can be more than one argument, and those are transferred onto
+	  // the newly allocated props object.
+	  var childrenLength = arguments.length - 2;
+	  if (childrenLength === 1) {
+	    props.children = children;
+	  } else if (childrenLength > 1) {
+	    var childArray = Array(childrenLength);
+	    for (var i = 0; i < childrenLength; i++) {
+	      childArray[i] = arguments[i + 2];
+	    }
+	    props.children = childArray;
+	  }
+	
+	  return new ReactElement(
+	    element.type,
+	    key,
+	    ref,
+	    owner,
+	    element._context,
+	    props
+	  );
+	};
+	
+	/**
+	 * @param {?object} object
+	 * @return {boolean} True if `object` is a valid component.
+	 * @final
+	 */
+	ReactElement.isValidElement = function(object) {
+	  // ReactTestUtils is often used outside of beforeEach where as React is
+	  // within it. This leads to two different instances of React on the same
+	  // page. To identify a element from a different React instance we use
+	  // a flag instead of an instanceof check.
+	  var isElement = !!(object && object._isReactElement);
+	  // if (isElement && !(object instanceof ReactElement)) {
+	  // This is an indicator that you're using multiple versions of React at the
+	  // same time. This will screw with ownership and stuff. Fix it, please.
+	  // TODO: We could possibly warn here.
+	  // }
+	  return isElement;
+	};
+	
+	module.exports = ReactElement;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactContext
+	 */
+	
+	'use strict';
+	
+	var assign = __webpack_require__(182);
+	var emptyObject = __webpack_require__(191);
+	var warning = __webpack_require__(192);
+	
+	var didWarn = false;
+	
+	/**
+	 * Keeps track of the current context.
+	 *
+	 * The context is automatically passed down the component ownership hierarchy
+	 * and is accessible via `this.context` on ReactCompositeComponents.
+	 */
+	var ReactContext = {
+	
+	  /**
+	   * @internal
+	   * @type {object}
+	   */
+	  current: emptyObject,
+	
+	  /**
+	   * Temporarily extends the current context while executing scopedCallback.
+	   *
+	   * A typical use case might look like
+	   *
+	   *  render: function() {
+	   *    var children = ReactContext.withContext({foo: 'foo'}, () => (
+	   *
+	   *    ));
+	   *    return <div>{children}</div>;
+	   *  }
+	   *
+	   * @param {object} newContext New context to merge into the existing context
+	   * @param {function} scopedCallback Callback to run with the new context
+	   * @return {ReactComponent|array<ReactComponent>}
+	   */
+	  withContext: function(newContext, scopedCallback) {
+	    if ("production" !== process.env.NODE_ENV) {
+	      ("production" !== process.env.NODE_ENV ? warning(
+	        didWarn,
+	        'withContext is deprecated and will be removed in a future version. ' +
+	        'Use a wrapper component with getChildContext instead.'
+	      ) : null);
+	
+	      didWarn = true;
+	    }
+	
+	    var result;
+	    var previousContext = ReactContext.current;
+	    ReactContext.current = assign({}, previousContext, newContext);
+	    try {
+	      result = scopedCallback();
+	    } finally {
+	      ReactContext.current = previousContext;
+	    }
+	    return result;
+	  }
+	
+	};
+	
+	module.exports = ReactContext;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule emptyObject
+	 */
+	
+	"use strict";
+	
+	var emptyObject = {};
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  Object.freeze(emptyObject);
+	}
+	
+	module.exports = emptyObject;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule warning
+	 */
+	
+	"use strict";
+	
+	var emptyFunction = __webpack_require__(193);
+	
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+	
+	var warning = emptyFunction;
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  warning = function(condition, format ) {for (var args=[],$__0=2,$__1=arguments.length;$__0<$__1;$__0++) args.push(arguments[$__0]);
+	    if (format === undefined) {
+	      throw new Error(
+	        '`warning(condition, format, ...args)` requires a warning ' +
+	        'message argument'
+	      );
+	    }
+	
+	    if (format.length < 10 || /^[s\W]*$/.test(format)) {
+	      throw new Error(
+	        'The warning format should be able to uniquely identify this ' +
+	        'warning. Please, use a more descriptive format than: ' + format
+	      );
+	    }
+	
+	    if (format.indexOf('Failed Composite propType: ') === 0) {
+	      return; // Ignore CompositeComponent proptype check.
+	    }
+	
+	    if (!condition) {
+	      var argIndex = 0;
+	      var message = 'Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];});
+	      console.warn(message);
+	      try {
+	        // --- Welcome to debugging React ---
+	        // This error was thrown as a convenience so that you can use this stack
+	        // to find the callsite that caused this warning to fire.
+	        throw new Error(message);
+	      } catch(x) {}
+	    }
+	  };
+	}
+	
+	module.exports = warning;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 193 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule emptyFunction
+	 */
+	
+	function makeEmptyFunction(arg) {
+	  return function() {
+	    return arg;
+	  };
+	}
+	
+	/**
+	 * This function accepts and discards inputs; it has no side effects. This is
+	 * primarily useful idiomatically for overridable function endpoints which
+	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+	 */
+	function emptyFunction() {}
+	
+	emptyFunction.thatReturns = makeEmptyFunction;
+	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+	emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+	emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+	emptyFunction.thatReturnsThis = function() { return this; };
+	emptyFunction.thatReturnsArgument = function(arg) { return arg; };
+	
+	module.exports = emptyFunction;
+
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	* @providesModule ReactFragment
+	*/
+	
+	'use strict';
+	
+	var ReactElement = __webpack_require__(189);
+	
+	var warning = __webpack_require__(192);
+	
+	/**
+	 * We used to allow keyed objects to serve as a collection of ReactElements,
+	 * or nested sets. This allowed us a way to explicitly key a set a fragment of
+	 * components. This is now being replaced with an opaque data structure.
+	 * The upgrade path is to call React.addons.createFragment({ key: value }) to
+	 * create a keyed fragment. The resulting data structure is opaque, for now.
+	 */
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  var fragmentKey = '_reactFragment';
+	  var didWarnKey = '_reactDidWarn';
+	  var canWarnForReactFragment = false;
+	
+	  try {
+	    // Feature test. Don't even try to issue this warning if we can't use
+	    // enumerable: false.
+	
+	    var dummy = function() {
+	      return 1;
+	    };
+	
+	    Object.defineProperty(
+	      {},
+	      fragmentKey,
+	      {enumerable: false, value: true}
+	    );
+	
+	    Object.defineProperty(
+	      {},
+	      'key',
+	      {enumerable: true, get: dummy}
+	    );
+	
+	    canWarnForReactFragment = true;
+	  } catch (x) { }
+	
+	  var proxyPropertyAccessWithWarning = function(obj, key) {
+	    Object.defineProperty(obj, key, {
+	      enumerable: true,
+	      get: function() {
+	        ("production" !== process.env.NODE_ENV ? warning(
+	          this[didWarnKey],
+	          'A ReactFragment is an opaque type. Accessing any of its ' +
+	          'properties is deprecated. Pass it to one of the React.Children ' +
+	          'helpers.'
+	        ) : null);
+	        this[didWarnKey] = true;
+	        return this[fragmentKey][key];
+	      },
+	      set: function(value) {
+	        ("production" !== process.env.NODE_ENV ? warning(
+	          this[didWarnKey],
+	          'A ReactFragment is an immutable opaque type. Mutating its ' +
+	          'properties is deprecated.'
+	        ) : null);
+	        this[didWarnKey] = true;
+	        this[fragmentKey][key] = value;
+	      }
+	    });
+	  };
+	
+	  var issuedWarnings = {};
+	
+	  var didWarnForFragment = function(fragment) {
+	    // We use the keys and the type of the value as a heuristic to dedupe the
+	    // warning to avoid spamming too much.
+	    var fragmentCacheKey = '';
+	    for (var key in fragment) {
+	      fragmentCacheKey += key + ':' + (typeof fragment[key]) + ',';
+	    }
+	    var alreadyWarnedOnce = !!issuedWarnings[fragmentCacheKey];
+	    issuedWarnings[fragmentCacheKey] = true;
+	    return alreadyWarnedOnce;
+	  };
+	}
+	
+	var ReactFragment = {
+	  // Wrap a keyed object in an opaque proxy that warns you if you access any
+	  // of its properties.
+	  create: function(object) {
+	    if ("production" !== process.env.NODE_ENV) {
+	      if (typeof object !== 'object' || !object || Array.isArray(object)) {
+	        ("production" !== process.env.NODE_ENV ? warning(
+	          false,
+	          'React.addons.createFragment only accepts a single object.',
+	          object
+	        ) : null);
+	        return object;
+	      }
+	      if (ReactElement.isValidElement(object)) {
+	        ("production" !== process.env.NODE_ENV ? warning(
+	          false,
+	          'React.addons.createFragment does not accept a ReactElement ' +
+	          'without a wrapper object.'
+	        ) : null);
+	        return object;
+	      }
+	      if (canWarnForReactFragment) {
+	        var proxy = {};
+	        Object.defineProperty(proxy, fragmentKey, {
+	          enumerable: false,
+	          value: object
+	        });
+	        Object.defineProperty(proxy, didWarnKey, {
+	          writable: true,
+	          enumerable: false,
+	          value: false
+	        });
+	        for (var key in object) {
+	          proxyPropertyAccessWithWarning(proxy, key);
+	        }
+	        Object.preventExtensions(proxy);
+	        return proxy;
+	      }
+	    }
+	    return object;
+	  },
+	  // Extract the original keyed object from the fragment opaque type. Warn if
+	  // a plain object is passed here.
+	  extract: function(fragment) {
+	    if ("production" !== process.env.NODE_ENV) {
+	      if (canWarnForReactFragment) {
+	        if (!fragment[fragmentKey]) {
+	          ("production" !== process.env.NODE_ENV ? warning(
+	            didWarnForFragment(fragment),
+	            'Any use of a keyed object should be wrapped in ' +
+	            'React.addons.createFragment(object) before being passed as a ' +
+	            'child.'
+	          ) : null);
+	          return fragment;
+	        }
+	        return fragment[fragmentKey];
+	      }
+	    }
+	    return fragment;
+	  },
+	  // Check if this is a fragment and if so, extract the keyed object. If it
+	  // is a fragment-like object, warn that it should be wrapped. Ignore if we
+	  // can't determine what kind of object this is.
+	  extractIfFragment: function(fragment) {
+	    if ("production" !== process.env.NODE_ENV) {
+	      if (canWarnForReactFragment) {
+	        // If it is the opaque type, return the keyed object.
+	        if (fragment[fragmentKey]) {
+	          return fragment[fragmentKey];
+	        }
+	        // Otherwise, check each property if it has an element, if it does
+	        // it is probably meant as a fragment, so we can warn early. Defer,
+	        // the warning to extract.
+	        for (var key in fragment) {
+	          if (fragment.hasOwnProperty(key) &&
+	              ReactElement.isValidElement(fragment[key])) {
+	            // This looks like a fragment object, we should provide an
+	            // early warning.
+	            return ReactFragment.extract(fragment);
+	          }
+	        }
+	      }
+	    }
+	    return fragment;
+	  }
+	};
+	
+	module.exports = ReactFragment;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -59593,7 +62553,7 @@
 	
 	'use strict';
 	
-	var keyMirror = __webpack_require__(197);
+	var keyMirror = __webpack_require__(196);
 	
 	var ReactPropTypeLocations = keyMirror({
 	  prop: null,
@@ -59605,7 +62565,65 @@
 
 
 /***/ },
-/* 225 */
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule keyMirror
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var invariant = __webpack_require__(181);
+	
+	/**
+	 * Constructs an enumeration with keys equal to their value.
+	 *
+	 * For example:
+	 *
+	 *   var COLORS = keyMirror({blue: null, red: null});
+	 *   var myColor = COLORS.blue;
+	 *   var isColorValid = !!COLORS[myColor];
+	 *
+	 * The last line could not be performed if the values of the generated enum were
+	 * not equal to their keys.
+	 *
+	 *   Input:  {key1: val1, key2: val2}
+	 *   Output: {key1: key1, key2: key2}
+	 *
+	 * @param {object} obj
+	 * @return {object}
+	 */
+	var keyMirror = function(obj) {
+	  var ret = {};
+	  var key;
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    obj instanceof Object && !Array.isArray(obj),
+	    'keyMirror(...): Argument must be an object.'
+	  ) : invariant(obj instanceof Object && !Array.isArray(obj)));
+	  for (key in obj) {
+	    if (!obj.hasOwnProperty(key)) {
+	      continue;
+	    }
+	    ret[key] = key;
+	  }
+	  return ret;
+	};
+	
+	module.exports = keyMirror;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -59633,10 +62651,10 @@
 	
 	module.exports = ReactPropTypeLocationNames;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 226 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -59652,8 +62670,8 @@
 	
 	'use strict';
 	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
 	
 	var autoGenerateWrapperClass = null;
 	var genericComponentClass = null;
@@ -59743,10 +62761,58 @@
 	
 	module.exports = ReactNativeComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 227 */
+/* 199 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule getIteratorFn
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	/* global Symbol */
+	var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+	var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+	
+	/**
+	 * Returns the iterator method function contained on the iterable object.
+	 *
+	 * Be sure to invoke the function with the iterable as context:
+	 *
+	 *     var iteratorFn = getIteratorFn(myIterable);
+	 *     if (iteratorFn) {
+	 *       var iterator = iteratorFn.call(myIterable);
+	 *       ...
+	 *     }
+	 *
+	 * @param {?object} maybeIterable
+	 * @return {?function}
+	 */
+	function getIteratorFn(maybeIterable) {
+	  var iteratorFn = maybeIterable && (
+	    (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL])
+	  );
+	  if (typeof iteratorFn === 'function') {
+	    return iteratorFn;
+	  }
+	}
+	
+	module.exports = getIteratorFn;
+
+
+/***/ },
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -59762,7 +62828,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * `Transaction` creates a black box that is able to wrap any method such that
@@ -59987,10 +63053,1926 @@
 	
 	module.exports = Transaction;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 228 */
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule LinkedStateMixin
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var ReactLink = __webpack_require__(202);
+	var ReactStateSetters = __webpack_require__(334);
+	
+	/**
+	 * A simple mixin around ReactLink.forState().
+	 */
+	var LinkedStateMixin = {
+	  /**
+	   * Create a ReactLink that's linked to part of this component's state. The
+	   * ReactLink will have the current value of this.state[key] and will call
+	   * setState() when a change is requested.
+	   *
+	   * @param {string} key state key to update. Note: you may want to use keyOf()
+	   * if you're using Google Closure Compiler advanced mode.
+	   * @return {ReactLink} ReactLink instance linking to the state.
+	   */
+	  linkState: function(key) {
+	    return new ReactLink(
+	      this.state[key],
+	      ReactStateSetters.createStateKeySetter(this, key)
+	    );
+	  }
+	};
+	
+	module.exports = LinkedStateMixin;
+
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactLink
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	/**
+	 * ReactLink encapsulates a common pattern in which a component wants to modify
+	 * a prop received from its parent. ReactLink allows the parent to pass down a
+	 * value coupled with a callback that, when invoked, expresses an intent to
+	 * modify that value. For example:
+	 *
+	 * React.createClass({
+	 *   getInitialState: function() {
+	 *     return {value: ''};
+	 *   },
+	 *   render: function() {
+	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
+	 *     return <input valueLink={valueLink} />;
+	 *   },
+	 *   this._handleValueChange: function(newValue) {
+	 *     this.setState({value: newValue});
+	 *   }
+	 * });
+	 *
+	 * We have provided some sugary mixins to make the creation and
+	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
+	 */
+	
+	var React = __webpack_require__(203);
+	
+	/**
+	 * @param {*} value current value of the link
+	 * @param {function} requestChange callback to request a change
+	 */
+	function ReactLink(value, requestChange) {
+	  this.value = value;
+	  this.requestChange = requestChange;
+	}
+	
+	/**
+	 * Creates a PropType that enforces the ReactLink API and optionally checks the
+	 * type of the value being passed inside the link. Example:
+	 *
+	 * MyComponent.propTypes = {
+	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
+	 * }
+	 */
+	function createLinkTypeChecker(linkType) {
+	  var shapes = {
+	    value: typeof linkType === 'undefined' ?
+	      React.PropTypes.any.isRequired :
+	      linkType.isRequired,
+	    requestChange: React.PropTypes.func.isRequired
+	  };
+	  return React.PropTypes.shape(shapes);
+	}
+	
+	ReactLink.PropTypes = {
+	  link: createLinkTypeChecker
+	};
+	
+	module.exports = ReactLink;
+
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule React
+	 */
+	
+	/* globals __REACT_DEVTOOLS_GLOBAL_HOOK__*/
+	
+	'use strict';
+	
+	var EventPluginUtils = __webpack_require__(204);
+	var ReactChildren = __webpack_require__(206);
+	var ReactComponent = __webpack_require__(210);
+	var ReactClass = __webpack_require__(214);
+	var ReactContext = __webpack_require__(190);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactElement = __webpack_require__(189);
+	var ReactElementValidator = __webpack_require__(188);
+	var ReactDOM = __webpack_require__(217);
+	var ReactDOMTextComponent = __webpack_require__(219);
+	var ReactDefaultInjection = __webpack_require__(268);
+	var ReactInstanceHandles = __webpack_require__(208);
+	var ReactMount = __webpack_require__(244);
+	var ReactPerf = __webpack_require__(184);
+	var ReactPropTypes = __webpack_require__(299);
+	var ReactReconciler = __webpack_require__(185);
+	var ReactServerRendering = __webpack_require__(331);
+	
+	var assign = __webpack_require__(182);
+	var findDOMNode = __webpack_require__(288);
+	var onlyChild = __webpack_require__(333);
+	
+	ReactDefaultInjection.inject();
+	
+	var createElement = ReactElement.createElement;
+	var createFactory = ReactElement.createFactory;
+	var cloneElement = ReactElement.cloneElement;
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  createElement = ReactElementValidator.createElement;
+	  createFactory = ReactElementValidator.createFactory;
+	  cloneElement = ReactElementValidator.cloneElement;
+	}
+	
+	var render = ReactPerf.measure('React', 'render', ReactMount.render);
+	
+	var React = {
+	  Children: {
+	    map: ReactChildren.map,
+	    forEach: ReactChildren.forEach,
+	    count: ReactChildren.count,
+	    only: onlyChild
+	  },
+	  Component: ReactComponent,
+	  DOM: ReactDOM,
+	  PropTypes: ReactPropTypes,
+	  initializeTouchEvents: function(shouldUseTouch) {
+	    EventPluginUtils.useTouchEvents = shouldUseTouch;
+	  },
+	  createClass: ReactClass.createClass,
+	  createElement: createElement,
+	  cloneElement: cloneElement,
+	  createFactory: createFactory,
+	  createMixin: function(mixin) {
+	    // Currently a noop. Will be used to validate and trace mixins.
+	    return mixin;
+	  },
+	  constructAndRenderComponent: ReactMount.constructAndRenderComponent,
+	  constructAndRenderComponentByID: ReactMount.constructAndRenderComponentByID,
+	  findDOMNode: findDOMNode,
+	  render: render,
+	  renderToString: ReactServerRendering.renderToString,
+	  renderToStaticMarkup: ReactServerRendering.renderToStaticMarkup,
+	  unmountComponentAtNode: ReactMount.unmountComponentAtNode,
+	  isValidElement: ReactElement.isValidElement,
+	  withContext: ReactContext.withContext,
+	
+	  // Hook for JSX spread, don't use this for anything else.
+	  __spread: assign
+	};
+	
+	// Inject the runtime into a devtools global hook regardless of browser.
+	// Allows for debugging when the hook is injected on the page.
+	if (
+	  typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' &&
+	  typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.inject === 'function') {
+	  __REACT_DEVTOOLS_GLOBAL_HOOK__.inject({
+	    CurrentOwner: ReactCurrentOwner,
+	    InstanceHandles: ReactInstanceHandles,
+	    Mount: ReactMount,
+	    Reconciler: ReactReconciler,
+	    TextComponent: ReactDOMTextComponent
+	  });
+	}
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  var ExecutionEnvironment = __webpack_require__(228);
+	  if (ExecutionEnvironment.canUseDOM && window.top === window.self) {
+	
+	    // If we're in Chrome, look for the devtools marker and provide a download
+	    // link if not installed.
+	    if (navigator.userAgent.indexOf('Chrome') > -1) {
+	      if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined') {
+	        console.debug(
+	          'Download the React DevTools for a better development experience: ' +
+	          'https://fb.me/react-devtools'
+	        );
+	      }
+	    }
+	
+	    var expectedFeatures = [
+	      // shims
+	      Array.isArray,
+	      Array.prototype.every,
+	      Array.prototype.forEach,
+	      Array.prototype.indexOf,
+	      Array.prototype.map,
+	      Date.now,
+	      Function.prototype.bind,
+	      Object.keys,
+	      String.prototype.split,
+	      String.prototype.trim,
+	
+	      // shams
+	      Object.create,
+	      Object.freeze
+	    ];
+	
+	    for (var i = 0; i < expectedFeatures.length; i++) {
+	      if (!expectedFeatures[i]) {
+	        console.error(
+	          'One or more ES5 shim/shams expected by React are not available: ' +
+	          'https://fb.me/react-warning-polyfills'
+	        );
+	        break;
+	      }
+	    }
+	  }
+	}
+	
+	React.version = '0.13.3';
+	
+	module.exports = React;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule EventPluginUtils
+	 */
+	
+	'use strict';
+	
+	var EventConstants = __webpack_require__(205);
+	
+	var invariant = __webpack_require__(181);
+	
+	/**
+	 * Injected dependencies:
+	 */
+	
+	/**
+	 * - `Mount`: [required] Module that can convert between React dom IDs and
+	 *   actual node references.
+	 */
+	var injection = {
+	  Mount: null,
+	  injectMount: function(InjectedMount) {
+	    injection.Mount = InjectedMount;
+	    if ("production" !== process.env.NODE_ENV) {
+	      ("production" !== process.env.NODE_ENV ? invariant(
+	        InjectedMount && InjectedMount.getNode,
+	        'EventPluginUtils.injection.injectMount(...): Injected Mount module ' +
+	        'is missing getNode.'
+	      ) : invariant(InjectedMount && InjectedMount.getNode));
+	    }
+	  }
+	};
+	
+	var topLevelTypes = EventConstants.topLevelTypes;
+	
+	function isEndish(topLevelType) {
+	  return topLevelType === topLevelTypes.topMouseUp ||
+	         topLevelType === topLevelTypes.topTouchEnd ||
+	         topLevelType === topLevelTypes.topTouchCancel;
+	}
+	
+	function isMoveish(topLevelType) {
+	  return topLevelType === topLevelTypes.topMouseMove ||
+	         topLevelType === topLevelTypes.topTouchMove;
+	}
+	function isStartish(topLevelType) {
+	  return topLevelType === topLevelTypes.topMouseDown ||
+	         topLevelType === topLevelTypes.topTouchStart;
+	}
+	
+	
+	var validateEventDispatches;
+	if ("production" !== process.env.NODE_ENV) {
+	  validateEventDispatches = function(event) {
+	    var dispatchListeners = event._dispatchListeners;
+	    var dispatchIDs = event._dispatchIDs;
+	
+	    var listenersIsArr = Array.isArray(dispatchListeners);
+	    var idsIsArr = Array.isArray(dispatchIDs);
+	    var IDsLen = idsIsArr ? dispatchIDs.length : dispatchIDs ? 1 : 0;
+	    var listenersLen = listenersIsArr ?
+	      dispatchListeners.length :
+	      dispatchListeners ? 1 : 0;
+	
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      idsIsArr === listenersIsArr && IDsLen === listenersLen,
+	      'EventPluginUtils: Invalid `event`.'
+	    ) : invariant(idsIsArr === listenersIsArr && IDsLen === listenersLen));
+	  };
+	}
+	
+	/**
+	 * Invokes `cb(event, listener, id)`. Avoids using call if no scope is
+	 * provided. The `(listener,id)` pair effectively forms the "dispatch" but are
+	 * kept separate to conserve memory.
+	 */
+	function forEachEventDispatch(event, cb) {
+	  var dispatchListeners = event._dispatchListeners;
+	  var dispatchIDs = event._dispatchIDs;
+	  if ("production" !== process.env.NODE_ENV) {
+	    validateEventDispatches(event);
+	  }
+	  if (Array.isArray(dispatchListeners)) {
+	    for (var i = 0; i < dispatchListeners.length; i++) {
+	      if (event.isPropagationStopped()) {
+	        break;
+	      }
+	      // Listeners and IDs are two parallel arrays that are always in sync.
+	      cb(event, dispatchListeners[i], dispatchIDs[i]);
+	    }
+	  } else if (dispatchListeners) {
+	    cb(event, dispatchListeners, dispatchIDs);
+	  }
+	}
+	
+	/**
+	 * Default implementation of PluginModule.executeDispatch().
+	 * @param {SyntheticEvent} SyntheticEvent to handle
+	 * @param {function} Application-level callback
+	 * @param {string} domID DOM id to pass to the callback.
+	 */
+	function executeDispatch(event, listener, domID) {
+	  event.currentTarget = injection.Mount.getNode(domID);
+	  var returnValue = listener(event, domID);
+	  event.currentTarget = null;
+	  return returnValue;
+	}
+	
+	/**
+	 * Standard/simple iteration through an event's collected dispatches.
+	 */
+	function executeDispatchesInOrder(event, cb) {
+	  forEachEventDispatch(event, cb);
+	  event._dispatchListeners = null;
+	  event._dispatchIDs = null;
+	}
+	
+	/**
+	 * Standard/simple iteration through an event's collected dispatches, but stops
+	 * at the first dispatch execution returning true, and returns that id.
+	 *
+	 * @return id of the first dispatch execution who's listener returns true, or
+	 * null if no listener returned true.
+	 */
+	function executeDispatchesInOrderStopAtTrueImpl(event) {
+	  var dispatchListeners = event._dispatchListeners;
+	  var dispatchIDs = event._dispatchIDs;
+	  if ("production" !== process.env.NODE_ENV) {
+	    validateEventDispatches(event);
+	  }
+	  if (Array.isArray(dispatchListeners)) {
+	    for (var i = 0; i < dispatchListeners.length; i++) {
+	      if (event.isPropagationStopped()) {
+	        break;
+	      }
+	      // Listeners and IDs are two parallel arrays that are always in sync.
+	      if (dispatchListeners[i](event, dispatchIDs[i])) {
+	        return dispatchIDs[i];
+	      }
+	    }
+	  } else if (dispatchListeners) {
+	    if (dispatchListeners(event, dispatchIDs)) {
+	      return dispatchIDs;
+	    }
+	  }
+	  return null;
+	}
+	
+	/**
+	 * @see executeDispatchesInOrderStopAtTrueImpl
+	 */
+	function executeDispatchesInOrderStopAtTrue(event) {
+	  var ret = executeDispatchesInOrderStopAtTrueImpl(event);
+	  event._dispatchIDs = null;
+	  event._dispatchListeners = null;
+	  return ret;
+	}
+	
+	/**
+	 * Execution of a "direct" dispatch - there must be at most one dispatch
+	 * accumulated on the event or it is considered an error. It doesn't really make
+	 * sense for an event with multiple dispatches (bubbled) to keep track of the
+	 * return values at each dispatch execution, but it does tend to make sense when
+	 * dealing with "direct" dispatches.
+	 *
+	 * @return The return value of executing the single dispatch.
+	 */
+	function executeDirectDispatch(event) {
+	  if ("production" !== process.env.NODE_ENV) {
+	    validateEventDispatches(event);
+	  }
+	  var dispatchListener = event._dispatchListeners;
+	  var dispatchID = event._dispatchIDs;
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    !Array.isArray(dispatchListener),
+	    'executeDirectDispatch(...): Invalid `event`.'
+	  ) : invariant(!Array.isArray(dispatchListener)));
+	  var res = dispatchListener ?
+	    dispatchListener(event, dispatchID) :
+	    null;
+	  event._dispatchListeners = null;
+	  event._dispatchIDs = null;
+	  return res;
+	}
+	
+	/**
+	 * @param {SyntheticEvent} event
+	 * @return {bool} True iff number of dispatches accumulated is greater than 0.
+	 */
+	function hasDispatches(event) {
+	  return !!event._dispatchListeners;
+	}
+	
+	/**
+	 * General utilities that are useful in creating custom Event Plugins.
+	 */
+	var EventPluginUtils = {
+	  isEndish: isEndish,
+	  isMoveish: isMoveish,
+	  isStartish: isStartish,
+	
+	  executeDirectDispatch: executeDirectDispatch,
+	  executeDispatch: executeDispatch,
+	  executeDispatchesInOrder: executeDispatchesInOrder,
+	  executeDispatchesInOrderStopAtTrue: executeDispatchesInOrderStopAtTrue,
+	  hasDispatches: hasDispatches,
+	  injection: injection,
+	  useTouchEvents: false
+	};
+	
+	module.exports = EventPluginUtils;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule EventConstants
+	 */
+	
+	'use strict';
+	
+	var keyMirror = __webpack_require__(196);
+	
+	var PropagationPhases = keyMirror({bubbled: null, captured: null});
+	
+	/**
+	 * Types of raw signals from the browser caught at the top level.
+	 */
+	var topLevelTypes = keyMirror({
+	  topBlur: null,
+	  topChange: null,
+	  topClick: null,
+	  topCompositionEnd: null,
+	  topCompositionStart: null,
+	  topCompositionUpdate: null,
+	  topContextMenu: null,
+	  topCopy: null,
+	  topCut: null,
+	  topDoubleClick: null,
+	  topDrag: null,
+	  topDragEnd: null,
+	  topDragEnter: null,
+	  topDragExit: null,
+	  topDragLeave: null,
+	  topDragOver: null,
+	  topDragStart: null,
+	  topDrop: null,
+	  topError: null,
+	  topFocus: null,
+	  topInput: null,
+	  topKeyDown: null,
+	  topKeyPress: null,
+	  topKeyUp: null,
+	  topLoad: null,
+	  topMouseDown: null,
+	  topMouseMove: null,
+	  topMouseOut: null,
+	  topMouseOver: null,
+	  topMouseUp: null,
+	  topPaste: null,
+	  topReset: null,
+	  topScroll: null,
+	  topSelectionChange: null,
+	  topSubmit: null,
+	  topTextInput: null,
+	  topTouchCancel: null,
+	  topTouchEnd: null,
+	  topTouchMove: null,
+	  topTouchStart: null,
+	  topWheel: null
+	});
+	
+	var EventConstants = {
+	  topLevelTypes: topLevelTypes,
+	  PropagationPhases: PropagationPhases
+	};
+	
+	module.exports = EventConstants;
+
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactChildren
+	 */
+	
+	'use strict';
+	
+	var PooledClass = __webpack_require__(180);
+	var ReactFragment = __webpack_require__(194);
+	
+	var traverseAllChildren = __webpack_require__(207);
+	var warning = __webpack_require__(192);
+	
+	var twoArgumentPooler = PooledClass.twoArgumentPooler;
+	var threeArgumentPooler = PooledClass.threeArgumentPooler;
+	
+	/**
+	 * PooledClass representing the bookkeeping associated with performing a child
+	 * traversal. Allows avoiding binding callbacks.
+	 *
+	 * @constructor ForEachBookKeeping
+	 * @param {!function} forEachFunction Function to perform traversal with.
+	 * @param {?*} forEachContext Context to perform context with.
+	 */
+	function ForEachBookKeeping(forEachFunction, forEachContext) {
+	  this.forEachFunction = forEachFunction;
+	  this.forEachContext = forEachContext;
+	}
+	PooledClass.addPoolingTo(ForEachBookKeeping, twoArgumentPooler);
+	
+	function forEachSingleChild(traverseContext, child, name, i) {
+	  var forEachBookKeeping = traverseContext;
+	  forEachBookKeeping.forEachFunction.call(
+	    forEachBookKeeping.forEachContext, child, i);
+	}
+	
+	/**
+	 * Iterates through children that are typically specified as `props.children`.
+	 *
+	 * The provided forEachFunc(child, index) will be called for each
+	 * leaf child.
+	 *
+	 * @param {?*} children Children tree container.
+	 * @param {function(*, int)} forEachFunc.
+	 * @param {*} forEachContext Context for forEachContext.
+	 */
+	function forEachChildren(children, forEachFunc, forEachContext) {
+	  if (children == null) {
+	    return children;
+	  }
+	
+	  var traverseContext =
+	    ForEachBookKeeping.getPooled(forEachFunc, forEachContext);
+	  traverseAllChildren(children, forEachSingleChild, traverseContext);
+	  ForEachBookKeeping.release(traverseContext);
+	}
+	
+	/**
+	 * PooledClass representing the bookkeeping associated with performing a child
+	 * mapping. Allows avoiding binding callbacks.
+	 *
+	 * @constructor MapBookKeeping
+	 * @param {!*} mapResult Object containing the ordered map of results.
+	 * @param {!function} mapFunction Function to perform mapping with.
+	 * @param {?*} mapContext Context to perform mapping with.
+	 */
+	function MapBookKeeping(mapResult, mapFunction, mapContext) {
+	  this.mapResult = mapResult;
+	  this.mapFunction = mapFunction;
+	  this.mapContext = mapContext;
+	}
+	PooledClass.addPoolingTo(MapBookKeeping, threeArgumentPooler);
+	
+	function mapSingleChildIntoContext(traverseContext, child, name, i) {
+	  var mapBookKeeping = traverseContext;
+	  var mapResult = mapBookKeeping.mapResult;
+	
+	  var keyUnique = !mapResult.hasOwnProperty(name);
+	  if ("production" !== process.env.NODE_ENV) {
+	    ("production" !== process.env.NODE_ENV ? warning(
+	      keyUnique,
+	      'ReactChildren.map(...): Encountered two children with the same key, ' +
+	      '`%s`. Child keys must be unique; when two children share a key, only ' +
+	      'the first child will be used.',
+	      name
+	    ) : null);
+	  }
+	
+	  if (keyUnique) {
+	    var mappedChild =
+	      mapBookKeeping.mapFunction.call(mapBookKeeping.mapContext, child, i);
+	    mapResult[name] = mappedChild;
+	  }
+	}
+	
+	/**
+	 * Maps children that are typically specified as `props.children`.
+	 *
+	 * The provided mapFunction(child, key, index) will be called for each
+	 * leaf child.
+	 *
+	 * TODO: This may likely break any calls to `ReactChildren.map` that were
+	 * previously relying on the fact that we guarded against null children.
+	 *
+	 * @param {?*} children Children tree container.
+	 * @param {function(*, int)} mapFunction.
+	 * @param {*} mapContext Context for mapFunction.
+	 * @return {object} Object containing the ordered map of results.
+	 */
+	function mapChildren(children, func, context) {
+	  if (children == null) {
+	    return children;
+	  }
+	
+	  var mapResult = {};
+	  var traverseContext = MapBookKeeping.getPooled(mapResult, func, context);
+	  traverseAllChildren(children, mapSingleChildIntoContext, traverseContext);
+	  MapBookKeeping.release(traverseContext);
+	  return ReactFragment.create(mapResult);
+	}
+	
+	function forEachSingleChildDummy(traverseContext, child, name, i) {
+	  return null;
+	}
+	
+	/**
+	 * Count the number of children that are typically specified as
+	 * `props.children`.
+	 *
+	 * @param {?*} children Children tree container.
+	 * @return {number} The number of children.
+	 */
+	function countChildren(children, context) {
+	  return traverseAllChildren(children, forEachSingleChildDummy, null);
+	}
+	
+	var ReactChildren = {
+	  forEach: forEachChildren,
+	  map: mapChildren,
+	  count: countChildren
+	};
+	
+	module.exports = ReactChildren;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule traverseAllChildren
+	 */
+	
+	'use strict';
+	
+	var ReactElement = __webpack_require__(189);
+	var ReactFragment = __webpack_require__(194);
+	var ReactInstanceHandles = __webpack_require__(208);
+	
+	var getIteratorFn = __webpack_require__(199);
+	var invariant = __webpack_require__(181);
+	var warning = __webpack_require__(192);
+	
+	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
+	var SUBSEPARATOR = ':';
+	
+	/**
+	 * TODO: Test that a single child and an array with one item have the same key
+	 * pattern.
+	 */
+	
+	var userProvidedKeyEscaperLookup = {
+	  '=': '=0',
+	  '.': '=1',
+	  ':': '=2'
+	};
+	
+	var userProvidedKeyEscapeRegex = /[=.:]/g;
+	
+	var didWarnAboutMaps = false;
+	
+	function userProvidedKeyEscaper(match) {
+	  return userProvidedKeyEscaperLookup[match];
+	}
+	
+	/**
+	 * Generate a key string that identifies a component within a set.
+	 *
+	 * @param {*} component A component that could contain a manual key.
+	 * @param {number} index Index that is used if a manual key is not provided.
+	 * @return {string}
+	 */
+	function getComponentKey(component, index) {
+	  if (component && component.key != null) {
+	    // Explicit key
+	    return wrapUserProvidedKey(component.key);
+	  }
+	  // Implicit key determined by the index in the set
+	  return index.toString(36);
+	}
+	
+	/**
+	 * Escape a component key so that it is safe to use in a reactid.
+	 *
+	 * @param {*} key Component key to be escaped.
+	 * @return {string} An escaped string.
+	 */
+	function escapeUserProvidedKey(text) {
+	  return ('' + text).replace(
+	    userProvidedKeyEscapeRegex,
+	    userProvidedKeyEscaper
+	  );
+	}
+	
+	/**
+	 * Wrap a `key` value explicitly provided by the user to distinguish it from
+	 * implicitly-generated keys generated by a component's index in its parent.
+	 *
+	 * @param {string} key Value of a user-provided `key` attribute
+	 * @return {string}
+	 */
+	function wrapUserProvidedKey(key) {
+	  return '$' + escapeUserProvidedKey(key);
+	}
+	
+	/**
+	 * @param {?*} children Children tree container.
+	 * @param {!string} nameSoFar Name of the key path so far.
+	 * @param {!number} indexSoFar Number of children encountered until this point.
+	 * @param {!function} callback Callback to invoke with each child found.
+	 * @param {?*} traverseContext Used to pass information throughout the traversal
+	 * process.
+	 * @return {!number} The number of children in this subtree.
+	 */
+	function traverseAllChildrenImpl(
+	  children,
+	  nameSoFar,
+	  indexSoFar,
+	  callback,
+	  traverseContext
+	) {
+	  var type = typeof children;
+	
+	  if (type === 'undefined' || type === 'boolean') {
+	    // All of the above are perceived as null.
+	    children = null;
+	  }
+	
+	  if (children === null ||
+	      type === 'string' ||
+	      type === 'number' ||
+	      ReactElement.isValidElement(children)) {
+	    callback(
+	      traverseContext,
+	      children,
+	      // If it's the only child, treat the name as if it was wrapped in an array
+	      // so that it's consistent if the number of children grows.
+	      nameSoFar === '' ? SEPARATOR + getComponentKey(children, 0) : nameSoFar,
+	      indexSoFar
+	    );
+	    return 1;
+	  }
+	
+	  var child, nextName, nextIndex;
+	  var subtreeCount = 0; // Count of children found in the current subtree.
+	
+	  if (Array.isArray(children)) {
+	    for (var i = 0; i < children.length; i++) {
+	      child = children[i];
+	      nextName = (
+	        (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
+	        getComponentKey(child, i)
+	      );
+	      nextIndex = indexSoFar + subtreeCount;
+	      subtreeCount += traverseAllChildrenImpl(
+	        child,
+	        nextName,
+	        nextIndex,
+	        callback,
+	        traverseContext
+	      );
+	    }
+	  } else {
+	    var iteratorFn = getIteratorFn(children);
+	    if (iteratorFn) {
+	      var iterator = iteratorFn.call(children);
+	      var step;
+	      if (iteratorFn !== children.entries) {
+	        var ii = 0;
+	        while (!(step = iterator.next()).done) {
+	          child = step.value;
+	          nextName = (
+	            (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
+	            getComponentKey(child, ii++)
+	          );
+	          nextIndex = indexSoFar + subtreeCount;
+	          subtreeCount += traverseAllChildrenImpl(
+	            child,
+	            nextName,
+	            nextIndex,
+	            callback,
+	            traverseContext
+	          );
+	        }
+	      } else {
+	        if ("production" !== process.env.NODE_ENV) {
+	          ("production" !== process.env.NODE_ENV ? warning(
+	            didWarnAboutMaps,
+	            'Using Maps as children is not yet fully supported. It is an ' +
+	            'experimental feature that might be removed. Convert it to a ' +
+	            'sequence / iterable of keyed ReactElements instead.'
+	          ) : null);
+	          didWarnAboutMaps = true;
+	        }
+	        // Iterator will provide entry [k,v] tuples rather than values.
+	        while (!(step = iterator.next()).done) {
+	          var entry = step.value;
+	          if (entry) {
+	            child = entry[1];
+	            nextName = (
+	              (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
+	              wrapUserProvidedKey(entry[0]) + SUBSEPARATOR +
+	              getComponentKey(child, 0)
+	            );
+	            nextIndex = indexSoFar + subtreeCount;
+	            subtreeCount += traverseAllChildrenImpl(
+	              child,
+	              nextName,
+	              nextIndex,
+	              callback,
+	              traverseContext
+	            );
+	          }
+	        }
+	      }
+	    } else if (type === 'object') {
+	      ("production" !== process.env.NODE_ENV ? invariant(
+	        children.nodeType !== 1,
+	        'traverseAllChildren(...): Encountered an invalid child; DOM ' +
+	        'elements are not valid children of React components.'
+	      ) : invariant(children.nodeType !== 1));
+	      var fragment = ReactFragment.extract(children);
+	      for (var key in fragment) {
+	        if (fragment.hasOwnProperty(key)) {
+	          child = fragment[key];
+	          nextName = (
+	            (nameSoFar !== '' ? nameSoFar + SUBSEPARATOR : SEPARATOR) +
+	            wrapUserProvidedKey(key) + SUBSEPARATOR +
+	            getComponentKey(child, 0)
+	          );
+	          nextIndex = indexSoFar + subtreeCount;
+	          subtreeCount += traverseAllChildrenImpl(
+	            child,
+	            nextName,
+	            nextIndex,
+	            callback,
+	            traverseContext
+	          );
+	        }
+	      }
+	    }
+	  }
+	
+	  return subtreeCount;
+	}
+	
+	/**
+	 * Traverses children that are typically specified as `props.children`, but
+	 * might also be specified through attributes:
+	 *
+	 * - `traverseAllChildren(this.props.children, ...)`
+	 * - `traverseAllChildren(this.props.leftPanelChildren, ...)`
+	 *
+	 * The `traverseContext` is an optional argument that is passed through the
+	 * entire traversal. It can be used to store accumulations or anything else that
+	 * the callback might find relevant.
+	 *
+	 * @param {?*} children Children tree object.
+	 * @param {!function} callback To invoke upon traversing each child.
+	 * @param {?*} traverseContext Context for traversal.
+	 * @return {!number} The number of children in this subtree.
+	 */
+	function traverseAllChildren(children, callback, traverseContext) {
+	  if (children == null) {
+	    return 0;
+	  }
+	
+	  return traverseAllChildrenImpl(children, '', 0, callback, traverseContext);
+	}
+	
+	module.exports = traverseAllChildren;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactInstanceHandles
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var ReactRootIndex = __webpack_require__(209);
+	
+	var invariant = __webpack_require__(181);
+	
+	var SEPARATOR = '.';
+	var SEPARATOR_LENGTH = SEPARATOR.length;
+	
+	/**
+	 * Maximum depth of traversals before we consider the possibility of a bad ID.
+	 */
+	var MAX_TREE_DEPTH = 100;
+	
+	/**
+	 * Creates a DOM ID prefix to use when mounting React components.
+	 *
+	 * @param {number} index A unique integer
+	 * @return {string} React root ID.
+	 * @internal
+	 */
+	function getReactRootIDString(index) {
+	  return SEPARATOR + index.toString(36);
+	}
+	
+	/**
+	 * Checks if a character in the supplied ID is a separator or the end.
+	 *
+	 * @param {string} id A React DOM ID.
+	 * @param {number} index Index of the character to check.
+	 * @return {boolean} True if the character is a separator or end of the ID.
+	 * @private
+	 */
+	function isBoundary(id, index) {
+	  return id.charAt(index) === SEPARATOR || index === id.length;
+	}
+	
+	/**
+	 * Checks if the supplied string is a valid React DOM ID.
+	 *
+	 * @param {string} id A React DOM ID, maybe.
+	 * @return {boolean} True if the string is a valid React DOM ID.
+	 * @private
+	 */
+	function isValidID(id) {
+	  return id === '' || (
+	    id.charAt(0) === SEPARATOR && id.charAt(id.length - 1) !== SEPARATOR
+	  );
+	}
+	
+	/**
+	 * Checks if the first ID is an ancestor of or equal to the second ID.
+	 *
+	 * @param {string} ancestorID
+	 * @param {string} descendantID
+	 * @return {boolean} True if `ancestorID` is an ancestor of `descendantID`.
+	 * @internal
+	 */
+	function isAncestorIDOf(ancestorID, descendantID) {
+	  return (
+	    descendantID.indexOf(ancestorID) === 0 &&
+	    isBoundary(descendantID, ancestorID.length)
+	  );
+	}
+	
+	/**
+	 * Gets the parent ID of the supplied React DOM ID, `id`.
+	 *
+	 * @param {string} id ID of a component.
+	 * @return {string} ID of the parent, or an empty string.
+	 * @private
+	 */
+	function getParentID(id) {
+	  return id ? id.substr(0, id.lastIndexOf(SEPARATOR)) : '';
+	}
+	
+	/**
+	 * Gets the next DOM ID on the tree path from the supplied `ancestorID` to the
+	 * supplied `destinationID`. If they are equal, the ID is returned.
+	 *
+	 * @param {string} ancestorID ID of an ancestor node of `destinationID`.
+	 * @param {string} destinationID ID of the destination node.
+	 * @return {string} Next ID on the path from `ancestorID` to `destinationID`.
+	 * @private
+	 */
+	function getNextDescendantID(ancestorID, destinationID) {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    isValidID(ancestorID) && isValidID(destinationID),
+	    'getNextDescendantID(%s, %s): Received an invalid React DOM ID.',
+	    ancestorID,
+	    destinationID
+	  ) : invariant(isValidID(ancestorID) && isValidID(destinationID)));
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    isAncestorIDOf(ancestorID, destinationID),
+	    'getNextDescendantID(...): React has made an invalid assumption about ' +
+	    'the DOM hierarchy. Expected `%s` to be an ancestor of `%s`.',
+	    ancestorID,
+	    destinationID
+	  ) : invariant(isAncestorIDOf(ancestorID, destinationID)));
+	  if (ancestorID === destinationID) {
+	    return ancestorID;
+	  }
+	  // Skip over the ancestor and the immediate separator. Traverse until we hit
+	  // another separator or we reach the end of `destinationID`.
+	  var start = ancestorID.length + SEPARATOR_LENGTH;
+	  var i;
+	  for (i = start; i < destinationID.length; i++) {
+	    if (isBoundary(destinationID, i)) {
+	      break;
+	    }
+	  }
+	  return destinationID.substr(0, i);
+	}
+	
+	/**
+	 * Gets the nearest common ancestor ID of two IDs.
+	 *
+	 * Using this ID scheme, the nearest common ancestor ID is the longest common
+	 * prefix of the two IDs that immediately preceded a "marker" in both strings.
+	 *
+	 * @param {string} oneID
+	 * @param {string} twoID
+	 * @return {string} Nearest common ancestor ID, or the empty string if none.
+	 * @private
+	 */
+	function getFirstCommonAncestorID(oneID, twoID) {
+	  var minLength = Math.min(oneID.length, twoID.length);
+	  if (minLength === 0) {
+	    return '';
+	  }
+	  var lastCommonMarkerIndex = 0;
+	  // Use `<=` to traverse until the "EOL" of the shorter string.
+	  for (var i = 0; i <= minLength; i++) {
+	    if (isBoundary(oneID, i) && isBoundary(twoID, i)) {
+	      lastCommonMarkerIndex = i;
+	    } else if (oneID.charAt(i) !== twoID.charAt(i)) {
+	      break;
+	    }
+	  }
+	  var longestCommonID = oneID.substr(0, lastCommonMarkerIndex);
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    isValidID(longestCommonID),
+	    'getFirstCommonAncestorID(%s, %s): Expected a valid React DOM ID: %s',
+	    oneID,
+	    twoID,
+	    longestCommonID
+	  ) : invariant(isValidID(longestCommonID)));
+	  return longestCommonID;
+	}
+	
+	/**
+	 * Traverses the parent path between two IDs (either up or down). The IDs must
+	 * not be the same, and there must exist a parent path between them. If the
+	 * callback returns `false`, traversal is stopped.
+	 *
+	 * @param {?string} start ID at which to start traversal.
+	 * @param {?string} stop ID at which to end traversal.
+	 * @param {function} cb Callback to invoke each ID with.
+	 * @param {?boolean} skipFirst Whether or not to skip the first node.
+	 * @param {?boolean} skipLast Whether or not to skip the last node.
+	 * @private
+	 */
+	function traverseParentPath(start, stop, cb, arg, skipFirst, skipLast) {
+	  start = start || '';
+	  stop = stop || '';
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    start !== stop,
+	    'traverseParentPath(...): Cannot traverse from and to the same ID, `%s`.',
+	    start
+	  ) : invariant(start !== stop));
+	  var traverseUp = isAncestorIDOf(stop, start);
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    traverseUp || isAncestorIDOf(start, stop),
+	    'traverseParentPath(%s, %s, ...): Cannot traverse from two IDs that do ' +
+	    'not have a parent path.',
+	    start,
+	    stop
+	  ) : invariant(traverseUp || isAncestorIDOf(start, stop)));
+	  // Traverse from `start` to `stop` one depth at a time.
+	  var depth = 0;
+	  var traverse = traverseUp ? getParentID : getNextDescendantID;
+	  for (var id = start; /* until break */; id = traverse(id, stop)) {
+	    var ret;
+	    if ((!skipFirst || id !== start) && (!skipLast || id !== stop)) {
+	      ret = cb(id, traverseUp, arg);
+	    }
+	    if (ret === false || id === stop) {
+	      // Only break //after// visiting `stop`.
+	      break;
+	    }
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      depth++ < MAX_TREE_DEPTH,
+	      'traverseParentPath(%s, %s, ...): Detected an infinite loop while ' +
+	      'traversing the React DOM ID tree. This may be due to malformed IDs: %s',
+	      start, stop
+	    ) : invariant(depth++ < MAX_TREE_DEPTH));
+	  }
+	}
+	
+	/**
+	 * Manages the IDs assigned to DOM representations of React components. This
+	 * uses a specific scheme in order to traverse the DOM efficiently (e.g. in
+	 * order to simulate events).
+	 *
+	 * @internal
+	 */
+	var ReactInstanceHandles = {
+	
+	  /**
+	   * Constructs a React root ID
+	   * @return {string} A React root ID.
+	   */
+	  createReactRootID: function() {
+	    return getReactRootIDString(ReactRootIndex.createReactRootIndex());
+	  },
+	
+	  /**
+	   * Constructs a React ID by joining a root ID with a name.
+	   *
+	   * @param {string} rootID Root ID of a parent component.
+	   * @param {string} name A component's name (as flattened children).
+	   * @return {string} A React ID.
+	   * @internal
+	   */
+	  createReactID: function(rootID, name) {
+	    return rootID + name;
+	  },
+	
+	  /**
+	   * Gets the DOM ID of the React component that is the root of the tree that
+	   * contains the React component with the supplied DOM ID.
+	   *
+	   * @param {string} id DOM ID of a React component.
+	   * @return {?string} DOM ID of the React component that is the root.
+	   * @internal
+	   */
+	  getReactRootIDFromNodeID: function(id) {
+	    if (id && id.charAt(0) === SEPARATOR && id.length > 1) {
+	      var index = id.indexOf(SEPARATOR, 1);
+	      return index > -1 ? id.substr(0, index) : id;
+	    }
+	    return null;
+	  },
+	
+	  /**
+	   * Traverses the ID hierarchy and invokes the supplied `cb` on any IDs that
+	   * should would receive a `mouseEnter` or `mouseLeave` event.
+	   *
+	   * NOTE: Does not invoke the callback on the nearest common ancestor because
+	   * nothing "entered" or "left" that element.
+	   *
+	   * @param {string} leaveID ID being left.
+	   * @param {string} enterID ID being entered.
+	   * @param {function} cb Callback to invoke on each entered/left ID.
+	   * @param {*} upArg Argument to invoke the callback with on left IDs.
+	   * @param {*} downArg Argument to invoke the callback with on entered IDs.
+	   * @internal
+	   */
+	  traverseEnterLeave: function(leaveID, enterID, cb, upArg, downArg) {
+	    var ancestorID = getFirstCommonAncestorID(leaveID, enterID);
+	    if (ancestorID !== leaveID) {
+	      traverseParentPath(leaveID, ancestorID, cb, upArg, false, true);
+	    }
+	    if (ancestorID !== enterID) {
+	      traverseParentPath(ancestorID, enterID, cb, downArg, true, false);
+	    }
+	  },
+	
+	  /**
+	   * Simulates the traversal of a two-phase, capture/bubble event dispatch.
+	   *
+	   * NOTE: This traversal happens on IDs without touching the DOM.
+	   *
+	   * @param {string} targetID ID of the target node.
+	   * @param {function} cb Callback to invoke.
+	   * @param {*} arg Argument to invoke the callback with.
+	   * @internal
+	   */
+	  traverseTwoPhase: function(targetID, cb, arg) {
+	    if (targetID) {
+	      traverseParentPath('', targetID, cb, arg, true, false);
+	      traverseParentPath(targetID, '', cb, arg, false, true);
+	    }
+	  },
+	
+	  /**
+	   * Traverse a node ID, calling the supplied `cb` for each ancestor ID. For
+	   * example, passing `.0.$row-0.1` would result in `cb` getting called
+	   * with `.0`, `.0.$row-0`, and `.0.$row-0.1`.
+	   *
+	   * NOTE: This traversal happens on IDs without touching the DOM.
+	   *
+	   * @param {string} targetID ID of the target node.
+	   * @param {function} cb Callback to invoke.
+	   * @param {*} arg Argument to invoke the callback with.
+	   * @internal
+	   */
+	  traverseAncestors: function(targetID, cb, arg) {
+	    traverseParentPath('', targetID, cb, arg, true, false);
+	  },
+	
+	  /**
+	   * Exposed for unit testing.
+	   * @private
+	   */
+	  _getFirstCommonAncestorID: getFirstCommonAncestorID,
+	
+	  /**
+	   * Exposed for unit testing.
+	   * @private
+	   */
+	  _getNextDescendantID: getNextDescendantID,
+	
+	  isAncestorIDOf: isAncestorIDOf,
+	
+	  SEPARATOR: SEPARATOR
+	
+	};
+	
+	module.exports = ReactInstanceHandles;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 209 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactRootIndex
+	 * @typechecks
+	 */
+	
+	'use strict';
+	
+	var ReactRootIndexInjection = {
+	  /**
+	   * @param {function} _createReactRootIndex
+	   */
+	  injectCreateReactRootIndex: function(_createReactRootIndex) {
+	    ReactRootIndex.createReactRootIndex = _createReactRootIndex;
+	  }
+	};
+	
+	var ReactRootIndex = {
+	  createReactRootIndex: null,
+	  injection: ReactRootIndexInjection
+	};
+	
+	module.exports = ReactRootIndex;
+
+
+/***/ },
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactComponent
+	 */
+	
+	'use strict';
+	
+	var ReactUpdateQueue = __webpack_require__(211);
+	
+	var invariant = __webpack_require__(181);
+	var warning = __webpack_require__(192);
+	
+	/**
+	 * Base class helpers for the updating state of a component.
+	 */
+	function ReactComponent(props, context) {
+	  this.props = props;
+	  this.context = context;
+	}
+	
+	/**
+	 * Sets a subset of the state. Always use this to mutate
+	 * state. You should treat `this.state` as immutable.
+	 *
+	 * There is no guarantee that `this.state` will be immediately updated, so
+	 * accessing `this.state` after calling this method may return the old value.
+	 *
+	 * There is no guarantee that calls to `setState` will run synchronously,
+	 * as they may eventually be batched together.  You can provide an optional
+	 * callback that will be executed when the call to setState is actually
+	 * completed.
+	 *
+	 * When a function is provided to setState, it will be called at some point in
+	 * the future (not synchronously). It will be called with the up to date
+	 * component arguments (state, props, context). These values can be different
+	 * from this.* because your function may be called after receiveProps but before
+	 * shouldComponentUpdate, and this new state, props, and context will not yet be
+	 * assigned to this.
+	 *
+	 * @param {object|function} partialState Next partial state or function to
+	 *        produce next partial state to be merged with current state.
+	 * @param {?function} callback Called after state is updated.
+	 * @final
+	 * @protected
+	 */
+	ReactComponent.prototype.setState = function(partialState, callback) {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    typeof partialState === 'object' ||
+	    typeof partialState === 'function' ||
+	    partialState == null,
+	    'setState(...): takes an object of state variables to update or a ' +
+	    'function which returns an object of state variables.'
+	  ) : invariant(typeof partialState === 'object' ||
+	  typeof partialState === 'function' ||
+	  partialState == null));
+	  if ("production" !== process.env.NODE_ENV) {
+	    ("production" !== process.env.NODE_ENV ? warning(
+	      partialState != null,
+	      'setState(...): You passed an undefined or null state object; ' +
+	      'instead, use forceUpdate().'
+	    ) : null);
+	  }
+	  ReactUpdateQueue.enqueueSetState(this, partialState);
+	  if (callback) {
+	    ReactUpdateQueue.enqueueCallback(this, callback);
+	  }
+	};
+	
+	/**
+	 * Forces an update. This should only be invoked when it is known with
+	 * certainty that we are **not** in a DOM transaction.
+	 *
+	 * You may want to call this when you know that some deeper aspect of the
+	 * component's state has changed but `setState` was not called.
+	 *
+	 * This will not invoke `shouldComponentUpdate`, but it will invoke
+	 * `componentWillUpdate` and `componentDidUpdate`.
+	 *
+	 * @param {?function} callback Called after update is complete.
+	 * @final
+	 * @protected
+	 */
+	ReactComponent.prototype.forceUpdate = function(callback) {
+	  ReactUpdateQueue.enqueueForceUpdate(this);
+	  if (callback) {
+	    ReactUpdateQueue.enqueueCallback(this, callback);
+	  }
+	};
+	
+	/**
+	 * Deprecated APIs. These APIs used to exist on classic React classes but since
+	 * we would like to deprecate them, we're not going to move them over to this
+	 * modern base class. Instead, we define a getter that warns if it's accessed.
+	 */
+	if ("production" !== process.env.NODE_ENV) {
+	  var deprecatedAPIs = {
+	    getDOMNode: [
+	      'getDOMNode',
+	      'Use React.findDOMNode(component) instead.'
+	    ],
+	    isMounted: [
+	      'isMounted',
+	      'Instead, make sure to clean up subscriptions and pending requests in ' +
+	      'componentWillUnmount to prevent memory leaks.'
+	    ],
+	    replaceProps: [
+	      'replaceProps',
+	      'Instead, call React.render again at the top level.'
+	    ],
+	    replaceState: [
+	      'replaceState',
+	      'Refactor your code to use setState instead (see ' +
+	      'https://github.com/facebook/react/issues/3236).'
+	    ],
+	    setProps: [
+	      'setProps',
+	      'Instead, call React.render again at the top level.'
+	    ]
+	  };
+	  var defineDeprecationWarning = function(methodName, info) {
+	    try {
+	      Object.defineProperty(ReactComponent.prototype, methodName, {
+	        get: function() {
+	          ("production" !== process.env.NODE_ENV ? warning(
+	            false,
+	            '%s(...) is deprecated in plain JavaScript React classes. %s',
+	            info[0],
+	            info[1]
+	          ) : null);
+	          return undefined;
+	        }
+	      });
+	    } catch (x) {
+	      // IE will fail on defineProperty (es5-shim/sham too)
+	    }
+	  };
+	  for (var fnName in deprecatedAPIs) {
+	    if (deprecatedAPIs.hasOwnProperty(fnName)) {
+	      defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
+	    }
+	  }
+	}
+	
+	module.exports = ReactComponent;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 211 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactUpdateQueue
+	 */
+	
+	'use strict';
+	
+	var ReactLifeCycle = __webpack_require__(212);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactElement = __webpack_require__(189);
+	var ReactInstanceMap = __webpack_require__(213);
+	var ReactUpdates = __webpack_require__(178);
+	
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
+	var warning = __webpack_require__(192);
+	
+	function enqueueUpdate(internalInstance) {
+	  if (internalInstance !== ReactLifeCycle.currentlyMountingInstance) {
+	    // If we're in a componentWillMount handler, don't enqueue a rerender
+	    // because ReactUpdates assumes we're in a browser context (which is
+	    // wrong for server rendering) and we're about to do a render anyway.
+	    // See bug in #1740.
+	    ReactUpdates.enqueueUpdate(internalInstance);
+	  }
+	}
+	
+	function getInternalInstanceReadyForUpdate(publicInstance, callerName) {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    ReactCurrentOwner.current == null,
+	    '%s(...): Cannot update during an existing state transition ' +
+	    '(such as within `render`). Render methods should be a pure function ' +
+	    'of props and state.',
+	    callerName
+	  ) : invariant(ReactCurrentOwner.current == null));
+	
+	  var internalInstance = ReactInstanceMap.get(publicInstance);
+	  if (!internalInstance) {
+	    if ("production" !== process.env.NODE_ENV) {
+	      // Only warn when we have a callerName. Otherwise we should be silent.
+	      // We're probably calling from enqueueCallback. We don't want to warn
+	      // there because we already warned for the corresponding lifecycle method.
+	      ("production" !== process.env.NODE_ENV ? warning(
+	        !callerName,
+	        '%s(...): Can only update a mounted or mounting component. ' +
+	        'This usually means you called %s() on an unmounted ' +
+	        'component. This is a no-op.',
+	        callerName,
+	        callerName
+	      ) : null);
+	    }
+	    return null;
+	  }
+	
+	  if (internalInstance === ReactLifeCycle.currentlyUnmountingInstance) {
+	    return null;
+	  }
+	
+	  return internalInstance;
+	}
+	
+	/**
+	 * ReactUpdateQueue allows for state updates to be scheduled into a later
+	 * reconciliation step.
+	 */
+	var ReactUpdateQueue = {
+	
+	  /**
+	   * Enqueue a callback that will be executed after all the pending updates
+	   * have processed.
+	   *
+	   * @param {ReactClass} publicInstance The instance to use as `this` context.
+	   * @param {?function} callback Called after state is updated.
+	   * @internal
+	   */
+	  enqueueCallback: function(publicInstance, callback) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      typeof callback === 'function',
+	      'enqueueCallback(...): You called `setProps`, `replaceProps`, ' +
+	      '`setState`, `replaceState`, or `forceUpdate` with a callback that ' +
+	      'isn\'t callable.'
+	    ) : invariant(typeof callback === 'function'));
+	    var internalInstance = getInternalInstanceReadyForUpdate(publicInstance);
+	
+	    // Previously we would throw an error if we didn't have an internal
+	    // instance. Since we want to make it a no-op instead, we mirror the same
+	    // behavior we have in other enqueue* methods.
+	    // We also need to ignore callbacks in componentWillMount. See
+	    // enqueueUpdates.
+	    if (!internalInstance ||
+	        internalInstance === ReactLifeCycle.currentlyMountingInstance) {
+	      return null;
+	    }
+	
+	    if (internalInstance._pendingCallbacks) {
+	      internalInstance._pendingCallbacks.push(callback);
+	    } else {
+	      internalInstance._pendingCallbacks = [callback];
+	    }
+	    // TODO: The callback here is ignored when setState is called from
+	    // componentWillMount. Either fix it or disallow doing so completely in
+	    // favor of getInitialState. Alternatively, we can disallow
+	    // componentWillMount during server-side rendering.
+	    enqueueUpdate(internalInstance);
+	  },
+	
+	  enqueueCallbackInternal: function(internalInstance, callback) {
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      typeof callback === 'function',
+	      'enqueueCallback(...): You called `setProps`, `replaceProps`, ' +
+	      '`setState`, `replaceState`, or `forceUpdate` with a callback that ' +
+	      'isn\'t callable.'
+	    ) : invariant(typeof callback === 'function'));
+	    if (internalInstance._pendingCallbacks) {
+	      internalInstance._pendingCallbacks.push(callback);
+	    } else {
+	      internalInstance._pendingCallbacks = [callback];
+	    }
+	    enqueueUpdate(internalInstance);
+	  },
+	
+	  /**
+	   * Forces an update. This should only be invoked when it is known with
+	   * certainty that we are **not** in a DOM transaction.
+	   *
+	   * You may want to call this when you know that some deeper aspect of the
+	   * component's state has changed but `setState` was not called.
+	   *
+	   * This will not invoke `shouldUpdateComponent`, but it will invoke
+	   * `componentWillUpdate` and `componentDidUpdate`.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @internal
+	   */
+	  enqueueForceUpdate: function(publicInstance) {
+	    var internalInstance = getInternalInstanceReadyForUpdate(
+	      publicInstance,
+	      'forceUpdate'
+	    );
+	
+	    if (!internalInstance) {
+	      return;
+	    }
+	
+	    internalInstance._pendingForceUpdate = true;
+	
+	    enqueueUpdate(internalInstance);
+	  },
+	
+	  /**
+	   * Replaces all of the state. Always use this or `setState` to mutate state.
+	   * You should treat `this.state` as immutable.
+	   *
+	   * There is no guarantee that `this.state` will be immediately updated, so
+	   * accessing `this.state` after calling this method may return the old value.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @param {object} completeState Next state.
+	   * @internal
+	   */
+	  enqueueReplaceState: function(publicInstance, completeState) {
+	    var internalInstance = getInternalInstanceReadyForUpdate(
+	      publicInstance,
+	      'replaceState'
+	    );
+	
+	    if (!internalInstance) {
+	      return;
+	    }
+	
+	    internalInstance._pendingStateQueue = [completeState];
+	    internalInstance._pendingReplaceState = true;
+	
+	    enqueueUpdate(internalInstance);
+	  },
+	
+	  /**
+	   * Sets a subset of the state. This only exists because _pendingState is
+	   * internal. This provides a merging strategy that is not available to deep
+	   * properties which is confusing. TODO: Expose pendingState or don't use it
+	   * during the merge.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @param {object} partialState Next partial state to be merged with state.
+	   * @internal
+	   */
+	  enqueueSetState: function(publicInstance, partialState) {
+	    var internalInstance = getInternalInstanceReadyForUpdate(
+	      publicInstance,
+	      'setState'
+	    );
+	
+	    if (!internalInstance) {
+	      return;
+	    }
+	
+	    var queue =
+	      internalInstance._pendingStateQueue ||
+	      (internalInstance._pendingStateQueue = []);
+	    queue.push(partialState);
+	
+	    enqueueUpdate(internalInstance);
+	  },
+	
+	  /**
+	   * Sets a subset of the props.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @param {object} partialProps Subset of the next props.
+	   * @internal
+	   */
+	  enqueueSetProps: function(publicInstance, partialProps) {
+	    var internalInstance = getInternalInstanceReadyForUpdate(
+	      publicInstance,
+	      'setProps'
+	    );
+	
+	    if (!internalInstance) {
+	      return;
+	    }
+	
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      internalInstance._isTopLevel,
+	      'setProps(...): You called `setProps` on a ' +
+	      'component with a parent. This is an anti-pattern since props will ' +
+	      'get reactively updated when rendered. Instead, change the owner\'s ' +
+	      '`render` method to pass the correct value as props to the component ' +
+	      'where it is created.'
+	    ) : invariant(internalInstance._isTopLevel));
+	
+	    // Merge with the pending element if it exists, otherwise with existing
+	    // element props.
+	    var element = internalInstance._pendingElement ||
+	                  internalInstance._currentElement;
+	    var props = assign({}, element.props, partialProps);
+	    internalInstance._pendingElement = ReactElement.cloneAndReplaceProps(
+	      element,
+	      props
+	    );
+	
+	    enqueueUpdate(internalInstance);
+	  },
+	
+	  /**
+	   * Replaces all of the props.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @param {object} props New props.
+	   * @internal
+	   */
+	  enqueueReplaceProps: function(publicInstance, props) {
+	    var internalInstance = getInternalInstanceReadyForUpdate(
+	      publicInstance,
+	      'replaceProps'
+	    );
+	
+	    if (!internalInstance) {
+	      return;
+	    }
+	
+	    ("production" !== process.env.NODE_ENV ? invariant(
+	      internalInstance._isTopLevel,
+	      'replaceProps(...): You called `replaceProps` on a ' +
+	      'component with a parent. This is an anti-pattern since props will ' +
+	      'get reactively updated when rendered. Instead, change the owner\'s ' +
+	      '`render` method to pass the correct value as props to the component ' +
+	      'where it is created.'
+	    ) : invariant(internalInstance._isTopLevel));
+	
+	    // Merge with the pending element if it exists, otherwise with existing
+	    // element props.
+	    var element = internalInstance._pendingElement ||
+	                  internalInstance._currentElement;
+	    internalInstance._pendingElement = ReactElement.cloneAndReplaceProps(
+	      element,
+	      props
+	    );
+	
+	    enqueueUpdate(internalInstance);
+	  },
+	
+	  enqueueElementInternal: function(internalInstance, newElement) {
+	    internalInstance._pendingElement = newElement;
+	    enqueueUpdate(internalInstance);
+	  }
+	
+	};
+	
+	module.exports = ReactUpdateQueue;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+
+/***/ },
+/* 212 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactLifeCycle
+	 */
+	
+	'use strict';
+	
+	/**
+	 * This module manages the bookkeeping when a component is in the process
+	 * of being mounted or being unmounted. This is used as a way to enforce
+	 * invariants (or warnings) when it is not recommended to call
+	 * setState/forceUpdate.
+	 *
+	 * currentlyMountingInstance: During the construction phase, it is not possible
+	 * to trigger an update since the instance is not fully mounted yet. However, we
+	 * currently allow this as a convenience for mutating the initial state.
+	 *
+	 * currentlyUnmountingInstance: During the unmounting phase, the instance is
+	 * still mounted and can therefore schedule an update. However, this is not
+	 * recommended and probably an error since it's about to be unmounted.
+	 * Therefore we still want to trigger in an error for that case.
+	 */
+	
+	var ReactLifeCycle = {
+	  currentlyMountingInstance: null,
+	  currentlyUnmountingInstance: null
+	};
+	
+	module.exports = ReactLifeCycle;
+
+
+/***/ },
+/* 213 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactInstanceMap
+	 */
+	
+	'use strict';
+	
+	/**
+	 * `ReactInstanceMap` maintains a mapping from a public facing stateful
+	 * instance (key) and the internal representation (value). This allows public
+	 * methods to accept the user facing instance as an argument and map them back
+	 * to internal methods.
+	 */
+	
+	// TODO: Replace this with ES6: var ReactInstanceMap = new Map();
+	var ReactInstanceMap = {
+	
+	  /**
+	   * This API should be called `delete` but we'd have to make sure to always
+	   * transform these to strings for IE support. When this transform is fully
+	   * supported we can rename it.
+	   */
+	  remove: function(key) {
+	    key._reactInternalInstance = undefined;
+	  },
+	
+	  get: function(key) {
+	    return key._reactInternalInstance;
+	  },
+	
+	  has: function(key) {
+	    return key._reactInternalInstance !== undefined;
+	  },
+	
+	  set: function(key, value) {
+	    key._reactInternalInstance = value;
+	  }
+	
+	};
+	
+	module.exports = ReactInstanceMap;
+
+
+/***/ },
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -60006,21 +64988,21 @@
 	
 	'use strict';
 	
-	var ReactComponent = __webpack_require__(213);
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactElement = __webpack_require__(202);
-	var ReactErrorUtils = __webpack_require__(229);
-	var ReactInstanceMap = __webpack_require__(216);
-	var ReactLifeCycle = __webpack_require__(215);
-	var ReactPropTypeLocations = __webpack_require__(224);
-	var ReactPropTypeLocationNames = __webpack_require__(225);
-	var ReactUpdateQueue = __webpack_require__(214);
+	var ReactComponent = __webpack_require__(210);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactElement = __webpack_require__(189);
+	var ReactErrorUtils = __webpack_require__(215);
+	var ReactInstanceMap = __webpack_require__(213);
+	var ReactLifeCycle = __webpack_require__(212);
+	var ReactPropTypeLocations = __webpack_require__(195);
+	var ReactPropTypeLocationNames = __webpack_require__(197);
+	var ReactUpdateQueue = __webpack_require__(211);
 	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
-	var keyMirror = __webpack_require__(197);
-	var keyOf = __webpack_require__(230);
-	var warning = __webpack_require__(206);
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
+	var keyMirror = __webpack_require__(196);
+	var keyOf = __webpack_require__(216);
+	var warning = __webpack_require__(192);
 	
 	var MIXINS_KEY = keyOf({mixins: null});
 	
@@ -60936,10 +65918,10 @@
 	
 	module.exports = ReactClass;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 229 */
+/* 215 */
 /***/ function(module, exports) {
 
 	/**
@@ -60975,7 +65957,7 @@
 
 
 /***/ },
-/* 230 */
+/* 216 */
 /***/ function(module, exports) {
 
 	/**
@@ -61015,7 +65997,7 @@
 
 
 /***/ },
-/* 231 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -61032,10 +66014,10 @@
 	
 	'use strict';
 	
-	var ReactElement = __webpack_require__(202);
-	var ReactElementValidator = __webpack_require__(223);
+	var ReactElement = __webpack_require__(189);
+	var ReactElementValidator = __webpack_require__(188);
 	
-	var mapObject = __webpack_require__(232);
+	var mapObject = __webpack_require__(218);
 	
 	/**
 	 * Create a factory that creates HTML tag elements.
@@ -61194,10 +66176,10 @@
 	
 	module.exports = ReactDOM;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 232 */
+/* 218 */
 /***/ function(module, exports) {
 
 	/**
@@ -61254,7 +66236,7 @@
 
 
 /***/ },
-/* 233 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -61271,13 +66253,13 @@
 	
 	'use strict';
 	
-	var DOMPropertyOperations = __webpack_require__(234);
+	var DOMPropertyOperations = __webpack_require__(220);
 	var ReactComponentBrowserEnvironment =
-	  __webpack_require__(238);
-	var ReactDOMComponent = __webpack_require__(278);
+	  __webpack_require__(224);
+	var ReactDOMComponent = __webpack_require__(264);
 	
-	var assign = __webpack_require__(204);
-	var escapeTextContentForBrowser = __webpack_require__(237);
+	var assign = __webpack_require__(182);
+	var escapeTextContentForBrowser = __webpack_require__(223);
 	
 	/**
 	 * Text nodes violate a couple assumptions that React makes about components:
@@ -61375,7 +66357,7 @@
 
 
 /***/ },
-/* 234 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -61392,10 +66374,10 @@
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(235);
+	var DOMProperty = __webpack_require__(221);
 	
-	var quoteAttributeValueForBrowser = __webpack_require__(236);
-	var warning = __webpack_require__(206);
+	var quoteAttributeValueForBrowser = __webpack_require__(222);
+	var warning = __webpack_require__(192);
 	
 	function shouldIgnoreValue(name, value) {
 	  return value == null ||
@@ -61567,10 +66549,10 @@
 	
 	module.exports = DOMPropertyOperations;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 235 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -61589,7 +66571,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	function checkMask(value, bitmask) {
 	  return (value & bitmask) === bitmask;
@@ -61869,10 +66851,10 @@
 	
 	module.exports = DOMProperty;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 236 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -61888,7 +66870,7 @@
 	
 	'use strict';
 	
-	var escapeTextContentForBrowser = __webpack_require__(237);
+	var escapeTextContentForBrowser = __webpack_require__(223);
 	
 	/**
 	 * Escapes attribute value to prevent scripting attacks.
@@ -61904,7 +66886,7 @@
 
 
 /***/ },
-/* 237 */
+/* 223 */
 /***/ function(module, exports) {
 
 	/**
@@ -61948,7 +66930,7 @@
 
 
 /***/ },
-/* 238 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -61966,8 +66948,8 @@
 	
 	'use strict';
 	
-	var ReactDOMIDOperations = __webpack_require__(239);
-	var ReactMount = __webpack_require__(258);
+	var ReactDOMIDOperations = __webpack_require__(225);
+	var ReactMount = __webpack_require__(244);
 	
 	/**
 	 * Abstracts away all functionality of the reconciler that requires knowledge of
@@ -61999,7 +66981,7 @@
 
 
 /***/ },
-/* 239 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -62018,14 +67000,14 @@
 	
 	'use strict';
 	
-	var CSSPropertyOperations = __webpack_require__(240);
-	var DOMChildrenOperations = __webpack_require__(249);
-	var DOMPropertyOperations = __webpack_require__(234);
-	var ReactMount = __webpack_require__(258);
-	var ReactPerf = __webpack_require__(219);
+	var CSSPropertyOperations = __webpack_require__(226);
+	var DOMChildrenOperations = __webpack_require__(235);
+	var DOMPropertyOperations = __webpack_require__(220);
+	var ReactMount = __webpack_require__(244);
+	var ReactPerf = __webpack_require__(184);
 	
-	var invariant = __webpack_require__(198);
-	var setInnerHTML = __webpack_require__(257);
+	var invariant = __webpack_require__(181);
+	var setInnerHTML = __webpack_require__(243);
 	
 	/**
 	 * Errors for properties that should not be updated with `updatePropertyById()`.
@@ -62167,10 +67149,10 @@
 	
 	module.exports = ReactDOMIDOperations;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 240 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -62187,14 +67169,14 @@
 	
 	'use strict';
 	
-	var CSSProperty = __webpack_require__(241);
-	var ExecutionEnvironment = __webpack_require__(242);
+	var CSSProperty = __webpack_require__(227);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
-	var camelizeStyleName = __webpack_require__(243);
-	var dangerousStyleValue = __webpack_require__(245);
-	var hyphenateStyleName = __webpack_require__(246);
-	var memoizeStringOnly = __webpack_require__(248);
-	var warning = __webpack_require__(206);
+	var camelizeStyleName = __webpack_require__(229);
+	var dangerousStyleValue = __webpack_require__(231);
+	var hyphenateStyleName = __webpack_require__(232);
+	var memoizeStringOnly = __webpack_require__(234);
+	var warning = __webpack_require__(192);
 	
 	var processStyleName = memoizeStringOnly(function(styleName) {
 	  return hyphenateStyleName(styleName);
@@ -62352,10 +67334,10 @@
 	
 	module.exports = CSSPropertyOperations;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 241 */
+/* 227 */
 /***/ function(module, exports) {
 
 	/**
@@ -62484,7 +67466,7 @@
 
 
 /***/ },
-/* 242 */
+/* 228 */
 /***/ function(module, exports) {
 
 	/**
@@ -62532,7 +67514,7 @@
 
 
 /***/ },
-/* 243 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -62549,7 +67531,7 @@
 	
 	"use strict";
 	
-	var camelize = __webpack_require__(244);
+	var camelize = __webpack_require__(230);
 	
 	var msPattern = /^-ms-/;
 	
@@ -62578,7 +67560,7 @@
 
 
 /***/ },
-/* 244 */
+/* 230 */
 /***/ function(module, exports) {
 
 	/**
@@ -62614,7 +67596,7 @@
 
 
 /***/ },
-/* 245 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -62631,7 +67613,7 @@
 	
 	'use strict';
 	
-	var CSSProperty = __webpack_require__(241);
+	var CSSProperty = __webpack_require__(227);
 	
 	var isUnitlessNumber = CSSProperty.isUnitlessNumber;
 	
@@ -62676,7 +67658,7 @@
 
 
 /***/ },
-/* 246 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -62693,7 +67675,7 @@
 	
 	"use strict";
 	
-	var hyphenate = __webpack_require__(247);
+	var hyphenate = __webpack_require__(233);
 	
 	var msPattern = /^ms-/;
 	
@@ -62721,7 +67703,7 @@
 
 
 /***/ },
-/* 247 */
+/* 233 */
 /***/ function(module, exports) {
 
 	/**
@@ -62758,7 +67740,7 @@
 
 
 /***/ },
-/* 248 */
+/* 234 */
 /***/ function(module, exports) {
 
 	/**
@@ -62795,7 +67777,7 @@
 
 
 /***/ },
-/* 249 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -62812,11 +67794,11 @@
 	
 	'use strict';
 	
-	var Danger = __webpack_require__(250);
-	var ReactMultiChildUpdateTypes = __webpack_require__(255);
+	var Danger = __webpack_require__(236);
+	var ReactMultiChildUpdateTypes = __webpack_require__(241);
 	
-	var setTextContent = __webpack_require__(256);
-	var invariant = __webpack_require__(198);
+	var setTextContent = __webpack_require__(242);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Inserts `childNode` as a child of `parentNode` at the `index`.
@@ -62933,10 +67915,10 @@
 	
 	module.exports = DOMChildrenOperations;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 250 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -62955,12 +67937,12 @@
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
-	var createNodesFromMarkup = __webpack_require__(251);
-	var emptyFunction = __webpack_require__(207);
-	var getMarkupWrap = __webpack_require__(254);
-	var invariant = __webpack_require__(198);
+	var createNodesFromMarkup = __webpack_require__(237);
+	var emptyFunction = __webpack_require__(193);
+	var getMarkupWrap = __webpack_require__(240);
+	var invariant = __webpack_require__(181);
 	
 	var OPEN_TAG_NAME_EXP = /^(<[^ \/>]+)/;
 	var RESULT_INDEX_ATTR = 'data-danger-index';
@@ -63123,10 +68105,10 @@
 	
 	module.exports = Danger;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 251 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -63143,11 +68125,11 @@
 	
 	/*jslint evil: true, sub: true */
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
-	var createArrayFromMixed = __webpack_require__(252);
-	var getMarkupWrap = __webpack_require__(254);
-	var invariant = __webpack_require__(198);
+	var createArrayFromMixed = __webpack_require__(238);
+	var getMarkupWrap = __webpack_require__(240);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Dummy container used to render all markup.
@@ -63216,10 +68198,10 @@
 	
 	module.exports = createNodesFromMarkup;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 252 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -63234,7 +68216,7 @@
 	 * @typechecks
 	 */
 	
-	var toArray = __webpack_require__(253);
+	var toArray = __webpack_require__(239);
 	
 	/**
 	 * Perform a heuristic test to determine if an object is "array-like".
@@ -63309,7 +68291,7 @@
 
 
 /***/ },
-/* 253 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -63324,7 +68306,7 @@
 	 * @typechecks
 	 */
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Convert array-like objects to arrays.
@@ -63381,10 +68363,10 @@
 	
 	module.exports = toArray;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 254 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -63398,9 +68380,9 @@
 	 * @providesModule getMarkupWrap
 	 */
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Dummy container used to detect which wraps are necessary.
@@ -63503,10 +68485,10 @@
 	
 	module.exports = getMarkupWrap;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 255 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -63522,7 +68504,7 @@
 	
 	'use strict';
 	
-	var keyMirror = __webpack_require__(197);
+	var keyMirror = __webpack_require__(196);
 	
 	/**
 	 * When a component's children are updated, a series of update configuration
@@ -63543,7 +68525,7 @@
 
 
 /***/ },
-/* 256 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -63559,9 +68541,9 @@
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(242);
-	var escapeTextContentForBrowser = __webpack_require__(237);
-	var setInnerHTML = __webpack_require__(257);
+	var ExecutionEnvironment = __webpack_require__(228);
+	var escapeTextContentForBrowser = __webpack_require__(223);
+	var setInnerHTML = __webpack_require__(243);
 	
 	/**
 	 * Set the textContent property of a node, ensuring that whitespace is preserved
@@ -63589,7 +68571,7 @@
 
 
 /***/ },
-/* 257 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -63607,7 +68589,7 @@
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
 	var WHITESPACE_TEST = /^[ \r\n\t\f]/;
 	var NONVISIBLE_TEST = /<(!--|link|noscript|meta|script|style)[ \r\n\t\f\/>]/;
@@ -63682,7 +68664,7 @@
 
 
 /***/ },
-/* 258 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -63698,28 +68680,28 @@
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(235);
-	var ReactBrowserEventEmitter = __webpack_require__(259);
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactElement = __webpack_require__(202);
-	var ReactElementValidator = __webpack_require__(223);
-	var ReactEmptyComponent = __webpack_require__(267);
-	var ReactInstanceHandles = __webpack_require__(210);
-	var ReactInstanceMap = __webpack_require__(216);
-	var ReactMarkupChecksum = __webpack_require__(268);
-	var ReactPerf = __webpack_require__(219);
-	var ReactReconciler = __webpack_require__(220);
-	var ReactUpdateQueue = __webpack_require__(214);
-	var ReactUpdates = __webpack_require__(217);
+	var DOMProperty = __webpack_require__(221);
+	var ReactBrowserEventEmitter = __webpack_require__(245);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactElement = __webpack_require__(189);
+	var ReactElementValidator = __webpack_require__(188);
+	var ReactEmptyComponent = __webpack_require__(253);
+	var ReactInstanceHandles = __webpack_require__(208);
+	var ReactInstanceMap = __webpack_require__(213);
+	var ReactMarkupChecksum = __webpack_require__(254);
+	var ReactPerf = __webpack_require__(184);
+	var ReactReconciler = __webpack_require__(185);
+	var ReactUpdateQueue = __webpack_require__(211);
+	var ReactUpdates = __webpack_require__(178);
 	
-	var emptyObject = __webpack_require__(205);
-	var containsNode = __webpack_require__(270);
-	var getReactRootElementInContainer = __webpack_require__(273);
-	var instantiateReactComponent = __webpack_require__(274);
-	var invariant = __webpack_require__(198);
-	var setInnerHTML = __webpack_require__(257);
-	var shouldUpdateReactComponent = __webpack_require__(277);
-	var warning = __webpack_require__(206);
+	var emptyObject = __webpack_require__(191);
+	var containsNode = __webpack_require__(256);
+	var getReactRootElementInContainer = __webpack_require__(259);
+	var instantiateReactComponent = __webpack_require__(260);
+	var invariant = __webpack_require__(181);
+	var setInnerHTML = __webpack_require__(243);
+	var shouldUpdateReactComponent = __webpack_require__(263);
+	var warning = __webpack_require__(192);
 	
 	var SEPARATOR = ReactInstanceHandles.SEPARATOR;
 	
@@ -64573,10 +69555,10 @@
 	
 	module.exports = ReactMount;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 259 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -64593,14 +69575,14 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPluginHub = __webpack_require__(260);
-	var EventPluginRegistry = __webpack_require__(261);
-	var ReactEventEmitterMixin = __webpack_require__(264);
-	var ViewportMetrics = __webpack_require__(265);
+	var EventConstants = __webpack_require__(205);
+	var EventPluginHub = __webpack_require__(246);
+	var EventPluginRegistry = __webpack_require__(247);
+	var ReactEventEmitterMixin = __webpack_require__(250);
+	var ViewportMetrics = __webpack_require__(251);
 	
-	var assign = __webpack_require__(204);
-	var isEventSupported = __webpack_require__(266);
+	var assign = __webpack_require__(182);
+	var isEventSupported = __webpack_require__(252);
 	
 	/**
 	 * Summary of `ReactBrowserEventEmitter` event handling:
@@ -64933,7 +69915,7 @@
 
 
 /***/ },
-/* 260 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -64949,12 +69931,12 @@
 	
 	'use strict';
 	
-	var EventPluginRegistry = __webpack_require__(261);
-	var EventPluginUtils = __webpack_require__(195);
+	var EventPluginRegistry = __webpack_require__(247);
+	var EventPluginUtils = __webpack_require__(204);
 	
-	var accumulateInto = __webpack_require__(262);
-	var forEachAccumulated = __webpack_require__(263);
-	var invariant = __webpack_require__(198);
+	var accumulateInto = __webpack_require__(248);
+	var forEachAccumulated = __webpack_require__(249);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Internal store for event listeners
@@ -65211,10 +70193,10 @@
 	
 	module.exports = EventPluginHub;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 261 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -65231,7 +70213,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Injectable ordering of event plugins.
@@ -65494,10 +70476,10 @@
 	
 	module.exports = EventPluginRegistry;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 262 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -65513,7 +70495,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 *
@@ -65563,10 +70545,10 @@
 	
 	module.exports = accumulateInto;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 263 */
+/* 249 */
 /***/ function(module, exports) {
 
 	/**
@@ -65601,7 +70583,7 @@
 
 
 /***/ },
-/* 264 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -65617,7 +70599,7 @@
 	
 	'use strict';
 	
-	var EventPluginHub = __webpack_require__(260);
+	var EventPluginHub = __webpack_require__(246);
 	
 	function runEventQueueInBatch(events) {
 	  EventPluginHub.enqueueEvents(events);
@@ -65655,7 +70637,7 @@
 
 
 /***/ },
-/* 265 */
+/* 251 */
 /***/ function(module, exports) {
 
 	/**
@@ -65688,7 +70670,7 @@
 
 
 /***/ },
-/* 266 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -65704,7 +70686,7 @@
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
 	var useHasFeature;
 	if (ExecutionEnvironment.canUseDOM) {
@@ -65757,7 +70739,7 @@
 
 
 /***/ },
-/* 267 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -65773,10 +70755,10 @@
 	
 	'use strict';
 	
-	var ReactElement = __webpack_require__(202);
-	var ReactInstanceMap = __webpack_require__(216);
+	var ReactElement = __webpack_require__(189);
+	var ReactInstanceMap = __webpack_require__(213);
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	var component;
 	// This registry keeps track of the React IDs of the components that rendered to
@@ -65852,10 +70834,10 @@
 	
 	module.exports = ReactEmptyComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 268 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -65871,7 +70853,7 @@
 	
 	'use strict';
 	
-	var adler32 = __webpack_require__(269);
+	var adler32 = __webpack_require__(255);
 	
 	var ReactMarkupChecksum = {
 	  CHECKSUM_ATTR_NAME: 'data-react-checksum',
@@ -65907,7 +70889,7 @@
 
 
 /***/ },
-/* 269 */
+/* 255 */
 /***/ function(module, exports) {
 
 	/**
@@ -65945,7 +70927,7 @@
 
 
 /***/ },
-/* 270 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -65960,7 +70942,7 @@
 	 * @typechecks
 	 */
 	
-	var isTextNode = __webpack_require__(271);
+	var isTextNode = __webpack_require__(257);
 	
 	/*jslint bitwise:true */
 	
@@ -65993,7 +70975,7 @@
 
 
 /***/ },
-/* 271 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -66008,7 +70990,7 @@
 	 * @typechecks
 	 */
 	
-	var isNode = __webpack_require__(272);
+	var isNode = __webpack_require__(258);
 	
 	/**
 	 * @param {*} object The object to check.
@@ -66022,7 +71004,7 @@
 
 
 /***/ },
-/* 272 */
+/* 258 */
 /***/ function(module, exports) {
 
 	/**
@@ -66053,7 +71035,7 @@
 
 
 /***/ },
-/* 273 */
+/* 259 */
 /***/ function(module, exports) {
 
 	/**
@@ -66092,7 +71074,7 @@
 
 
 /***/ },
-/* 274 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -66109,13 +71091,13 @@
 	
 	'use strict';
 	
-	var ReactCompositeComponent = __webpack_require__(275);
-	var ReactEmptyComponent = __webpack_require__(267);
-	var ReactNativeComponent = __webpack_require__(226);
+	var ReactCompositeComponent = __webpack_require__(261);
+	var ReactEmptyComponent = __webpack_require__(253);
+	var ReactNativeComponent = __webpack_require__(198);
 	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
-	var warning = __webpack_require__(206);
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
+	var warning = __webpack_require__(192);
 	
 	// To avoid a cyclic dependency, we create the final class in this module
 	var ReactCompositeComponentWrapper = function() { };
@@ -66230,10 +71212,10 @@
 	
 	module.exports = instantiateReactComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 275 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -66249,25 +71231,25 @@
 	
 	'use strict';
 	
-	var ReactComponentEnvironment = __webpack_require__(276);
-	var ReactContext = __webpack_require__(203);
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactElement = __webpack_require__(202);
-	var ReactElementValidator = __webpack_require__(223);
-	var ReactInstanceMap = __webpack_require__(216);
-	var ReactLifeCycle = __webpack_require__(215);
-	var ReactNativeComponent = __webpack_require__(226);
-	var ReactPerf = __webpack_require__(219);
-	var ReactPropTypeLocations = __webpack_require__(224);
-	var ReactPropTypeLocationNames = __webpack_require__(225);
-	var ReactReconciler = __webpack_require__(220);
-	var ReactUpdates = __webpack_require__(217);
+	var ReactComponentEnvironment = __webpack_require__(262);
+	var ReactContext = __webpack_require__(190);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactElement = __webpack_require__(189);
+	var ReactElementValidator = __webpack_require__(188);
+	var ReactInstanceMap = __webpack_require__(213);
+	var ReactLifeCycle = __webpack_require__(212);
+	var ReactNativeComponent = __webpack_require__(198);
+	var ReactPerf = __webpack_require__(184);
+	var ReactPropTypeLocations = __webpack_require__(195);
+	var ReactPropTypeLocationNames = __webpack_require__(197);
+	var ReactReconciler = __webpack_require__(185);
+	var ReactUpdates = __webpack_require__(178);
 	
-	var assign = __webpack_require__(204);
-	var emptyObject = __webpack_require__(205);
-	var invariant = __webpack_require__(198);
-	var shouldUpdateReactComponent = __webpack_require__(277);
-	var warning = __webpack_require__(206);
+	var assign = __webpack_require__(182);
+	var emptyObject = __webpack_require__(191);
+	var invariant = __webpack_require__(181);
+	var shouldUpdateReactComponent = __webpack_require__(263);
+	var warning = __webpack_require__(192);
 	
 	function getDeclarationErrorAddendum(component) {
 	  var owner = component._currentElement._owner || null;
@@ -67146,10 +72128,10 @@
 	
 	module.exports = ReactCompositeComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 276 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -67165,7 +72147,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	var injected = false;
 	
@@ -67210,10 +72192,10 @@
 	
 	module.exports = ReactComponentEnvironment;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 277 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -67230,7 +72212,7 @@
 	
 	'use strict';
 	
-	var warning = __webpack_require__(206);
+	var warning = __webpack_require__(192);
 	
 	/**
 	 * Given a `prevElement` and `nextElement`, determines if the existing
@@ -67317,10 +72299,10 @@
 	
 	module.exports = shouldUpdateReactComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 278 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -67339,22 +72321,22 @@
 	
 	'use strict';
 	
-	var CSSPropertyOperations = __webpack_require__(240);
-	var DOMProperty = __webpack_require__(235);
-	var DOMPropertyOperations = __webpack_require__(234);
-	var ReactBrowserEventEmitter = __webpack_require__(259);
+	var CSSPropertyOperations = __webpack_require__(226);
+	var DOMProperty = __webpack_require__(221);
+	var DOMPropertyOperations = __webpack_require__(220);
+	var ReactBrowserEventEmitter = __webpack_require__(245);
 	var ReactComponentBrowserEnvironment =
-	  __webpack_require__(238);
-	var ReactMount = __webpack_require__(258);
-	var ReactMultiChild = __webpack_require__(279);
-	var ReactPerf = __webpack_require__(219);
+	  __webpack_require__(224);
+	var ReactMount = __webpack_require__(244);
+	var ReactMultiChild = __webpack_require__(265);
+	var ReactPerf = __webpack_require__(184);
 	
-	var assign = __webpack_require__(204);
-	var escapeTextContentForBrowser = __webpack_require__(237);
-	var invariant = __webpack_require__(198);
-	var isEventSupported = __webpack_require__(266);
-	var keyOf = __webpack_require__(230);
-	var warning = __webpack_require__(206);
+	var assign = __webpack_require__(182);
+	var escapeTextContentForBrowser = __webpack_require__(223);
+	var invariant = __webpack_require__(181);
+	var isEventSupported = __webpack_require__(252);
+	var keyOf = __webpack_require__(216);
+	var warning = __webpack_require__(192);
 	
 	var deleteListener = ReactBrowserEventEmitter.deleteListener;
 	var listenTo = ReactBrowserEventEmitter.listenTo;
@@ -67830,10 +72812,10 @@
 	
 	module.exports = ReactDOMComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 279 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -67850,11 +72832,11 @@
 	
 	'use strict';
 	
-	var ReactComponentEnvironment = __webpack_require__(276);
-	var ReactMultiChildUpdateTypes = __webpack_require__(255);
+	var ReactComponentEnvironment = __webpack_require__(262);
+	var ReactMultiChildUpdateTypes = __webpack_require__(241);
 	
-	var ReactReconciler = __webpack_require__(220);
-	var ReactChildReconciler = __webpack_require__(280);
+	var ReactReconciler = __webpack_require__(185);
+	var ReactChildReconciler = __webpack_require__(266);
 	
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -68267,7 +73249,7 @@
 
 
 /***/ },
-/* 280 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -68284,11 +73266,11 @@
 	
 	'use strict';
 	
-	var ReactReconciler = __webpack_require__(220);
+	var ReactReconciler = __webpack_require__(185);
 	
-	var flattenChildren = __webpack_require__(281);
-	var instantiateReactComponent = __webpack_require__(274);
-	var shouldUpdateReactComponent = __webpack_require__(277);
+	var flattenChildren = __webpack_require__(267);
+	var instantiateReactComponent = __webpack_require__(260);
+	var shouldUpdateReactComponent = __webpack_require__(263);
 	
 	/**
 	 * ReactChildReconciler provides helpers for initializing or updating a set of
@@ -68398,7 +73380,7 @@
 
 
 /***/ },
-/* 281 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -68414,8 +73396,8 @@
 	
 	'use strict';
 	
-	var traverseAllChildren = __webpack_require__(209);
-	var warning = __webpack_require__(206);
+	var traverseAllChildren = __webpack_require__(207);
+	var warning = __webpack_require__(192);
 	
 	/**
 	 * @param {function} traverseContext Context passed through traversal.
@@ -68456,10 +73438,10 @@
 	
 	module.exports = flattenChildren;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 282 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -68475,42 +73457,42 @@
 	
 	'use strict';
 	
-	var BeforeInputEventPlugin = __webpack_require__(283);
-	var ChangeEventPlugin = __webpack_require__(291);
-	var ClientReactRootIndex = __webpack_require__(293);
-	var DefaultEventPluginOrder = __webpack_require__(294);
-	var EnterLeaveEventPlugin = __webpack_require__(295);
-	var ExecutionEnvironment = __webpack_require__(242);
-	var HTMLDOMPropertyConfig = __webpack_require__(299);
-	var MobileSafariClickEventPlugin = __webpack_require__(300);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
+	var BeforeInputEventPlugin = __webpack_require__(269);
+	var ChangeEventPlugin = __webpack_require__(277);
+	var ClientReactRootIndex = __webpack_require__(279);
+	var DefaultEventPluginOrder = __webpack_require__(280);
+	var EnterLeaveEventPlugin = __webpack_require__(281);
+	var ExecutionEnvironment = __webpack_require__(228);
+	var HTMLDOMPropertyConfig = __webpack_require__(285);
+	var MobileSafariClickEventPlugin = __webpack_require__(286);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
 	var ReactComponentBrowserEnvironment =
-	  __webpack_require__(238);
-	var ReactDefaultBatchingStrategy = __webpack_require__(303);
-	var ReactDOMComponent = __webpack_require__(278);
-	var ReactDOMButton = __webpack_require__(304);
-	var ReactDOMForm = __webpack_require__(307);
-	var ReactDOMImg = __webpack_require__(309);
-	var ReactDOMIDOperations = __webpack_require__(239);
-	var ReactDOMIframe = __webpack_require__(310);
-	var ReactDOMInput = __webpack_require__(311);
-	var ReactDOMOption = __webpack_require__(314);
-	var ReactDOMSelect = __webpack_require__(315);
-	var ReactDOMTextarea = __webpack_require__(316);
-	var ReactDOMTextComponent = __webpack_require__(233);
-	var ReactElement = __webpack_require__(202);
-	var ReactEventListener = __webpack_require__(317);
-	var ReactInjection = __webpack_require__(320);
-	var ReactInstanceHandles = __webpack_require__(210);
-	var ReactMount = __webpack_require__(258);
-	var ReactReconcileTransaction = __webpack_require__(321);
-	var SelectEventPlugin = __webpack_require__(327);
-	var ServerReactRootIndex = __webpack_require__(329);
-	var SimpleEventPlugin = __webpack_require__(330);
-	var SVGDOMPropertyConfig = __webpack_require__(339);
+	  __webpack_require__(224);
+	var ReactDefaultBatchingStrategy = __webpack_require__(289);
+	var ReactDOMComponent = __webpack_require__(264);
+	var ReactDOMButton = __webpack_require__(290);
+	var ReactDOMForm = __webpack_require__(293);
+	var ReactDOMImg = __webpack_require__(295);
+	var ReactDOMIDOperations = __webpack_require__(225);
+	var ReactDOMIframe = __webpack_require__(296);
+	var ReactDOMInput = __webpack_require__(297);
+	var ReactDOMOption = __webpack_require__(300);
+	var ReactDOMSelect = __webpack_require__(301);
+	var ReactDOMTextarea = __webpack_require__(302);
+	var ReactDOMTextComponent = __webpack_require__(219);
+	var ReactElement = __webpack_require__(189);
+	var ReactEventListener = __webpack_require__(303);
+	var ReactInjection = __webpack_require__(306);
+	var ReactInstanceHandles = __webpack_require__(208);
+	var ReactMount = __webpack_require__(244);
+	var ReactReconcileTransaction = __webpack_require__(307);
+	var SelectEventPlugin = __webpack_require__(313);
+	var ServerReactRootIndex = __webpack_require__(315);
+	var SimpleEventPlugin = __webpack_require__(316);
+	var SVGDOMPropertyConfig = __webpack_require__(325);
 	
-	var createFullPageComponent = __webpack_require__(340);
+	var createFullPageComponent = __webpack_require__(326);
 	
 	function autoGenerateWrapperClass(type) {
 	  return ReactClass.createClass({
@@ -68608,7 +73590,7 @@
 	  if ("production" !== process.env.NODE_ENV) {
 	    var url = (ExecutionEnvironment.canUseDOM && window.location.href) || '';
 	    if ((/[?&]react_perf\b/).test(url)) {
-	      var ReactDefaultPerf = __webpack_require__(341);
+	      var ReactDefaultPerf = __webpack_require__(327);
 	      ReactDefaultPerf.start();
 	    }
 	  }
@@ -68618,10 +73600,10 @@
 	  inject: inject
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 283 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -68638,14 +73620,14 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPropagators = __webpack_require__(284);
-	var ExecutionEnvironment = __webpack_require__(242);
-	var FallbackCompositionState = __webpack_require__(285);
-	var SyntheticCompositionEvent = __webpack_require__(287);
-	var SyntheticInputEvent = __webpack_require__(290);
+	var EventConstants = __webpack_require__(205);
+	var EventPropagators = __webpack_require__(270);
+	var ExecutionEnvironment = __webpack_require__(228);
+	var FallbackCompositionState = __webpack_require__(271);
+	var SyntheticCompositionEvent = __webpack_require__(273);
+	var SyntheticInputEvent = __webpack_require__(276);
 	
-	var keyOf = __webpack_require__(230);
+	var keyOf = __webpack_require__(216);
 	
 	var END_KEYCODES = [9, 13, 27, 32]; // Tab, Return, Esc, Space
 	var START_KEYCODE = 229;
@@ -69120,7 +74102,7 @@
 
 
 /***/ },
-/* 284 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -69136,11 +74118,11 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPluginHub = __webpack_require__(260);
+	var EventConstants = __webpack_require__(205);
+	var EventPluginHub = __webpack_require__(246);
 	
-	var accumulateInto = __webpack_require__(262);
-	var forEachAccumulated = __webpack_require__(263);
+	var accumulateInto = __webpack_require__(248);
+	var forEachAccumulated = __webpack_require__(249);
 	
 	var PropagationPhases = EventConstants.PropagationPhases;
 	var getListener = EventPluginHub.getListener;
@@ -69262,10 +74244,10 @@
 	
 	module.exports = EventPropagators;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 285 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -69282,10 +74264,10 @@
 	
 	'use strict';
 	
-	var PooledClass = __webpack_require__(200);
+	var PooledClass = __webpack_require__(180);
 	
-	var assign = __webpack_require__(204);
-	var getTextContentAccessor = __webpack_require__(286);
+	var assign = __webpack_require__(182);
+	var getTextContentAccessor = __webpack_require__(272);
 	
 	/**
 	 * This helper class stores information about text content of a target node,
@@ -69360,7 +74342,7 @@
 
 
 /***/ },
-/* 286 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -69376,7 +74358,7 @@
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
 	var contentKey = null;
 	
@@ -69401,7 +74383,7 @@
 
 
 /***/ },
-/* 287 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -69418,7 +74400,7 @@
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(288);
+	var SyntheticEvent = __webpack_require__(274);
 	
 	/**
 	 * @interface Event
@@ -69450,7 +74432,7 @@
 
 
 /***/ },
-/* 288 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -69467,11 +74449,11 @@
 	
 	'use strict';
 	
-	var PooledClass = __webpack_require__(200);
+	var PooledClass = __webpack_require__(180);
 	
-	var assign = __webpack_require__(204);
-	var emptyFunction = __webpack_require__(207);
-	var getEventTarget = __webpack_require__(289);
+	var assign = __webpack_require__(182);
+	var emptyFunction = __webpack_require__(193);
+	var getEventTarget = __webpack_require__(275);
 	
 	/**
 	 * @interface Event
@@ -69620,7 +74602,7 @@
 
 
 /***/ },
-/* 289 */
+/* 275 */
 /***/ function(module, exports) {
 
 	/**
@@ -69655,7 +74637,7 @@
 
 
 /***/ },
-/* 290 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -69672,7 +74654,7 @@
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(288);
+	var SyntheticEvent = __webpack_require__(274);
 	
 	/**
 	 * @interface Event
@@ -69705,7 +74687,7 @@
 
 
 /***/ },
-/* 291 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -69721,16 +74703,16 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPluginHub = __webpack_require__(260);
-	var EventPropagators = __webpack_require__(284);
-	var ExecutionEnvironment = __webpack_require__(242);
-	var ReactUpdates = __webpack_require__(217);
-	var SyntheticEvent = __webpack_require__(288);
+	var EventConstants = __webpack_require__(205);
+	var EventPluginHub = __webpack_require__(246);
+	var EventPropagators = __webpack_require__(270);
+	var ExecutionEnvironment = __webpack_require__(228);
+	var ReactUpdates = __webpack_require__(178);
+	var SyntheticEvent = __webpack_require__(274);
 	
-	var isEventSupported = __webpack_require__(266);
-	var isTextInputElement = __webpack_require__(292);
-	var keyOf = __webpack_require__(230);
+	var isEventSupported = __webpack_require__(252);
+	var isTextInputElement = __webpack_require__(278);
+	var keyOf = __webpack_require__(216);
 	
 	var topLevelTypes = EventConstants.topLevelTypes;
 	
@@ -70091,7 +75073,7 @@
 
 
 /***/ },
-/* 292 */
+/* 278 */
 /***/ function(module, exports) {
 
 	/**
@@ -70138,7 +75120,7 @@
 
 
 /***/ },
-/* 293 */
+/* 279 */
 /***/ function(module, exports) {
 
 	/**
@@ -70167,7 +75149,7 @@
 
 
 /***/ },
-/* 294 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70183,7 +75165,7 @@
 	
 	'use strict';
 	
-	var keyOf = __webpack_require__(230);
+	var keyOf = __webpack_require__(216);
 	
 	/**
 	 * Module that is injectable into `EventPluginHub`, that specifies a
@@ -70210,7 +75192,7 @@
 
 
 /***/ },
-/* 295 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70227,12 +75209,12 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPropagators = __webpack_require__(284);
-	var SyntheticMouseEvent = __webpack_require__(296);
+	var EventConstants = __webpack_require__(205);
+	var EventPropagators = __webpack_require__(270);
+	var SyntheticMouseEvent = __webpack_require__(282);
 	
-	var ReactMount = __webpack_require__(258);
-	var keyOf = __webpack_require__(230);
+	var ReactMount = __webpack_require__(244);
+	var keyOf = __webpack_require__(216);
 	
 	var topLevelTypes = EventConstants.topLevelTypes;
 	var getFirstReactDOM = ReactMount.getFirstReactDOM;
@@ -70354,7 +75336,7 @@
 
 
 /***/ },
-/* 296 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70371,10 +75353,10 @@
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(297);
-	var ViewportMetrics = __webpack_require__(265);
+	var SyntheticUIEvent = __webpack_require__(283);
+	var ViewportMetrics = __webpack_require__(251);
 	
-	var getEventModifierState = __webpack_require__(298);
+	var getEventModifierState = __webpack_require__(284);
 	
 	/**
 	 * @interface MouseEvent
@@ -70439,7 +75421,7 @@
 
 
 /***/ },
-/* 297 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70456,9 +75438,9 @@
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(288);
+	var SyntheticEvent = __webpack_require__(274);
 	
-	var getEventTarget = __webpack_require__(289);
+	var getEventTarget = __webpack_require__(275);
 	
 	/**
 	 * @interface UIEvent
@@ -70505,7 +75487,7 @@
 
 
 /***/ },
-/* 298 */
+/* 284 */
 /***/ function(module, exports) {
 
 	/**
@@ -70556,7 +75538,7 @@
 
 
 /***/ },
-/* 299 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70574,8 +75556,8 @@
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(235);
-	var ExecutionEnvironment = __webpack_require__(242);
+	var DOMProperty = __webpack_require__(221);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
 	var MUST_USE_ATTRIBUTE = DOMProperty.injection.MUST_USE_ATTRIBUTE;
 	var MUST_USE_PROPERTY = DOMProperty.injection.MUST_USE_PROPERTY;
@@ -70771,7 +75753,7 @@
 
 
 /***/ },
-/* 300 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70788,9 +75770,9 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
+	var EventConstants = __webpack_require__(205);
 	
-	var emptyFunction = __webpack_require__(207);
+	var emptyFunction = __webpack_require__(193);
 	
 	var topLevelTypes = EventConstants.topLevelTypes;
 	
@@ -70833,7 +75815,7 @@
 
 
 /***/ },
-/* 301 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70849,7 +75831,7 @@
 	
 	'use strict';
 	
-	var findDOMNode = __webpack_require__(302);
+	var findDOMNode = __webpack_require__(288);
 	
 	var ReactBrowserComponentMixin = {
 	  /**
@@ -70868,7 +75850,7 @@
 
 
 /***/ },
-/* 302 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -70885,13 +75867,13 @@
 	
 	'use strict';
 	
-	var ReactCurrentOwner = __webpack_require__(208);
-	var ReactInstanceMap = __webpack_require__(216);
-	var ReactMount = __webpack_require__(258);
+	var ReactCurrentOwner = __webpack_require__(183);
+	var ReactInstanceMap = __webpack_require__(213);
+	var ReactMount = __webpack_require__(244);
 	
-	var invariant = __webpack_require__(198);
-	var isNode = __webpack_require__(272);
-	var warning = __webpack_require__(206);
+	var invariant = __webpack_require__(181);
+	var isNode = __webpack_require__(258);
+	var warning = __webpack_require__(192);
 	
 	/**
 	 * Returns the DOM node rendered by this element.
@@ -70941,10 +75923,10 @@
 	
 	module.exports = findDOMNode;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 303 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -70960,11 +75942,11 @@
 	
 	'use strict';
 	
-	var ReactUpdates = __webpack_require__(217);
-	var Transaction = __webpack_require__(227);
+	var ReactUpdates = __webpack_require__(178);
+	var Transaction = __webpack_require__(200);
 	
-	var assign = __webpack_require__(204);
-	var emptyFunction = __webpack_require__(207);
+	var assign = __webpack_require__(182);
+	var emptyFunction = __webpack_require__(193);
 	
 	var RESET_BATCHED_UPDATES = {
 	  initialize: emptyFunction,
@@ -71021,7 +76003,7 @@
 
 
 /***/ },
-/* 304 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -71037,12 +76019,12 @@
 	
 	'use strict';
 	
-	var AutoFocusMixin = __webpack_require__(305);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
+	var AutoFocusMixin = __webpack_require__(291);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
 	
-	var keyMirror = __webpack_require__(197);
+	var keyMirror = __webpack_require__(196);
 	
 	var button = ReactElement.createFactory('button');
 	
@@ -71089,7 +76071,7 @@
 
 
 /***/ },
-/* 305 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -71106,7 +76088,7 @@
 	
 	'use strict';
 	
-	var focusNode = __webpack_require__(306);
+	var focusNode = __webpack_require__(292);
 	
 	var AutoFocusMixin = {
 	  componentDidMount: function() {
@@ -71120,7 +76102,7 @@
 
 
 /***/ },
-/* 306 */
+/* 292 */
 /***/ function(module, exports) {
 
 	/**
@@ -71153,7 +76135,7 @@
 
 
 /***/ },
-/* 307 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -71169,11 +76151,11 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var LocalEventTrapMixin = __webpack_require__(308);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
+	var EventConstants = __webpack_require__(205);
+	var LocalEventTrapMixin = __webpack_require__(294);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
 	
 	var form = ReactElement.createFactory('form');
 	
@@ -71206,7 +76188,7 @@
 
 
 /***/ },
-/* 308 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -71222,11 +76204,11 @@
 	
 	'use strict';
 	
-	var ReactBrowserEventEmitter = __webpack_require__(259);
+	var ReactBrowserEventEmitter = __webpack_require__(245);
 	
-	var accumulateInto = __webpack_require__(262);
-	var forEachAccumulated = __webpack_require__(263);
-	var invariant = __webpack_require__(198);
+	var accumulateInto = __webpack_require__(248);
+	var forEachAccumulated = __webpack_require__(249);
+	var invariant = __webpack_require__(181);
 	
 	function remove(event) {
 	  event.remove();
@@ -71263,10 +76245,10 @@
 	
 	module.exports = LocalEventTrapMixin;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 309 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -71282,11 +76264,11 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var LocalEventTrapMixin = __webpack_require__(308);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
+	var EventConstants = __webpack_require__(205);
+	var LocalEventTrapMixin = __webpack_require__(294);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
 	
 	var img = ReactElement.createFactory('img');
 	
@@ -71316,7 +76298,7 @@
 
 
 /***/ },
-/* 310 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -71332,11 +76314,11 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var LocalEventTrapMixin = __webpack_require__(308);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
+	var EventConstants = __webpack_require__(205);
+	var LocalEventTrapMixin = __webpack_require__(294);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
 	
 	var iframe = ReactElement.createFactory('iframe');
 	
@@ -71365,7 +76347,7 @@
 
 
 /***/ },
-/* 311 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -71381,17 +76363,17 @@
 	
 	'use strict';
 	
-	var AutoFocusMixin = __webpack_require__(305);
-	var DOMPropertyOperations = __webpack_require__(234);
-	var LinkedValueUtils = __webpack_require__(312);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
-	var ReactMount = __webpack_require__(258);
-	var ReactUpdates = __webpack_require__(217);
+	var AutoFocusMixin = __webpack_require__(291);
+	var DOMPropertyOperations = __webpack_require__(220);
+	var LinkedValueUtils = __webpack_require__(298);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
+	var ReactMount = __webpack_require__(244);
+	var ReactUpdates = __webpack_require__(178);
 	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
 	
 	var input = ReactElement.createFactory('input');
 	
@@ -71542,10 +76524,10 @@
 	
 	module.exports = ReactDOMInput;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 312 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -71562,9 +76544,9 @@
 	
 	'use strict';
 	
-	var ReactPropTypes = __webpack_require__(313);
+	var ReactPropTypes = __webpack_require__(299);
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	var hasReadOnlyValue = {
 	  'button': true,
@@ -71701,10 +76683,10 @@
 	
 	module.exports = LinkedValueUtils;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 313 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -71720,11 +76702,11 @@
 	
 	'use strict';
 	
-	var ReactElement = __webpack_require__(202);
-	var ReactFragment = __webpack_require__(201);
-	var ReactPropTypeLocationNames = __webpack_require__(225);
+	var ReactElement = __webpack_require__(189);
+	var ReactFragment = __webpack_require__(194);
+	var ReactPropTypeLocationNames = __webpack_require__(197);
 	
-	var emptyFunction = __webpack_require__(207);
+	var emptyFunction = __webpack_require__(193);
 	
 	/**
 	 * Collection of methods that allow declaration and validation of props that are
@@ -72057,7 +77039,7 @@
 
 
 /***/ },
-/* 314 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -72073,11 +77055,11 @@
 	
 	'use strict';
 	
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
 	
-	var warning = __webpack_require__(206);
+	var warning = __webpack_require__(192);
 	
 	var option = ReactElement.createFactory('option');
 	
@@ -72109,10 +77091,10 @@
 	
 	module.exports = ReactDOMOption;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 315 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -72128,14 +77110,14 @@
 	
 	'use strict';
 	
-	var AutoFocusMixin = __webpack_require__(305);
-	var LinkedValueUtils = __webpack_require__(312);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
-	var ReactUpdates = __webpack_require__(217);
+	var AutoFocusMixin = __webpack_require__(291);
+	var LinkedValueUtils = __webpack_require__(298);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
+	var ReactUpdates = __webpack_require__(178);
 	
-	var assign = __webpack_require__(204);
+	var assign = __webpack_require__(182);
 	
 	var select = ReactElement.createFactory('select');
 	
@@ -72294,7 +77276,7 @@
 
 
 /***/ },
-/* 316 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -72310,18 +77292,18 @@
 	
 	'use strict';
 	
-	var AutoFocusMixin = __webpack_require__(305);
-	var DOMPropertyOperations = __webpack_require__(234);
-	var LinkedValueUtils = __webpack_require__(312);
-	var ReactBrowserComponentMixin = __webpack_require__(301);
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
-	var ReactUpdates = __webpack_require__(217);
+	var AutoFocusMixin = __webpack_require__(291);
+	var DOMPropertyOperations = __webpack_require__(220);
+	var LinkedValueUtils = __webpack_require__(298);
+	var ReactBrowserComponentMixin = __webpack_require__(287);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
+	var ReactUpdates = __webpack_require__(178);
 	
-	var assign = __webpack_require__(204);
-	var invariant = __webpack_require__(198);
+	var assign = __webpack_require__(182);
+	var invariant = __webpack_require__(181);
 	
-	var warning = __webpack_require__(206);
+	var warning = __webpack_require__(192);
 	
 	var textarea = ReactElement.createFactory('textarea');
 	
@@ -72434,10 +77416,10 @@
 	
 	module.exports = ReactDOMTextarea;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 317 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -72454,16 +77436,16 @@
 	
 	'use strict';
 	
-	var EventListener = __webpack_require__(318);
-	var ExecutionEnvironment = __webpack_require__(242);
-	var PooledClass = __webpack_require__(200);
-	var ReactInstanceHandles = __webpack_require__(210);
-	var ReactMount = __webpack_require__(258);
-	var ReactUpdates = __webpack_require__(217);
+	var EventListener = __webpack_require__(304);
+	var ExecutionEnvironment = __webpack_require__(228);
+	var PooledClass = __webpack_require__(180);
+	var ReactInstanceHandles = __webpack_require__(208);
+	var ReactMount = __webpack_require__(244);
+	var ReactUpdates = __webpack_require__(178);
 	
-	var assign = __webpack_require__(204);
-	var getEventTarget = __webpack_require__(289);
-	var getUnboundedScrollPosition = __webpack_require__(319);
+	var assign = __webpack_require__(182);
+	var getEventTarget = __webpack_require__(275);
+	var getUnboundedScrollPosition = __webpack_require__(305);
 	
 	/**
 	 * Finds the parent React component of `node`.
@@ -72624,7 +77606,7 @@
 
 
 /***/ },
-/* 318 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -72646,7 +77628,7 @@
 	 * @typechecks
 	 */
 	
-	var emptyFunction = __webpack_require__(207);
+	var emptyFunction = __webpack_require__(193);
 	
 	/**
 	 * Upstream version of event listener. Does not take into account specific
@@ -72714,10 +77696,10 @@
 	
 	module.exports = EventListener;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 319 */
+/* 305 */
 /***/ function(module, exports) {
 
 	/**
@@ -72761,7 +77743,7 @@
 
 
 /***/ },
-/* 320 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -72777,17 +77759,17 @@
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(235);
-	var EventPluginHub = __webpack_require__(260);
-	var ReactComponentEnvironment = __webpack_require__(276);
-	var ReactClass = __webpack_require__(228);
-	var ReactEmptyComponent = __webpack_require__(267);
-	var ReactBrowserEventEmitter = __webpack_require__(259);
-	var ReactNativeComponent = __webpack_require__(226);
-	var ReactDOMComponent = __webpack_require__(278);
-	var ReactPerf = __webpack_require__(219);
-	var ReactRootIndex = __webpack_require__(211);
-	var ReactUpdates = __webpack_require__(217);
+	var DOMProperty = __webpack_require__(221);
+	var EventPluginHub = __webpack_require__(246);
+	var ReactComponentEnvironment = __webpack_require__(262);
+	var ReactClass = __webpack_require__(214);
+	var ReactEmptyComponent = __webpack_require__(253);
+	var ReactBrowserEventEmitter = __webpack_require__(245);
+	var ReactNativeComponent = __webpack_require__(198);
+	var ReactDOMComponent = __webpack_require__(264);
+	var ReactPerf = __webpack_require__(184);
+	var ReactRootIndex = __webpack_require__(209);
+	var ReactUpdates = __webpack_require__(178);
 	
 	var ReactInjection = {
 	  Component: ReactComponentEnvironment.injection,
@@ -72807,7 +77789,7 @@
 
 
 /***/ },
-/* 321 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -72824,14 +77806,14 @@
 	
 	'use strict';
 	
-	var CallbackQueue = __webpack_require__(218);
-	var PooledClass = __webpack_require__(200);
-	var ReactBrowserEventEmitter = __webpack_require__(259);
-	var ReactInputSelection = __webpack_require__(322);
-	var ReactPutListenerQueue = __webpack_require__(326);
-	var Transaction = __webpack_require__(227);
+	var CallbackQueue = __webpack_require__(179);
+	var PooledClass = __webpack_require__(180);
+	var ReactBrowserEventEmitter = __webpack_require__(245);
+	var ReactInputSelection = __webpack_require__(308);
+	var ReactPutListenerQueue = __webpack_require__(312);
+	var Transaction = __webpack_require__(200);
 	
-	var assign = __webpack_require__(204);
+	var assign = __webpack_require__(182);
 	
 	/**
 	 * Ensures that, when possible, the selection range (currently selected text
@@ -72987,7 +77969,7 @@
 
 
 /***/ },
-/* 322 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -73003,11 +77985,11 @@
 	
 	'use strict';
 	
-	var ReactDOMSelection = __webpack_require__(323);
+	var ReactDOMSelection = __webpack_require__(309);
 	
-	var containsNode = __webpack_require__(270);
-	var focusNode = __webpack_require__(306);
-	var getActiveElement = __webpack_require__(325);
+	var containsNode = __webpack_require__(256);
+	var focusNode = __webpack_require__(292);
+	var getActiveElement = __webpack_require__(311);
 	
 	function isInDocument(node) {
 	  return containsNode(document.documentElement, node);
@@ -73126,7 +78108,7 @@
 
 
 /***/ },
-/* 323 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -73142,10 +78124,10 @@
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
-	var getNodeForCharacterOffset = __webpack_require__(324);
-	var getTextContentAccessor = __webpack_require__(286);
+	var getNodeForCharacterOffset = __webpack_require__(310);
+	var getTextContentAccessor = __webpack_require__(272);
 	
 	/**
 	 * While `isCollapsed` is available on the Selection object and `collapsed`
@@ -73343,7 +78325,7 @@
 
 
 /***/ },
-/* 324 */
+/* 310 */
 /***/ function(module, exports) {
 
 	/**
@@ -73422,7 +78404,7 @@
 
 
 /***/ },
-/* 325 */
+/* 311 */
 /***/ function(module, exports) {
 
 	/**
@@ -73455,7 +78437,7 @@
 
 
 /***/ },
-/* 326 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -73471,10 +78453,10 @@
 	
 	'use strict';
 	
-	var PooledClass = __webpack_require__(200);
-	var ReactBrowserEventEmitter = __webpack_require__(259);
+	var PooledClass = __webpack_require__(180);
+	var ReactBrowserEventEmitter = __webpack_require__(245);
 	
-	var assign = __webpack_require__(204);
+	var assign = __webpack_require__(182);
 	
 	function ReactPutListenerQueue() {
 	  this.listenersToPut = [];
@@ -73515,7 +78497,7 @@
 
 
 /***/ },
-/* 327 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -73531,15 +78513,15 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPropagators = __webpack_require__(284);
-	var ReactInputSelection = __webpack_require__(322);
-	var SyntheticEvent = __webpack_require__(288);
+	var EventConstants = __webpack_require__(205);
+	var EventPropagators = __webpack_require__(270);
+	var ReactInputSelection = __webpack_require__(308);
+	var SyntheticEvent = __webpack_require__(274);
 	
-	var getActiveElement = __webpack_require__(325);
-	var isTextInputElement = __webpack_require__(292);
-	var keyOf = __webpack_require__(230);
-	var shallowEqual = __webpack_require__(328);
+	var getActiveElement = __webpack_require__(311);
+	var isTextInputElement = __webpack_require__(278);
+	var keyOf = __webpack_require__(216);
+	var shallowEqual = __webpack_require__(314);
 	
 	var topLevelTypes = EventConstants.topLevelTypes;
 	
@@ -73714,7 +78696,7 @@
 
 
 /***/ },
-/* 328 */
+/* 314 */
 /***/ function(module, exports) {
 
 	/**
@@ -73762,7 +78744,7 @@
 
 
 /***/ },
-/* 329 */
+/* 315 */
 /***/ function(module, exports) {
 
 	/**
@@ -73797,7 +78779,7 @@
 
 
 /***/ },
-/* 330 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -73813,24 +78795,24 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPluginUtils = __webpack_require__(195);
-	var EventPropagators = __webpack_require__(284);
-	var SyntheticClipboardEvent = __webpack_require__(331);
-	var SyntheticEvent = __webpack_require__(288);
-	var SyntheticFocusEvent = __webpack_require__(332);
-	var SyntheticKeyboardEvent = __webpack_require__(333);
-	var SyntheticMouseEvent = __webpack_require__(296);
-	var SyntheticDragEvent = __webpack_require__(336);
-	var SyntheticTouchEvent = __webpack_require__(337);
-	var SyntheticUIEvent = __webpack_require__(297);
-	var SyntheticWheelEvent = __webpack_require__(338);
+	var EventConstants = __webpack_require__(205);
+	var EventPluginUtils = __webpack_require__(204);
+	var EventPropagators = __webpack_require__(270);
+	var SyntheticClipboardEvent = __webpack_require__(318);
+	var SyntheticEvent = __webpack_require__(274);
+	var SyntheticFocusEvent = __webpack_require__(319);
+	var SyntheticKeyboardEvent = __webpack_require__(320);
+	var SyntheticMouseEvent = __webpack_require__(282);
+	var SyntheticDragEvent = __webpack_require__(317);
+	var SyntheticTouchEvent = __webpack_require__(323);
+	var SyntheticUIEvent = __webpack_require__(283);
+	var SyntheticWheelEvent = __webpack_require__(324);
 	
-	var getEventCharCode = __webpack_require__(334);
+	var getEventCharCode = __webpack_require__(321);
 	
-	var invariant = __webpack_require__(198);
-	var keyOf = __webpack_require__(230);
-	var warning = __webpack_require__(206);
+	var invariant = __webpack_require__(181);
+	var keyOf = __webpack_require__(216);
+	var warning = __webpack_require__(192);
 	
 	var topLevelTypes = EventConstants.topLevelTypes;
 	
@@ -74225,10 +79207,53 @@
 	
 	module.exports = SimpleEventPlugin;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 331 */
+/* 317 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule SyntheticDragEvent
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var SyntheticMouseEvent = __webpack_require__(282);
+	
+	/**
+	 * @interface DragEvent
+	 * @see http://www.w3.org/TR/DOM-Level-3-Events/
+	 */
+	var DragEventInterface = {
+	  dataTransfer: null
+	};
+	
+	/**
+	 * @param {object} dispatchConfig Configuration used to dispatch this event.
+	 * @param {string} dispatchMarker Marker identifying the event target.
+	 * @param {object} nativeEvent Native browser event.
+	 * @extends {SyntheticUIEvent}
+	 */
+	function SyntheticDragEvent(dispatchConfig, dispatchMarker, nativeEvent) {
+	  SyntheticMouseEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent);
+	}
+	
+	SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
+	
+	module.exports = SyntheticDragEvent;
+
+
+/***/ },
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74245,7 +79270,7 @@
 	
 	'use strict';
 	
-	var SyntheticEvent = __webpack_require__(288);
+	var SyntheticEvent = __webpack_require__(274);
 	
 	/**
 	 * @interface Event
@@ -74277,7 +79302,7 @@
 
 
 /***/ },
-/* 332 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74294,7 +79319,7 @@
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(297);
+	var SyntheticUIEvent = __webpack_require__(283);
 	
 	/**
 	 * @interface FocusEvent
@@ -74320,7 +79345,7 @@
 
 
 /***/ },
-/* 333 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74337,11 +79362,11 @@
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(297);
+	var SyntheticUIEvent = __webpack_require__(283);
 	
-	var getEventCharCode = __webpack_require__(334);
-	var getEventKey = __webpack_require__(335);
-	var getEventModifierState = __webpack_require__(298);
+	var getEventCharCode = __webpack_require__(321);
+	var getEventKey = __webpack_require__(322);
+	var getEventModifierState = __webpack_require__(284);
 	
 	/**
 	 * @interface KeyboardEvent
@@ -74411,7 +79436,7 @@
 
 
 /***/ },
-/* 334 */
+/* 321 */
 /***/ function(module, exports) {
 
 	/**
@@ -74467,7 +79492,7 @@
 
 
 /***/ },
-/* 335 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74484,7 +79509,7 @@
 	
 	'use strict';
 	
-	var getEventCharCode = __webpack_require__(334);
+	var getEventCharCode = __webpack_require__(321);
 	
 	/**
 	 * Normalization of deprecated HTML5 `key` values
@@ -74576,50 +79601,7 @@
 
 
 /***/ },
-/* 336 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule SyntheticDragEvent
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	var SyntheticMouseEvent = __webpack_require__(296);
-	
-	/**
-	 * @interface DragEvent
-	 * @see http://www.w3.org/TR/DOM-Level-3-Events/
-	 */
-	var DragEventInterface = {
-	  dataTransfer: null
-	};
-	
-	/**
-	 * @param {object} dispatchConfig Configuration used to dispatch this event.
-	 * @param {string} dispatchMarker Marker identifying the event target.
-	 * @param {object} nativeEvent Native browser event.
-	 * @extends {SyntheticUIEvent}
-	 */
-	function SyntheticDragEvent(dispatchConfig, dispatchMarker, nativeEvent) {
-	  SyntheticMouseEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent);
-	}
-	
-	SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
-	
-	module.exports = SyntheticDragEvent;
-
-
-/***/ },
-/* 337 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74636,9 +79618,9 @@
 	
 	'use strict';
 	
-	var SyntheticUIEvent = __webpack_require__(297);
+	var SyntheticUIEvent = __webpack_require__(283);
 	
-	var getEventModifierState = __webpack_require__(298);
+	var getEventModifierState = __webpack_require__(284);
 	
 	/**
 	 * @interface TouchEvent
@@ -74671,7 +79653,7 @@
 
 
 /***/ },
-/* 338 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74688,7 +79670,7 @@
 	
 	'use strict';
 	
-	var SyntheticMouseEvent = __webpack_require__(296);
+	var SyntheticMouseEvent = __webpack_require__(282);
 	
 	/**
 	 * @interface WheelEvent
@@ -74736,7 +79718,7 @@
 
 
 /***/ },
-/* 339 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74754,7 +79736,7 @@
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(235);
+	var DOMProperty = __webpack_require__(221);
 	
 	var MUST_USE_ATTRIBUTE = DOMProperty.injection.MUST_USE_ATTRIBUTE;
 	
@@ -74834,7 +79816,7 @@
 
 
 /***/ },
-/* 340 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -74852,10 +79834,10 @@
 	'use strict';
 	
 	// Defeat circular references by requiring this directly.
-	var ReactClass = __webpack_require__(228);
-	var ReactElement = __webpack_require__(202);
+	var ReactClass = __webpack_require__(214);
+	var ReactElement = __webpack_require__(189);
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Create a component that will throw an exception when unmounted.
@@ -74896,10 +79878,10 @@
 	
 	module.exports = createFullPageComponent;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 341 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -74916,12 +79898,12 @@
 	
 	'use strict';
 	
-	var DOMProperty = __webpack_require__(235);
-	var ReactDefaultPerfAnalysis = __webpack_require__(342);
-	var ReactMount = __webpack_require__(258);
-	var ReactPerf = __webpack_require__(219);
+	var DOMProperty = __webpack_require__(221);
+	var ReactDefaultPerfAnalysis = __webpack_require__(328);
+	var ReactMount = __webpack_require__(244);
+	var ReactPerf = __webpack_require__(184);
 	
-	var performanceNow = __webpack_require__(343);
+	var performanceNow = __webpack_require__(329);
 	
 	function roundFloat(val) {
 	  return Math.floor(val * 100) / 100;
@@ -75169,7 +80151,7 @@
 
 
 /***/ },
-/* 342 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -75183,7 +80165,7 @@
 	 * @providesModule ReactDefaultPerfAnalysis
 	 */
 	
-	var assign = __webpack_require__(204);
+	var assign = __webpack_require__(182);
 	
 	// Don't try to save users less than 1.2ms (a number I made up)
 	var DONT_CARE_THRESHOLD = 1.2;
@@ -75379,7 +80361,7 @@
 
 
 /***/ },
-/* 343 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -75394,7 +80376,7 @@
 	 * @typechecks
 	 */
 	
-	var performance = __webpack_require__(344);
+	var performance = __webpack_require__(330);
 	
 	/**
 	 * Detect if we can use `window.performance.now()` and gracefully fallback to
@@ -75411,7 +80393,7 @@
 
 
 /***/ },
-/* 344 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -75428,7 +80410,7 @@
 	
 	"use strict";
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
 	var performance;
 	
@@ -75443,7 +80425,7 @@
 
 
 /***/ },
-/* 345 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -75459,15 +80441,15 @@
 	 */
 	'use strict';
 	
-	var ReactElement = __webpack_require__(202);
-	var ReactInstanceHandles = __webpack_require__(210);
-	var ReactMarkupChecksum = __webpack_require__(268);
+	var ReactElement = __webpack_require__(189);
+	var ReactInstanceHandles = __webpack_require__(208);
+	var ReactMarkupChecksum = __webpack_require__(254);
 	var ReactServerRenderingTransaction =
-	  __webpack_require__(346);
+	  __webpack_require__(332);
 	
-	var emptyObject = __webpack_require__(205);
-	var instantiateReactComponent = __webpack_require__(274);
-	var invariant = __webpack_require__(198);
+	var emptyObject = __webpack_require__(191);
+	var instantiateReactComponent = __webpack_require__(260);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * @param {ReactElement} element
@@ -75525,10 +80507,10 @@
 	  renderToStaticMarkup: renderToStaticMarkup
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 346 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -75545,13 +80527,13 @@
 	
 	'use strict';
 	
-	var PooledClass = __webpack_require__(200);
-	var CallbackQueue = __webpack_require__(218);
-	var ReactPutListenerQueue = __webpack_require__(326);
-	var Transaction = __webpack_require__(227);
+	var PooledClass = __webpack_require__(180);
+	var CallbackQueue = __webpack_require__(179);
+	var ReactPutListenerQueue = __webpack_require__(312);
+	var Transaction = __webpack_require__(200);
 	
-	var assign = __webpack_require__(204);
-	var emptyFunction = __webpack_require__(207);
+	var assign = __webpack_require__(182);
+	var emptyFunction = __webpack_require__(193);
 	
 	/**
 	 * Provides a `CallbackQueue` queue for collecting `onDOMReady` callbacks
@@ -75645,7 +80627,7 @@
 
 
 /***/ },
-/* 347 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -75660,9 +80642,9 @@
 	 */
 	'use strict';
 	
-	var ReactElement = __webpack_require__(202);
+	var ReactElement = __webpack_require__(189);
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * Returns the first child in a collection of children and verifies that there
@@ -75685,10 +80667,10 @@
 	
 	module.exports = onlyChild;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 348 */
+/* 334 */
 /***/ function(module, exports) {
 
 	/**
@@ -75798,7 +80780,7 @@
 
 
 /***/ },
-/* 349 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -75814,7 +80796,7 @@
 	
 	'use strict';
 	
-	var shallowEqual = __webpack_require__(328);
+	var shallowEqual = __webpack_require__(314);
 	
 	/**
 	 * If your React component's render function is "pure", e.g. it will render the
@@ -75851,7 +80833,7 @@
 
 
 /***/ },
-/* 350 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -75868,15 +80850,15 @@
 	
 	'use strict';
 	
-	var React = __webpack_require__(194);
+	var React = __webpack_require__(203);
 	
-	var assign = __webpack_require__(204);
+	var assign = __webpack_require__(182);
 	
 	var ReactTransitionGroup = React.createFactory(
-	  __webpack_require__(351)
+	  __webpack_require__(337)
 	);
 	var ReactCSSTransitionGroupChild = React.createFactory(
-	  __webpack_require__(356)
+	  __webpack_require__(342)
 	);
 	
 	var ReactCSSTransitionGroup = React.createClass({
@@ -75925,7 +80907,7 @@
 
 
 /***/ },
-/* 351 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -75941,12 +80923,12 @@
 	
 	'use strict';
 	
-	var React = __webpack_require__(194);
-	var ReactTransitionChildMapping = __webpack_require__(352);
+	var React = __webpack_require__(203);
+	var ReactTransitionChildMapping = __webpack_require__(338);
 	
-	var assign = __webpack_require__(204);
-	var cloneWithProps = __webpack_require__(353);
-	var emptyFunction = __webpack_require__(207);
+	var assign = __webpack_require__(182);
+	var cloneWithProps = __webpack_require__(339);
+	var emptyFunction = __webpack_require__(193);
 	
 	var ReactTransitionGroup = React.createClass({
 	  displayName: 'ReactTransitionGroup',
@@ -76159,7 +81141,7 @@
 
 
 /***/ },
-/* 352 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -76176,8 +81158,8 @@
 	
 	'use strict';
 	
-	var ReactChildren = __webpack_require__(199);
-	var ReactFragment = __webpack_require__(201);
+	var ReactChildren = __webpack_require__(206);
+	var ReactFragment = __webpack_require__(194);
 	
 	var ReactTransitionChildMapping = {
 	  /**
@@ -76268,7 +81250,7 @@
 
 
 /***/ },
-/* 353 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -76285,11 +81267,11 @@
 	
 	'use strict';
 	
-	var ReactElement = __webpack_require__(202);
-	var ReactPropTransferer = __webpack_require__(354);
+	var ReactElement = __webpack_require__(189);
+	var ReactPropTransferer = __webpack_require__(340);
 	
-	var keyOf = __webpack_require__(230);
-	var warning = __webpack_require__(206);
+	var keyOf = __webpack_require__(216);
+	var warning = __webpack_require__(192);
 	
 	var CHILDREN_PROP = keyOf({children: null});
 	
@@ -76327,10 +81309,10 @@
 	
 	module.exports = cloneWithProps;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 354 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -76346,9 +81328,9 @@
 	
 	'use strict';
 	
-	var assign = __webpack_require__(204);
-	var emptyFunction = __webpack_require__(207);
-	var joinClasses = __webpack_require__(355);
+	var assign = __webpack_require__(182);
+	var emptyFunction = __webpack_require__(193);
+	var joinClasses = __webpack_require__(341);
 	
 	/**
 	 * Creates a transfer strategy that will merge prop values using the supplied
@@ -76444,7 +81426,7 @@
 
 
 /***/ },
-/* 355 */
+/* 341 */
 /***/ function(module, exports) {
 
 	/**
@@ -76489,7 +81471,7 @@
 
 
 /***/ },
-/* 356 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -76506,13 +81488,13 @@
 	
 	'use strict';
 	
-	var React = __webpack_require__(194);
+	var React = __webpack_require__(203);
 	
-	var CSSCore = __webpack_require__(357);
-	var ReactTransitionEvents = __webpack_require__(358);
+	var CSSCore = __webpack_require__(343);
+	var ReactTransitionEvents = __webpack_require__(344);
 	
-	var onlyChild = __webpack_require__(347);
-	var warning = __webpack_require__(206);
+	var onlyChild = __webpack_require__(333);
+	var warning = __webpack_require__(192);
 	
 	// We don't remove the element from the DOM until we receive an animationend or
 	// transitionend event. If the user screws up and forgets to add an animation
@@ -76637,10 +81619,10 @@
 	
 	module.exports = ReactCSSTransitionGroupChild;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 357 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -76655,7 +81637,7 @@
 	 * @typechecks
 	 */
 	
-	var invariant = __webpack_require__(198);
+	var invariant = __webpack_require__(181);
 	
 	/**
 	 * The CSSCore module specifies the API (and implements most of the methods)
@@ -76752,10 +81734,10 @@
 	
 	module.exports = CSSCore;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 358 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -76771,7 +81753,7 @@
 	
 	'use strict';
 	
-	var ExecutionEnvironment = __webpack_require__(242);
+	var ExecutionEnvironment = __webpack_require__(228);
 	
 	/**
 	 * EVENT_NAME_MAP is used to determine which event fired when a
@@ -76870,7 +81852,7 @@
 
 
 /***/ },
-/* 359 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -76901,7 +81883,7 @@
 	 */
 	
 	'use strict';
-	var warning = __webpack_require__(206);
+	var warning = __webpack_require__(192);
 	
 	var warned = false;
 	
@@ -76926,10 +81908,10 @@
 	
 	module.exports = cx;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 360 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -76947,9 +81929,9 @@
 	
 	'use strict';
 	
-	var assign = __webpack_require__(204);
-	var keyOf = __webpack_require__(230);
-	var invariant = __webpack_require__(198);
+	var assign = __webpack_require__(182);
+	var keyOf = __webpack_require__(216);
+	var invariant = __webpack_require__(181);
 	var hasOwnProperty = {}.hasOwnProperty;
 	
 	function shallowCopy(x) {
@@ -77100,10 +82082,10 @@
 	
 	module.exports = update;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(184)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
 
 /***/ },
-/* 361 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -77119,22 +82101,22 @@
 	
 	'use strict';
 	
-	var EventConstants = __webpack_require__(196);
-	var EventPluginHub = __webpack_require__(260);
-	var EventPropagators = __webpack_require__(284);
-	var React = __webpack_require__(194);
-	var ReactElement = __webpack_require__(202);
-	var ReactEmptyComponent = __webpack_require__(267);
-	var ReactBrowserEventEmitter = __webpack_require__(259);
-	var ReactCompositeComponent = __webpack_require__(275);
-	var ReactInstanceHandles = __webpack_require__(210);
-	var ReactInstanceMap = __webpack_require__(216);
-	var ReactMount = __webpack_require__(258);
-	var ReactUpdates = __webpack_require__(217);
-	var SyntheticEvent = __webpack_require__(288);
+	var EventConstants = __webpack_require__(205);
+	var EventPluginHub = __webpack_require__(246);
+	var EventPropagators = __webpack_require__(270);
+	var React = __webpack_require__(203);
+	var ReactElement = __webpack_require__(189);
+	var ReactEmptyComponent = __webpack_require__(253);
+	var ReactBrowserEventEmitter = __webpack_require__(245);
+	var ReactCompositeComponent = __webpack_require__(261);
+	var ReactInstanceHandles = __webpack_require__(208);
+	var ReactInstanceMap = __webpack_require__(213);
+	var ReactMount = __webpack_require__(244);
+	var ReactUpdates = __webpack_require__(178);
+	var SyntheticEvent = __webpack_require__(274);
 	
-	var assign = __webpack_require__(204);
-	var emptyObject = __webpack_require__(205);
+	var assign = __webpack_require__(182);
+	var emptyObject = __webpack_require__(191);
 	
 	var topLevelTypes = EventConstants.topLevelTypes;
 	
@@ -77621,19 +82603,19 @@
 
 
 /***/ },
-/* 362 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(363);
+	__webpack_require__(349);
 	module.exports = 'ngAnimate';
 
 
 /***/ },
-/* 363 */
+/* 349 */
 /***/ function(module, exports) {
 
 	/**
-	 * @license AngularJS v1.4.4
+	 * @license AngularJS v1.4.3
 	 * (c) 2010-2015 Google, Inc. http://angularjs.org
 	 * License: MIT
 	 */
@@ -77655,60 +82637,12 @@
 	var ELEMENT_NODE = 1;
 	var COMMENT_NODE = 8;
 	
-	var ADD_CLASS_SUFFIX = '-add';
-	var REMOVE_CLASS_SUFFIX = '-remove';
-	var EVENT_CLASS_PREFIX = 'ng-';
-	var ACTIVE_CLASS_SUFFIX = '-active';
-	
 	var NG_ANIMATE_CLASSNAME = 'ng-animate';
 	var NG_ANIMATE_CHILDREN_DATA = '$$ngAnimateChildren';
 	
-	// Detect proper transitionend/animationend event names.
-	var CSS_PREFIX = '', TRANSITION_PROP, TRANSITIONEND_EVENT, ANIMATION_PROP, ANIMATIONEND_EVENT;
-	
-	// If unprefixed events are not supported but webkit-prefixed are, use the latter.
-	// Otherwise, just use W3C names, browsers not supporting them at all will just ignore them.
-	// Note: Chrome implements `window.onwebkitanimationend` and doesn't implement `window.onanimationend`
-	// but at the same time dispatches the `animationend` event and not `webkitAnimationEnd`.
-	// Register both events in case `window.onanimationend` is not supported because of that,
-	// do the same for `transitionend` as Safari is likely to exhibit similar behavior.
-	// Also, the only modern browser that uses vendor prefixes for transitions/keyframes is webkit
-	// therefore there is no reason to test anymore for other vendor prefixes:
-	// http://caniuse.com/#search=transition
-	if (window.ontransitionend === undefined && window.onwebkittransitionend !== undefined) {
-	  CSS_PREFIX = '-webkit-';
-	  TRANSITION_PROP = 'WebkitTransition';
-	  TRANSITIONEND_EVENT = 'webkitTransitionEnd transitionend';
-	} else {
-	  TRANSITION_PROP = 'transition';
-	  TRANSITIONEND_EVENT = 'transitionend';
-	}
-	
-	if (window.onanimationend === undefined && window.onwebkitanimationend !== undefined) {
-	  CSS_PREFIX = '-webkit-';
-	  ANIMATION_PROP = 'WebkitAnimation';
-	  ANIMATIONEND_EVENT = 'webkitAnimationEnd animationend';
-	} else {
-	  ANIMATION_PROP = 'animation';
-	  ANIMATIONEND_EVENT = 'animationend';
-	}
-	
-	var DURATION_KEY = 'Duration';
-	var PROPERTY_KEY = 'Property';
-	var DELAY_KEY = 'Delay';
-	var TIMING_KEY = 'TimingFunction';
-	var ANIMATION_ITERATION_COUNT_KEY = 'IterationCount';
-	var ANIMATION_PLAYSTATE_KEY = 'PlayState';
-	var SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
-	
-	var ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
-	var ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
-	var TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
-	var TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
-	
 	var isPromiseLike = function(p) {
 	  return p && p.then ? true : false;
-	};
+	}
 	
 	function assertArg(arg, name, reason) {
 	  if (!arg) {
@@ -77859,20 +82793,7 @@
 	  var toRemove = (target.removeClass || '') + ' ' + (newOptions.removeClass || '');
 	  var classes = resolveElementClasses(element.attr('class'), toAdd, toRemove);
 	
-	  if (newOptions.preparationClasses) {
-	    target.preparationClasses = concatWithSpace(newOptions.preparationClasses, target.preparationClasses);
-	    delete newOptions.preparationClasses;
-	  }
-	
-	  // noop is basically when there is no callback; otherwise something has been set
-	  var realDomOperation = target.domOperation !== noop ? target.domOperation : null;
-	
 	  extend(target, newOptions);
-	
-	  // TODO(matsko or sreeramu): proper fix is to maintain all animation callback in array and call at last,but now only leave has the callback so no issue with this.
-	  if (realDomOperation) {
-	    target.domOperation = realDomOperation;
-	  }
 	
 	  if (classes.addClass) {
 	    target.addClass = classes.addClass;
@@ -77951,67 +82872,63 @@
 	  return (element instanceof angular.element) ? element[0] : element;
 	}
 	
-	function applyGeneratedPreparationClasses(element, event, options) {
-	  var classes = '';
-	  if (event) {
-	    classes = pendClasses(event, EVENT_CLASS_PREFIX, true);
-	  }
-	  if (options.addClass) {
-	    classes = concatWithSpace(classes, pendClasses(options.addClass, ADD_CLASS_SUFFIX));
-	  }
-	  if (options.removeClass) {
-	    classes = concatWithSpace(classes, pendClasses(options.removeClass, REMOVE_CLASS_SUFFIX));
-	  }
-	  if (classes.length) {
-	    options.preparationClasses = classes;
-	    element.addClass(classes);
-	  }
-	}
+	var $$rAFSchedulerFactory = ['$$rAF', function($$rAF) {
+	  var tickQueue = [];
+	  var cancelFn;
 	
-	function clearGeneratedClasses(element, options) {
-	  if (options.preparationClasses) {
-	    element.removeClass(options.preparationClasses);
-	    options.preparationClasses = null;
+	  function scheduler(tasks) {
+	    // we make a copy since RAFScheduler mutates the state
+	    // of the passed in array variable and this would be difficult
+	    // to track down on the outside code
+	    tickQueue.push([].concat(tasks));
+	    nextTick();
 	  }
-	  if (options.activeClasses) {
-	    element.removeClass(options.activeClasses);
-	    options.activeClasses = null;
+	
+	  /* waitUntilQuiet does two things:
+	   * 1. It will run the FINAL `fn` value only when an uncancelled RAF has passed through
+	   * 2. It will delay the next wave of tasks from running until the quiet `fn` has run.
+	   *
+	   * The motivation here is that animation code can request more time from the scheduler
+	   * before the next wave runs. This allows for certain DOM properties such as classes to
+	   * be resolved in time for the next animation to run.
+	   */
+	  scheduler.waitUntilQuiet = function(fn) {
+	    if (cancelFn) cancelFn();
+	
+	    cancelFn = $$rAF(function() {
+	      cancelFn = null;
+	      fn();
+	      nextTick();
+	    });
+	  };
+	
+	  return scheduler;
+	
+	  function nextTick() {
+	    if (!tickQueue.length) return;
+	
+	    var updatedQueue = [];
+	    for (var i = 0; i < tickQueue.length; i++) {
+	      var innerQueue = tickQueue[i];
+	      runNextTask(innerQueue);
+	      if (innerQueue.length) {
+	        updatedQueue.push(innerQueue);
+	      }
+	    }
+	    tickQueue = updatedQueue;
+	
+	    if (!cancelFn) {
+	      $$rAF(function() {
+	        if (!cancelFn) nextTick();
+	      });
+	    }
 	  }
-	}
 	
-	function blockTransitions(node, duration) {
-	  // we use a negative delay value since it performs blocking
-	  // yet it doesn't kill any existing transitions running on the
-	  // same element which makes this safe for class-based animations
-	  var value = duration ? '-' + duration + 's' : '';
-	  applyInlineStyle(node, [TRANSITION_DELAY_PROP, value]);
-	  return [TRANSITION_DELAY_PROP, value];
-	}
-	
-	function blockKeyframeAnimations(node, applyBlock) {
-	  var value = applyBlock ? 'paused' : '';
-	  var key = ANIMATION_PROP + ANIMATION_PLAYSTATE_KEY;
-	  applyInlineStyle(node, [key, value]);
-	  return [key, value];
-	}
-	
-	function applyInlineStyle(node, styleTuple) {
-	  var prop = styleTuple[0];
-	  var value = styleTuple[1];
-	  node.style[prop] = value;
-	}
-	
-	function concatWithSpace(a,b) {
-	  if (!a) return b;
-	  if (!b) return a;
-	  return a + ' ' + b;
-	}
-	
-	function $$BodyProvider() {
-	  this.$get = ['$document', function($document) {
-	    return jqLite($document[0].body);
-	  }];
-	}
+	  function runNextTask(tasks) {
+	    var nextTask = tasks.shift();
+	    nextTask();
+	  }
+	}];
 	
 	var $$AnimateChildrenDirective = [function() {
 	  return function(scope, element, attrs) {
@@ -78227,19 +83144,63 @@
 	 * * `stagger` - A numeric time value representing the delay between successively animated elements
 	 * ({@link ngAnimate#css-staggering-animations Click here to learn how CSS-based staggering works in ngAnimate.})
 	 * * `staggerIndex` - The numeric index representing the stagger item (e.g. a value of 5 is equal to the sixth item in the stagger; therefore when a
-	 * * `stagger` option value of `0.1` is used then there will be a stagger delay of `600ms`)
-	 * * `applyClassesEarly` - Whether or not the classes being added or removed will be used when detecting the animation. This is set by `$animate` when enter/leave/move animations are fired to ensure that the CSS classes are resolved in time. (Note that this will prevent any transitions from occuring on the classes being added and removed.)
+	 * `stagger` option value of `0.1` is used then there will be a stagger delay of `600ms`)
+	 * `applyClassesEarly` - Whether or not the classes being added or removed will be used when detecting the animation. This is set by `$animate` when enter/leave/move animations are fired to ensure that the CSS classes are resolved in time. (Note that this will prevent any transitions from occuring on the classes being added and removed.)
 	 *
 	 * @return {object} an object with start and end methods and details about the animation.
 	 *
 	 * * `start` - The method to start the animation. This will return a `Promise` when called.
 	 * * `end` - This method will cancel the animation and remove all applied CSS classes and styles.
 	 */
+	
+	// Detect proper transitionend/animationend event names.
+	var CSS_PREFIX = '', TRANSITION_PROP, TRANSITIONEND_EVENT, ANIMATION_PROP, ANIMATIONEND_EVENT;
+	
+	// If unprefixed events are not supported but webkit-prefixed are, use the latter.
+	// Otherwise, just use W3C names, browsers not supporting them at all will just ignore them.
+	// Note: Chrome implements `window.onwebkitanimationend` and doesn't implement `window.onanimationend`
+	// but at the same time dispatches the `animationend` event and not `webkitAnimationEnd`.
+	// Register both events in case `window.onanimationend` is not supported because of that,
+	// do the same for `transitionend` as Safari is likely to exhibit similar behavior.
+	// Also, the only modern browser that uses vendor prefixes for transitions/keyframes is webkit
+	// therefore there is no reason to test anymore for other vendor prefixes:
+	// http://caniuse.com/#search=transition
+	if (window.ontransitionend === undefined && window.onwebkittransitionend !== undefined) {
+	  CSS_PREFIX = '-webkit-';
+	  TRANSITION_PROP = 'WebkitTransition';
+	  TRANSITIONEND_EVENT = 'webkitTransitionEnd transitionend';
+	} else {
+	  TRANSITION_PROP = 'transition';
+	  TRANSITIONEND_EVENT = 'transitionend';
+	}
+	
+	if (window.onanimationend === undefined && window.onwebkitanimationend !== undefined) {
+	  CSS_PREFIX = '-webkit-';
+	  ANIMATION_PROP = 'WebkitAnimation';
+	  ANIMATIONEND_EVENT = 'webkitAnimationEnd animationend';
+	} else {
+	  ANIMATION_PROP = 'animation';
+	  ANIMATIONEND_EVENT = 'animationend';
+	}
+	
+	var DURATION_KEY = 'Duration';
+	var PROPERTY_KEY = 'Property';
+	var DELAY_KEY = 'Delay';
+	var TIMING_KEY = 'TimingFunction';
+	var ANIMATION_ITERATION_COUNT_KEY = 'IterationCount';
+	var ANIMATION_PLAYSTATE_KEY = 'PlayState';
+	var ELAPSED_TIME_MAX_DECIMAL_PLACES = 3;
+	var CLOSING_TIME_BUFFER = 1.5;
 	var ONE_SECOND = 1000;
 	var BASE_TEN = 10;
 	
-	var ELAPSED_TIME_MAX_DECIMAL_PLACES = 3;
-	var CLOSING_TIME_BUFFER = 1.5;
+	var SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
+	
+	var ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
+	var ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
+	
+	var TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
+	var TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
 	
 	var DETECT_CSS_PROPERTIES = {
 	  transitionDuration:      TRANSITION_DURATION_PROP,
@@ -78256,15 +83217,6 @@
 	  animationDuration:       ANIMATION_DURATION_PROP,
 	  animationDelay:          ANIMATION_DELAY_PROP
 	};
-	
-	function getCssKeyframeDurationStyle(duration) {
-	  return [ANIMATION_DURATION_PROP, duration + 's'];
-	}
-	
-	function getCssDelayStyle(delay, isKeyframeAnimation) {
-	  var prop = isKeyframeAnimation ? ANIMATION_DELAY_PROP : TRANSITION_DELAY_PROP;
-	  return [prop, delay + 's'];
-	}
 	
 	function computeCssStyles($window, element, properties) {
 	  var styles = Object.create(null);
@@ -78322,6 +83274,37 @@
 	  return [style, value];
 	}
 	
+	function getCssKeyframeDurationStyle(duration) {
+	  return [ANIMATION_DURATION_PROP, duration + 's'];
+	}
+	
+	function getCssDelayStyle(delay, isKeyframeAnimation) {
+	  var prop = isKeyframeAnimation ? ANIMATION_DELAY_PROP : TRANSITION_DELAY_PROP;
+	  return [prop, delay + 's'];
+	}
+	
+	function blockTransitions(node, duration) {
+	  // we use a negative delay value since it performs blocking
+	  // yet it doesn't kill any existing transitions running on the
+	  // same element which makes this safe for class-based animations
+	  var value = duration ? '-' + duration + 's' : '';
+	  applyInlineStyle(node, [TRANSITION_DELAY_PROP, value]);
+	  return [TRANSITION_DELAY_PROP, value];
+	}
+	
+	function blockKeyframeAnimations(node, applyBlock) {
+	  var value = applyBlock ? 'paused' : '';
+	  var key = ANIMATION_PROP + ANIMATION_PLAYSTATE_KEY;
+	  applyInlineStyle(node, [key, value]);
+	  return [key, value];
+	}
+	
+	function applyInlineStyle(node, styleTuple) {
+	  var prop = styleTuple[0];
+	  var value = styleTuple[1];
+	  node.style[prop] = value;
+	}
+	
 	function createLocalCacheLookup() {
 	  var cache = Object.create(null);
 	  return {
@@ -78353,8 +83336,10 @@
 	  var gcsLookup = createLocalCacheLookup();
 	  var gcsStaggerLookup = createLocalCacheLookup();
 	
-	  this.$get = ['$window', '$$jqLite', '$$AnimateRunner', '$timeout', '$$forceReflow', '$sniffer', '$$rAF',
-	       function($window,   $$jqLite,   $$AnimateRunner,   $timeout,   $$forceReflow,   $sniffer,   $$rAF) {
+	  this.$get = ['$window', '$$jqLite', '$$AnimateRunner', '$timeout',
+	               '$document', '$sniffer', '$$rAFScheduler',
+	       function($window,   $$jqLite,   $$AnimateRunner,   $timeout,
+	                $document,   $sniffer,   $$rAFScheduler) {
 	
 	    var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
 	
@@ -78411,26 +83396,28 @@
 	      return stagger || {};
 	    }
 	
-	    var cancelLastRAFRequest;
+	    var bod = getDomNode($document).body;
 	    var rafWaitQueue = [];
 	    function waitUntilQuiet(callback) {
-	      if (cancelLastRAFRequest) {
-	        cancelLastRAFRequest(); //cancels the request
-	      }
 	      rafWaitQueue.push(callback);
-	      cancelLastRAFRequest = $$rAF(function() {
-	        cancelLastRAFRequest = null;
+	      $$rAFScheduler.waitUntilQuiet(function() {
 	        gcsLookup.flush();
 	        gcsStaggerLookup.flush();
 	
-	        // DO NOT REMOVE THIS LINE OR REFACTOR OUT THE `pageWidth` variable.
-	        // PLEASE EXAMINE THE `$$forceReflow` service to understand why.
-	        var pageWidth = $$forceReflow();
+	        //the line below will force the browser to perform a repaint so
+	        //that all the animated elements within the animation frame will
+	        //be properly updated and drawn on screen. This is required to
+	        //ensure that the preparation animation is properly flushed so that
+	        //the active state picks up from there. DO NOT REMOVE THIS LINE.
+	        //DO NOT OPTIMIZE THIS LINE. THE MINIFIER WILL REMOVE IT OTHERWISE WHICH
+	        //WILL RESULT IN AN UNPREDICTABLE BUG THAT IS VERY HARD TO TRACK DOWN AND
+	        //WILL TAKE YEARS AWAY FROM YOUR LIFE.
+	        var width = bod.offsetWidth + 1;
 	
 	        // we use a for loop to ensure that if the queue is changed
 	        // during this looping then it will consider new requests
 	        for (var i = 0; i < rafWaitQueue.length; i++) {
-	          rafWaitQueue[i](pageWidth);
+	          rafWaitQueue[i](width);
 	        }
 	        rafWaitQueue.length = 0;
 	      });
@@ -78486,20 +83473,20 @@
 	      var addRemoveClassName = '';
 	
 	      if (isStructural) {
-	        structuralClassName = pendClasses(method, EVENT_CLASS_PREFIX, true);
+	        structuralClassName = pendClasses(method, 'ng-', true);
 	      } else if (method) {
 	        structuralClassName = method;
 	      }
 	
 	      if (options.addClass) {
-	        addRemoveClassName += pendClasses(options.addClass, ADD_CLASS_SUFFIX);
+	        addRemoveClassName += pendClasses(options.addClass, '-add');
 	      }
 	
 	      if (options.removeClass) {
 	        if (addRemoveClassName.length) {
 	          addRemoveClassName += ' ';
 	        }
-	        addRemoveClassName += pendClasses(options.removeClass, REMOVE_CLASS_SUFFIX);
+	        addRemoveClassName += pendClasses(options.removeClass, '-remove');
 	      }
 	
 	      // there may be a situation where a structural animation is combined together
@@ -78513,9 +83500,9 @@
 	        addRemoveClassName = '';
 	      }
 	
-	      var preparationClasses = [structuralClassName, addRemoveClassName].join(' ').trim();
-	      var fullClassName = classes + ' ' + preparationClasses;
-	      var activeClasses = pendClasses(preparationClasses, ACTIVE_CLASS_SUFFIX);
+	      var setupClasses = [structuralClassName, addRemoveClassName].join(' ').trim();
+	      var fullClassName = classes + ' ' + setupClasses;
+	      var activeClasses = pendClasses(setupClasses, '-active');
 	      var hasToStyles = styles.to && Object.keys(styles.to).length > 0;
 	      var containsKeyframeAnimation = (options.keyframeStyle || '').length > 0;
 	
@@ -78524,7 +83511,7 @@
 	      // unless there a is raw keyframe value that is applied to the element.
 	      if (!containsKeyframeAnimation
 	           && !hasToStyles
-	           && !preparationClasses) {
+	           && !setupClasses) {
 	        return closeAndReturnNoopAnimator();
 	      }
 	
@@ -78539,12 +83526,10 @@
 	        };
 	      } else {
 	        cacheKey = gcsHashFn(node, fullClassName);
-	        stagger = computeCachedCssStaggerStyles(node, preparationClasses, cacheKey, DETECT_STAGGER_CSS_PROPERTIES);
+	        stagger = computeCachedCssStaggerStyles(node, setupClasses, cacheKey, DETECT_STAGGER_CSS_PROPERTIES);
 	      }
 	
-	      if (!options.$$skipPreparationClasses) {
-	        $$jqLite.addClass(element, preparationClasses);
-	      }
+	      $$jqLite.addClass(element, setupClasses);
 	
 	      var applyOnlyDuration;
 	
@@ -78583,7 +83568,7 @@
 	      // transition delay to allow for the transition to naturally do it's thing. The beauty here is
 	      // that if there is no transition defined then nothing will happen and this will also allow
 	      // other transitions to be stacked on top of each other without any chopping them out.
-	      if (isFirst && !options.skipBlocking) {
+	      if (isFirst) {
 	        blockTransitions(node, SAFE_FAST_FORWARD_DURATION_VALUE);
 	      }
 	
@@ -78642,12 +83627,11 @@
 	      }
 	
 	      applyAnimationFromStyles(element, options);
-	
-	      if (flags.blockTransition || flags.blockKeyframeAnimation) {
-	        applyBlocking(maxDuration);
-	      } else if (!options.skipBlocking) {
+	      if (!flags.blockTransition) {
 	        blockTransitions(node, false);
 	      }
+	
+	      applyBlocking(maxDuration);
 	
 	      // TODO(matsko): for 1.5 change this code to have an animator object for better debugging
 	      return {
@@ -78690,9 +83674,7 @@
 	        animationClosed = true;
 	        animationPaused = false;
 	
-	        if (!options.$$skipPreparationClasses) {
-	          $$jqLite.removeClass(element, preparationClasses);
-	        }
+	        $$jqLite.removeClass(element, setupClasses);
 	        $$jqLite.removeClass(element, activeClasses);
 	
 	        blockKeyframeAnimations(node, false);
@@ -78819,7 +83801,7 @@
 	          $$jqLite.addClass(element, activeClasses);
 	
 	          if (flags.recalculateTimingStyles) {
-	            fullClassName = node.className + ' ' + preparationClasses;
+	            fullClassName = node.className + ' ' + setupClasses;
 	            cacheKey = gcsHashFn(node, fullClassName);
 	
 	            timings = computeTimings(node, fullClassName, cacheKey);
@@ -78886,7 +83868,7 @@
 	
 	          startTime = Date.now();
 	          element.on(events.join(' '), onAnimationProgress);
-	          $timeout(onAnimationExpired, maxDelayTime + CLOSING_TIME_BUFFER * maxDurationTime, false);
+	          $timeout(onAnimationExpired, maxDelayTime + CLOSING_TIME_BUFFER * maxDurationTime);
 	
 	          applyAnimationToStyles(element, options);
 	        }
@@ -78935,26 +83917,24 @@
 	  var NG_OUT_ANCHOR_CLASS_NAME = 'ng-anchor-out';
 	  var NG_IN_ANCHOR_CLASS_NAME = 'ng-anchor-in';
 	
-	  this.$get = ['$animateCss', '$rootScope', '$$AnimateRunner', '$rootElement', '$$body', '$sniffer', '$$jqLite',
-	       function($animateCss,   $rootScope,   $$AnimateRunner,   $rootElement,   $$body,   $sniffer,   $$jqLite) {
+	  this.$get = ['$animateCss', '$rootScope', '$$AnimateRunner', '$rootElement', '$document', '$sniffer',
+	       function($animateCss,   $rootScope,   $$AnimateRunner,   $rootElement,   $document,   $sniffer) {
 	
 	    // only browsers that support these properties can render animations
 	    if (!$sniffer.animations && !$sniffer.transitions) return noop;
 	
-	    var bodyNode = getDomNode($$body);
+	    var bodyNode = getDomNode($document).body;
 	    var rootNode = getDomNode($rootElement);
 	
 	    var rootBodyElement = jqLite(bodyNode.parentNode === rootNode ? bodyNode : rootNode);
 	
-	    var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
-	
-	    return function initDriverFn(animationDetails, onBeforeClassesAppliedCb) {
+	    return function initDriverFn(animationDetails) {
 	      return animationDetails.from && animationDetails.to
 	          ? prepareFromToAnchorAnimation(animationDetails.from,
 	                                         animationDetails.to,
 	                                         animationDetails.classes,
 	                                         animationDetails.anchors)
-	          : prepareRegularAnimation(animationDetails, onBeforeClassesAppliedCb);
+	          : prepareRegularAnimation(animationDetails);
 	    };
 	
 	    function filterCssClasses(classes) {
@@ -79098,8 +84078,8 @@
 	    }
 	
 	    function prepareFromToAnchorAnimation(from, to, classes, anchors) {
-	      var fromAnimation = prepareRegularAnimation(from, noop);
-	      var toAnimation = prepareRegularAnimation(to, noop);
+	      var fromAnimation = prepareRegularAnimation(from);
+	      var toAnimation = prepareRegularAnimation(to);
 	
 	      var anchorAnimations = [];
 	      forEach(anchors, function(anchor) {
@@ -79150,40 +84130,24 @@
 	      };
 	    }
 	
-	    function prepareRegularAnimation(animationDetails, onBeforeClassesAppliedCb) {
+	    function prepareRegularAnimation(animationDetails) {
 	      var element = animationDetails.element;
 	      var options = animationDetails.options || {};
 	
-	      // since the ng-EVENT, class-ADD and class-REMOVE classes are applied inside
-	      // of the animateQueue pre and postDigest stages then there is no need to add
-	      // then them here as well.
-	      options.$$skipPreparationClasses = true;
-	
-	      // during the pre/post digest stages inside of animateQueue we also performed
-	      // the blocking (transition:-9999s) so there is no point in doing that again.
-	      options.skipBlocking = true;
-	
 	      if (animationDetails.structural) {
-	        options.event = animationDetails.event;
+	        // structural animations ensure that the CSS classes are always applied
+	        // before the detection starts.
+	        options.structural = options.applyClassesEarly = true;
 	
 	        // we special case the leave animation since we want to ensure that
 	        // the element is removed as soon as the animation is over. Otherwise
 	        // a flicker might appear or the element may not be removed at all
-	        if (animationDetails.event === 'leave') {
+	        options.event = animationDetails.event;
+	        if (options.event === 'leave') {
 	          options.onDone = options.domOperation;
 	        }
-	      }
-	
-	      // we apply the classes right away since the pre-digest took care of the
-	      // preparation classes.
-	      onBeforeClassesAppliedCb(element);
-	      applyAnimationClasses(element, options);
-	
-	      // We assign the preparationClasses as the actual animation event since
-	      // the internals of $animateCss will just suffix the event token values
-	      // with `-active` to trigger the animation.
-	      if (options.preparationClasses) {
-	        options.event = concatWithSpace(options.event, options.preparationClasses);
+	      } else {
+	        options.event = null;
 	      }
 	
 	      var animator = $animateCss(element, options);
@@ -79560,8 +84524,8 @@
 	  });
 	
 	  rules.skip.push(function(element, newAnimation, currentAnimation) {
-	    // if there is an ongoing current animation then don't even bother running the class-based animation
-	    return currentAnimation.structural && currentAnimation.state === RUNNING_STATE && !newAnimation.structural;
+	    // if there is a current animation then skip the class-based animation
+	    return currentAnimation.structural && !newAnimation.structural;
 	  });
 	
 	  rules.cancel.push(function(element, newAnimation, currentAnimation) {
@@ -79583,13 +84547,14 @@
 	    return (nO.addClass && nO.addClass === cO.removeClass) || (nO.removeClass && nO.removeClass === cO.addClass);
 	  });
 	
-	  this.$get = ['$$rAF', '$rootScope', '$rootElement', '$document', '$$body', '$$HashMap',
-	               '$$animation', '$$AnimateRunner', '$templateRequest', '$$jqLite', '$$forceReflow',
-	       function($$rAF,   $rootScope,   $rootElement,   $document,   $$body,   $$HashMap,
-	                $$animation,   $$AnimateRunner,   $templateRequest,   $$jqLite,   $$forceReflow) {
+	  this.$get = ['$$rAF', '$rootScope', '$rootElement', '$document', '$$HashMap',
+	               '$$animation', '$$AnimateRunner', '$templateRequest', '$$jqLite',
+	       function($$rAF,   $rootScope,   $rootElement,   $document,   $$HashMap,
+	                $$animation,   $$AnimateRunner,   $templateRequest,   $$jqLite) {
 	
 	    var activeAnimationsLookup = new $$HashMap();
 	    var disabledElementsLookup = new $$HashMap();
+	
 	    var animationsEnabled = null;
 	
 	    // Wait until all directive and route-related templates are downloaded and
@@ -79620,6 +84585,8 @@
 	        });
 	      }
 	    );
+	
+	    var bodyElement = jqLite($document[0].body);
 	
 	    var callbackRegistry = {};
 	
@@ -79756,20 +84723,20 @@
 	      // These methods will become available after the digest has passed
 	      var runner = new $$AnimateRunner();
 	
+	      // there are situations where a directive issues an animation for
+	      // a jqLite wrapper that contains only comment nodes... If this
+	      // happens then there is no way we can perform an animation
+	      if (!node) {
+	        close();
+	        return runner;
+	      }
+	
 	      if (isArray(options.addClass)) {
 	        options.addClass = options.addClass.join(' ');
 	      }
 	
-	      if (options.addClass && !isString(options.addClass)) {
-	        options.addClass = null;
-	      }
-	
 	      if (isArray(options.removeClass)) {
 	        options.removeClass = options.removeClass.join(' ');
-	      }
-	
-	      if (options.removeClass && !isString(options.removeClass)) {
-	        options.removeClass = null;
 	      }
 	
 	      if (options.from && !isObject(options.from)) {
@@ -79778,14 +84745,6 @@
 	
 	      if (options.to && !isObject(options.to)) {
 	        options.to = null;
-	      }
-	
-	      // there are situations where a directive issues an animation for
-	      // a jqLite wrapper that contains only comment nodes... If this
-	      // happens then there is no way we can perform an animation
-	      if (!node) {
-	        close();
-	        return runner;
 	      }
 	
 	      var className = [node.className, options.addClass, options.removeClass].join(' ');
@@ -79852,9 +84811,8 @@
 	            // method which will call the runner methods in async.
 	            existingAnimation.close();
 	          } else {
-	            // this will merge the new animation options into existing animation options
-	            mergeAnimationOptions(element, existingAnimation.options, newAnimation.options);
-	            return existingAnimation.runner;
+	            // this will merge the existing animation options into this new follow-up animation
+	            mergeAnimationOptions(element, newAnimation.options, existingAnimation.options);
 	          }
 	        } else {
 	          // a joined animation means that this animation will take over the existing one
@@ -79865,14 +84823,9 @@
 	            if (existingAnimation.state === RUNNING_STATE) {
 	              normalizeAnimationOptions(element, options);
 	            } else {
-	              applyGeneratedPreparationClasses(element, isStructural ? event : null, options);
-	
 	              event = newAnimation.event = existingAnimation.event;
 	              options = mergeAnimationOptions(element, existingAnimation.options, newAnimation.options);
-	
-	              //we return the same runner since only the option values of this animation will
-	              //be fed into the `existingAnimation`.
-	              return existingAnimation.runner;
+	              return runner;
 	            }
 	          }
 	        }
@@ -79898,8 +84851,9 @@
 	        return runner;
 	      }
 	
-	      applyGeneratedPreparationClasses(element, isStructural ? event : null, options);
-	      blockTransitions(node, SAFE_FAST_FORWARD_DURATION_VALUE);
+	      if (isStructural) {
+	        closeParentClassBasedAnimations(parent);
+	      }
 	
 	      // the counter keeps track of cancelled animations
 	      var counter = (existingAnimation.counter || 0) + 1;
@@ -79958,12 +84912,12 @@
 	            ? 'setClass'
 	            : animationDetails.event;
 	
-	        markElementAnimationState(element, RUNNING_STATE);
-	        var realRunner = $$animation(element, event, animationDetails.options, function(e) {
-	          $$forceReflow();
-	          blockTransitions(getDomNode(e), false);
-	        });
+	        if (animationDetails.structural) {
+	          closeParentClassBasedAnimations(parentElement);
+	        }
 	
+	        markElementAnimationState(element, RUNNING_STATE);
+	        var realRunner = $$animation(element, event, animationDetails.options);
 	        realRunner.done(function(status) {
 	          close(!status);
 	          var animationDetails = activeAnimationsLookup.get(node);
@@ -79987,7 +84941,6 @@
 	      }
 	
 	      function close(reject) { // jshint ignore:line
-	        clearGeneratedClasses(element, options);
 	        applyAnimationClasses(element, options);
 	        applyAnimationStyles(element, options);
 	        options.domOperation();
@@ -80024,9 +84977,36 @@
 	      return getDomNode(nodeOrElmA) === getDomNode(nodeOrElmB);
 	    }
 	
+	    function closeParentClassBasedAnimations(startingElement) {
+	      var parentNode = getDomNode(startingElement);
+	      do {
+	        if (!parentNode || parentNode.nodeType !== ELEMENT_NODE) break;
+	
+	        var animationDetails = activeAnimationsLookup.get(parentNode);
+	        if (animationDetails) {
+	          examineParentAnimation(parentNode, animationDetails);
+	        }
+	
+	        parentNode = parentNode.parentNode;
+	      } while (true);
+	
+	      // since animations are detected from CSS classes, we need to flush all parent
+	      // class-based animations so that the parent classes are all present for child
+	      // animations to properly function (otherwise any CSS selectors may not work)
+	      function examineParentAnimation(node, animationDetails) {
+	        // enter/leave/move always have priority
+	        if (animationDetails.structural || !hasAnimationClasses(animationDetails.options)) return;
+	
+	        if (animationDetails.state === RUNNING_STATE) {
+	          animationDetails.runner.end();
+	        }
+	        clearElementAnimationState(node);
+	      }
+	    }
+	
 	    function areAnimationsAllowed(element, parentElement, event) {
-	      var bodyElementDetected = isMatchingElement(element, $$body) || element[0].nodeName === 'HTML';
-	      var rootElementDetected = isMatchingElement(element, $rootElement);
+	      var bodyElementDetected = false;
+	      var rootElementDetected = false;
 	      var parentAnimationDetected = false;
 	      var animateChildren;
 	
@@ -80081,7 +85061,7 @@
 	        if (!bodyElementDetected) {
 	          // we also need to ensure that the element is or will be apart of the body element
 	          // otherwise it is pointless to even issue an animation to be rendered
-	          bodyElementDetected = isMatchingElement(parentElement, $$body);
+	          bodyElementDetected = isMatchingElement(parentElement, bodyElement);
 	        }
 	
 	        parentElement = parentElement.parent();
@@ -80276,95 +85256,18 @@
 	    return element.data(RUNNER_STORAGE_KEY);
 	  }
 	
-	  this.$get = ['$$jqLite', '$rootScope', '$injector', '$$AnimateRunner', '$$HashMap',
-	       function($$jqLite,   $rootScope,   $injector,   $$AnimateRunner,   $$HashMap) {
+	  this.$get = ['$$jqLite', '$rootScope', '$injector', '$$AnimateRunner', '$$rAFScheduler',
+	       function($$jqLite,   $rootScope,   $injector,   $$AnimateRunner,   $$rAFScheduler) {
 	
 	    var animationQueue = [];
 	    var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
 	
-	    function sortAnimations(animations) {
-	      var tree = { children: [] };
-	      var i, lookup = new $$HashMap();
-	
-	      // this is done first beforehand so that the hashmap
-	      // is filled with a list of the elements that will be animated
-	      for (i = 0; i < animations.length; i++) {
-	        var animation = animations[i];
-	        lookup.put(animation.domNode, animations[i] = {
-	          domNode: animation.domNode,
-	          fn: animation.fn,
-	          children: []
-	        });
-	      }
-	
-	      for (i = 0; i < animations.length; i++) {
-	        processNode(animations[i]);
-	      }
-	
-	      return flatten(tree);
-	
-	      function processNode(entry) {
-	        if (entry.processed) return entry;
-	        entry.processed = true;
-	
-	        var elementNode = entry.domNode;
-	        var parentNode = elementNode.parentNode;
-	        lookup.put(elementNode, entry);
-	
-	        var parentEntry;
-	        while (parentNode) {
-	          parentEntry = lookup.get(parentNode);
-	          if (parentEntry) {
-	            if (!parentEntry.processed) {
-	              parentEntry = processNode(parentEntry);
-	            }
-	            break;
-	          }
-	          parentNode = parentNode.parentNode;
-	        }
-	
-	        (parentEntry || tree).children.push(entry);
-	        return entry;
-	      }
-	
-	      function flatten(tree) {
-	        var result = [];
-	        var queue = [];
-	        var i;
-	
-	        for (i = 0; i < tree.children.length; i++) {
-	          queue.push(tree.children[i]);
-	        }
-	
-	        var remainingLevelEntries = queue.length;
-	        var nextLevelEntries = 0;
-	        var row = [];
-	
-	        for (i = 0; i < queue.length; i++) {
-	          var entry = queue[i];
-	          if (remainingLevelEntries <= 0) {
-	            remainingLevelEntries = nextLevelEntries;
-	            nextLevelEntries = 0;
-	            result = result.concat(row);
-	            row = [];
-	          }
-	          row.push(entry.fn);
-	          forEach(entry.children, function(childEntry) {
-	            nextLevelEntries++;
-	            queue.push(childEntry);
-	          });
-	          remainingLevelEntries--;
-	        }
-	
-	        if (row.length) {
-	          result = result.concat(row);
-	        }
-	        return result;
-	      }
-	    }
+	    var totalPendingClassBasedAnimations = 0;
+	    var totalActiveClassBasedAnimations = 0;
+	    var classBasedAnimationsQueue = [];
 	
 	    // TODO(matsko): document the signature in a better way
-	    return function(element, event, options, onBeforeClassesAppliedCb) {
+	    return function(element, event, options) {
 	      options = prepareAnimationOptions(options);
 	      var isStructural = ['enter', 'move', 'leave'].indexOf(event) >= 0;
 	
@@ -80391,12 +85294,19 @@
 	        options.tempClasses = null;
 	      }
 	
+	      var classBasedIndex;
+	      if (!isStructural) {
+	        classBasedIndex = totalPendingClassBasedAnimations;
+	        totalPendingClassBasedAnimations += 1;
+	      }
+	
 	      animationQueue.push({
 	        // this data is used by the postDigest code and passed into
 	        // the driver step function
 	        element: element,
 	        classes: classes,
 	        event: event,
+	        classBasedIndex: classBasedIndex,
 	        structural: isStructural,
 	        options: options,
 	        beforeStart: beforeStart,
@@ -80411,67 +85321,77 @@
 	      if (animationQueue.length > 1) return runner;
 	
 	      $rootScope.$$postDigest(function() {
+	        totalActiveClassBasedAnimations = totalPendingClassBasedAnimations;
+	        totalPendingClassBasedAnimations = 0;
+	        classBasedAnimationsQueue.length = 0;
+	
 	        var animations = [];
 	        forEach(animationQueue, function(entry) {
 	          // the element was destroyed early on which removed the runner
 	          // form its storage. This means we can't animate this element
 	          // at all and it already has been closed due to destruction.
-	          var elm = entry.element;
-	          if (getRunner(elm) && getDomNode(elm).parentNode) {
+	          if (getRunner(entry.element)) {
 	            animations.push(entry);
-	          } else {
-	            entry.close();
 	          }
 	        });
 	
 	        // now any future animations will be in another postDigest
 	        animationQueue.length = 0;
 	
-	        var groupedAnimations = groupAnimations(animations);
-	        var toBeSortedAnimations = [];
+	        forEach(groupAnimations(animations), function(animationEntry) {
+	          if (animationEntry.structural) {
+	            triggerAnimationStart();
+	          } else {
+	            classBasedAnimationsQueue.push({
+	              node: getDomNode(animationEntry.element),
+	              fn: triggerAnimationStart
+	            });
 	
-	        forEach(groupedAnimations, function(animationEntry) {
-	          toBeSortedAnimations.push({
-	            domNode: getDomNode(animationEntry.from ? animationEntry.from.element : animationEntry.element),
-	            fn: function triggerAnimationStart() {
-	              // it's important that we apply the `ng-animate` CSS class and the
-	              // temporary classes before we do any driver invoking since these
-	              // CSS classes may be required for proper CSS detection.
-	              animationEntry.beforeStart();
+	            if (animationEntry.classBasedIndex === totalActiveClassBasedAnimations - 1) {
+	              // we need to sort each of the animations in order of parent to child
+	              // relationships. This ensures that the child classes are applied at the
+	              // right time.
+	              classBasedAnimationsQueue = classBasedAnimationsQueue.sort(function(a,b) {
+	                return b.node.contains(a.node);
+	              }).map(function(entry) {
+	                return entry.fn;
+	              });
 	
-	              var startAnimationFn, closeFn = animationEntry.close;
+	              $$rAFScheduler(classBasedAnimationsQueue);
+	            }
+	          }
 	
-	              // in the event that the element was removed before the digest runs or
-	              // during the RAF sequencing then we should not trigger the animation.
-	              var targetElement = animationEntry.anchors
-	                  ? (animationEntry.from.element || animationEntry.to.element)
-	                  : animationEntry.element;
+	          function triggerAnimationStart() {
+	            // it's important that we apply the `ng-animate` CSS class and the
+	            // temporary classes before we do any driver invoking since these
+	            // CSS classes may be required for proper CSS detection.
+	            animationEntry.beforeStart();
 	
-	              if (getRunner(targetElement)) {
-	                var operation = invokeFirstDriver(animationEntry, onBeforeClassesAppliedCb);
-	                if (operation) {
-	                  startAnimationFn = operation.start;
-	                }
-	              }
+	            var startAnimationFn, closeFn = animationEntry.close;
 	
-	              if (!startAnimationFn) {
-	                closeFn();
-	              } else {
-	                var animationRunner = startAnimationFn();
-	                animationRunner.done(function(status) {
-	                  closeFn(!status);
-	                });
-	                updateAnimationRunners(animationEntry, animationRunner);
+	            // in the event that the element was removed before the digest runs or
+	            // during the RAF sequencing then we should not trigger the animation.
+	            var targetElement = animationEntry.anchors
+	                ? (animationEntry.from.element || animationEntry.to.element)
+	                : animationEntry.element;
+	
+	            if (getRunner(targetElement) && getDomNode(targetElement).parentNode) {
+	              var operation = invokeFirstDriver(animationEntry);
+	              if (operation) {
+	                startAnimationFn = operation.start;
 	              }
 	            }
-	          });
-	        });
 	
-	        // we need to sort each of the animations in order of parent to child
-	        // relationships. This ensures that the parent to child classes are
-	        // applied at the right time.
-	        forEach(sortAnimations(toBeSortedAnimations), function(triggerAnimation) {
-	          triggerAnimation();
+	            if (!startAnimationFn) {
+	              closeFn();
+	            } else {
+	              var animationRunner = startAnimationFn();
+	              animationRunner.done(function(status) {
+	                closeFn(!status);
+	              });
+	              updateAnimationRunners(animationEntry, animationRunner);
+	            }
+	          }
 	        });
 	      });
 	
@@ -80542,7 +85462,7 @@
 	          var lookupKey = from.animationID.toString();
 	          if (!anchorGroups[lookupKey]) {
 	            var group = anchorGroups[lookupKey] = {
-	              // TODO(matsko): double-check this code
+	              structural: true,
 	              beforeStart: function() {
 	                fromAnimation.beforeStart();
 	                toAnimation.beforeStart();
@@ -80596,7 +85516,7 @@
 	        return matches.join(' ');
 	      }
 	
-	      function invokeFirstDriver(animationDetails, onBeforeClassesAppliedCb) {
+	      function invokeFirstDriver(animationDetails) {
 	        // we loop in reverse order since the more general drivers (like CSS and JS)
 	        // may attempt more elements, but custom drivers are more particular
 	        for (var i = drivers.length - 1; i >= 0; i--) {
@@ -80604,7 +85524,7 @@
 	          if (!$injector.has(driverName)) continue; // TODO(matsko): remove this check
 	
 	          var factory = $injector.get(driverName);
-	          var driver = factory(animationDetails, onBeforeClassesAppliedCb);
+	          var driver = factory(animationDetails);
 	          if (driver) {
 	            return driver;
 	          }
@@ -80659,8 +85579,8 @@
 	
 	/* global angularAnimateModule: true,
 	
-	   $$BodyProvider,
 	   $$rAFMutexFactory,
+	   $$rAFSchedulerFactory,
 	   $$AnimateChildrenDirective,
 	   $$AnimateRunnerFactory,
 	   $$AnimateQueueProvider,
@@ -81044,7 +85964,6 @@
 	 *     enter: function(element, doneFn) {
 	 *       var runner = $animateCss(element, {
 	 *         event: 'enter',
-	 *         structural: true,
 	 *         addClass: 'maroon-setting',
 	 *         from: { height:0 },
 	 *         to: { height: 200 }
@@ -81398,11 +86317,10 @@
 	 * Click here {@link ng.$animate $animate to learn more about animations with `$animate`}.
 	 */
 	angular.module('ngAnimate', [])
-	  .provider('$$body', $$BodyProvider)
-	
 	  .directive('ngAnimateChildren', $$AnimateChildrenDirective)
 	
 	  .factory('$$rAFMutex', $$rAFMutexFactory)
+	  .factory('$$rAFScheduler', $$rAFSchedulerFactory)
 	
 	  .factory('$$AnimateRunner', $$AnimateRunnerFactory)
 	
@@ -81420,19 +86338,19 @@
 
 
 /***/ },
-/* 364 */
+/* 350 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(365);
+	__webpack_require__(351);
 	module.exports = 'ngMessages';
 
 
 /***/ },
-/* 365 */
+/* 351 */
 /***/ function(module, exports) {
 
 	/**
-	 * @license AngularJS v1.4.4
+	 * @license AngularJS v1.4.3
 	 * (c) 2010-2015 Google, Inc. http://angularjs.org
 	 * License: MIT
 	 */
@@ -82112,7 +87030,7 @@
 
 
 /***/ },
-/* 366 */
+/* 352 */
 /***/ function(module, exports) {
 
 	/**
@@ -86487,5620 +91405,7 @@
 	})(window, window.angular);
 
 /***/ },
-/* 367 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(368);
-	module.exports = 'ui.bootstrap';
-
-
-/***/ },
-/* 368 */
-/***/ function(module, exports) {
-
-	/*
-	 * angular-ui-bootstrap
-	 * http://angular-ui.github.io/bootstrap/
-	
-	 * Version: 0.13.3 - 2015-08-09
-	 * License: MIT
-	 */
-	angular.module("ui.bootstrap", ["ui.bootstrap.tpls", "ui.bootstrap.collapse","ui.bootstrap.accordion","ui.bootstrap.alert","ui.bootstrap.bindHtml","ui.bootstrap.buttons","ui.bootstrap.carousel","ui.bootstrap.dateparser","ui.bootstrap.position","ui.bootstrap.datepicker","ui.bootstrap.dropdown","ui.bootstrap.modal","ui.bootstrap.pagination","ui.bootstrap.tooltip","ui.bootstrap.popover","ui.bootstrap.progressbar","ui.bootstrap.rating","ui.bootstrap.tabs","ui.bootstrap.timepicker","ui.bootstrap.transition","ui.bootstrap.typeahead"]);
-	angular.module("ui.bootstrap.tpls", ["template/accordion/accordion-group.html","template/accordion/accordion.html","template/alert/alert.html","template/carousel/carousel.html","template/carousel/slide.html","template/datepicker/datepicker.html","template/datepicker/day.html","template/datepicker/month.html","template/datepicker/popup.html","template/datepicker/year.html","template/modal/backdrop.html","template/modal/window.html","template/pagination/pager.html","template/pagination/pagination.html","template/tooltip/tooltip-html-popup.html","template/tooltip/tooltip-html-unsafe-popup.html","template/tooltip/tooltip-popup.html","template/tooltip/tooltip-template-popup.html","template/popover/popover-html.html","template/popover/popover-template.html","template/popover/popover.html","template/progressbar/bar.html","template/progressbar/progress.html","template/progressbar/progressbar.html","template/rating/rating.html","template/tabs/tab.html","template/tabs/tabset.html","template/timepicker/timepicker.html","template/typeahead/typeahead-match.html","template/typeahead/typeahead-popup.html"]);
-	angular.module('ui.bootstrap.collapse', [])
-	
-	  .directive('collapse', ['$animate', function ($animate) {
-	
-	    return {
-	      link: function (scope, element, attrs) {
-	        function expand() {
-	          element.removeClass('collapse')
-	            .addClass('collapsing')
-	            .attr('aria-expanded', true)
-	            .attr('aria-hidden', false);
-	
-	          $animate.addClass(element, 'in', {
-	            to: { height: element[0].scrollHeight + 'px' }
-	          }).then(expandDone);
-	        }
-	
-	        function expandDone() {
-	          element.removeClass('collapsing');
-	          element.css({height: 'auto'});
-	        }
-	
-	        function collapse() {
-	          if(! element.hasClass('collapse') && ! element.hasClass('in')) {
-	            return collapseDone();
-	          }
-	
-	          element
-	            // IMPORTANT: The height must be set before adding "collapsing" class.
-	            // Otherwise, the browser attempts to animate from height 0 (in
-	            // collapsing class) to the given height here.
-	            .css({height: element[0].scrollHeight + 'px'})
-	            // initially all panel collapse have the collapse class, this removal
-	            // prevents the animation from jumping to collapsed state
-	            .removeClass('collapse')
-	            .addClass('collapsing')
-	            .attr('aria-expanded', false)
-	            .attr('aria-hidden', true);
-	
-	          $animate.removeClass(element, 'in', {
-	            to: {height: '0'}
-	          }).then(collapseDone);
-	        }
-	
-	        function collapseDone() {
-	          element.css({height: '0'}); // Required so that collapse works when animation is disabled
-	          element.removeClass('collapsing');
-	          element.addClass('collapse');
-	        }
-	
-	        scope.$watch(attrs.collapse, function (shouldCollapse) {
-	          if (shouldCollapse) {
-	            collapse();
-	          } else {
-	            expand();
-	          }
-	        });
-	      }
-	    };
-	  }]);
-	
-	angular.module('ui.bootstrap.accordion', ['ui.bootstrap.collapse'])
-	
-	.constant('accordionConfig', {
-	  closeOthers: true
-	})
-	
-	.controller('AccordionController', ['$scope', '$attrs', 'accordionConfig', function ($scope, $attrs, accordionConfig) {
-	
-	  // This array keeps track of the accordion groups
-	  this.groups = [];
-	
-	  // Ensure that all the groups in this accordion are closed, unless close-others explicitly says not to
-	  this.closeOthers = function(openGroup) {
-	    var closeOthers = angular.isDefined($attrs.closeOthers) ? $scope.$eval($attrs.closeOthers) : accordionConfig.closeOthers;
-	    if ( closeOthers ) {
-	      angular.forEach(this.groups, function (group) {
-	        if ( group !== openGroup ) {
-	          group.isOpen = false;
-	        }
-	      });
-	    }
-	  };
-	
-	  // This is called from the accordion-group directive to add itself to the accordion
-	  this.addGroup = function(groupScope) {
-	    var that = this;
-	    this.groups.push(groupScope);
-	
-	    groupScope.$on('$destroy', function (event) {
-	      that.removeGroup(groupScope);
-	    });
-	  };
-	
-	  // This is called from the accordion-group directive when to remove itself
-	  this.removeGroup = function(group) {
-	    var index = this.groups.indexOf(group);
-	    if ( index !== -1 ) {
-	      this.groups.splice(index, 1);
-	    }
-	  };
-	
-	}])
-	
-	// The accordion directive simply sets up the directive controller
-	// and adds an accordion CSS class to itself element.
-	.directive('accordion', function () {
-	  return {
-	    restrict: 'EA',
-	    controller: 'AccordionController',
-	    controllerAs: 'accordion',
-	    transclude: true,
-	    replace: false,
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/accordion/accordion.html';
-	    }
-	  };
-	})
-	
-	// The accordion-group directive indicates a block of html that will expand and collapse in an accordion
-	.directive('accordionGroup', function() {
-	  return {
-	    require:'^accordion',         // We need this directive to be inside an accordion
-	    restrict:'EA',
-	    transclude:true,              // It transcludes the contents of the directive into the template
-	    replace: true,                // The element containing the directive will be replaced with the template
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/accordion/accordion-group.html';
-	    },
-	    scope: {
-	      heading: '@',               // Interpolate the heading attribute onto this scope
-	      isOpen: '=?',
-	      isDisabled: '=?'
-	    },
-	    controller: function() {
-	      this.setHeading = function(element) {
-	        this.heading = element;
-	      };
-	    },
-	    link: function(scope, element, attrs, accordionCtrl) {
-	      accordionCtrl.addGroup(scope);
-	
-	      scope.$watch('isOpen', function(value) {
-	        if ( value ) {
-	          accordionCtrl.closeOthers(scope);
-	        }
-	      });
-	
-	      scope.toggleOpen = function() {
-	        if ( !scope.isDisabled ) {
-	          scope.isOpen = !scope.isOpen;
-	        }
-	      };
-	    }
-	  };
-	})
-	
-	// Use accordion-heading below an accordion-group to provide a heading containing HTML
-	// <accordion-group>
-	//   <accordion-heading>Heading containing HTML - <img src="..."></accordion-heading>
-	// </accordion-group>
-	.directive('accordionHeading', function() {
-	  return {
-	    restrict: 'EA',
-	    transclude: true,   // Grab the contents to be used as the heading
-	    template: '',       // In effect remove this element!
-	    replace: true,
-	    require: '^accordionGroup',
-	    link: function(scope, element, attr, accordionGroupCtrl, transclude) {
-	      // Pass the heading to the accordion-group controller
-	      // so that it can be transcluded into the right place in the template
-	      // [The second parameter to transclude causes the elements to be cloned so that they work in ng-repeat]
-	      accordionGroupCtrl.setHeading(transclude(scope, angular.noop));
-	    }
-	  };
-	})
-	
-	// Use in the accordion-group template to indicate where you want the heading to be transcluded
-	// You must provide the property on the accordion-group controller that will hold the transcluded element
-	// <div class="accordion-group">
-	//   <div class="accordion-heading" ><a ... accordion-transclude="heading">...</a></div>
-	//   ...
-	// </div>
-	.directive('accordionTransclude', function() {
-	  return {
-	    require: '^accordionGroup',
-	    link: function(scope, element, attr, controller) {
-	      scope.$watch(function() { return controller[attr.accordionTransclude]; }, function(heading) {
-	        if ( heading ) {
-	          element.find('span').html('');
-	          element.find('span').append(heading);
-	        }
-	      });
-	    }
-	  };
-	})
-	
-	;
-	
-	angular.module('ui.bootstrap.alert', [])
-	
-	.controller('AlertController', ['$scope', '$attrs', function ($scope, $attrs) {
-	  $scope.closeable = !!$attrs.close;
-	  this.close = $scope.close;
-	}])
-	
-	.directive('alert', function () {
-	  return {
-	    restrict: 'EA',
-	    controller: 'AlertController',
-	    controllerAs: 'alert',
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/alert/alert.html';
-	    },
-	    transclude: true,
-	    replace: true,
-	    scope: {
-	      type: '@',
-	      close: '&'
-	    }
-	  };
-	})
-	
-	.directive('dismissOnTimeout', ['$timeout', function($timeout) {
-	  return {
-	    require: 'alert',
-	    link: function(scope, element, attrs, alertCtrl) {
-	      $timeout(function(){
-	        alertCtrl.close();
-	      }, parseInt(attrs.dismissOnTimeout, 10));
-	    }
-	  };
-	}]);
-	
-	angular.module('ui.bootstrap.bindHtml', [])
-	
-	  .value('$bindHtmlUnsafeSuppressDeprecated', false)
-	
-	  .directive('bindHtmlUnsafe', ['$log', '$bindHtmlUnsafeSuppressDeprecated', function ($log, $bindHtmlUnsafeSuppressDeprecated) {
-	    return function (scope, element, attr) {
-	      if (!$bindHtmlUnsafeSuppressDeprecated) {
-	        $log.warn('bindHtmlUnsafe is now deprecated. Use ngBindHtml instead');
-	      }
-	      element.addClass('ng-binding').data('$binding', attr.bindHtmlUnsafe);
-	      scope.$watch(attr.bindHtmlUnsafe, function bindHtmlUnsafeWatchAction(value) {
-	        element.html(value || '');
-	      });
-	    };
-	  }]);
-	angular.module('ui.bootstrap.buttons', [])
-	
-	.constant('buttonConfig', {
-	  activeClass: 'active',
-	  toggleEvent: 'click'
-	})
-	
-	.controller('ButtonsController', ['buttonConfig', function(buttonConfig) {
-	  this.activeClass = buttonConfig.activeClass || 'active';
-	  this.toggleEvent = buttonConfig.toggleEvent || 'click';
-	}])
-	
-	.directive('btnRadio', function () {
-	  return {
-	    require: ['btnRadio', 'ngModel'],
-	    controller: 'ButtonsController',
-	    controllerAs: 'buttons',
-	    link: function (scope, element, attrs, ctrls) {
-	      var buttonsCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-	
-	      //model -> UI
-	      ngModelCtrl.$render = function () {
-	        element.toggleClass(buttonsCtrl.activeClass, angular.equals(ngModelCtrl.$modelValue, scope.$eval(attrs.btnRadio)));
-	      };
-	
-	      //ui->model
-	      element.bind(buttonsCtrl.toggleEvent, function () {
-	        if (attrs.disabled) {
-	          return;
-	        }
-	
-	        var isActive = element.hasClass(buttonsCtrl.activeClass);
-	
-	        if (!isActive || angular.isDefined(attrs.uncheckable)) {
-	          scope.$apply(function () {
-	            ngModelCtrl.$setViewValue(isActive ? null : scope.$eval(attrs.btnRadio));
-	            ngModelCtrl.$render();
-	          });
-	        }
-	      });
-	    }
-	  };
-	})
-	
-	.directive('btnCheckbox', function () {
-	  return {
-	    require: ['btnCheckbox', 'ngModel'],
-	    controller: 'ButtonsController',
-	    controllerAs: 'button',
-	    link: function (scope, element, attrs, ctrls) {
-	      var buttonsCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-	
-	      function getTrueValue() {
-	        return getCheckboxValue(attrs.btnCheckboxTrue, true);
-	      }
-	
-	      function getFalseValue() {
-	        return getCheckboxValue(attrs.btnCheckboxFalse, false);
-	      }
-	
-	      function getCheckboxValue(attributeValue, defaultValue) {
-	        var val = scope.$eval(attributeValue);
-	        return angular.isDefined(val) ? val : defaultValue;
-	      }
-	
-	      //model -> UI
-	      ngModelCtrl.$render = function () {
-	        element.toggleClass(buttonsCtrl.activeClass, angular.equals(ngModelCtrl.$modelValue, getTrueValue()));
-	      };
-	
-	      //ui->model
-	      element.bind(buttonsCtrl.toggleEvent, function () {
-	        if (attrs.disabled) {
-	          return;
-	        }
-	
-	        scope.$apply(function () {
-	          ngModelCtrl.$setViewValue(element.hasClass(buttonsCtrl.activeClass) ? getFalseValue() : getTrueValue());
-	          ngModelCtrl.$render();
-	        });
-	      });
-	    }
-	  };
-	});
-	
-	/**
-	* @ngdoc overview
-	* @name ui.bootstrap.carousel
-	*
-	* @description
-	* AngularJS version of an image carousel.
-	*
-	*/
-	angular.module('ui.bootstrap.carousel', [])
-	.controller('CarouselController', ['$scope', '$element', '$interval', '$animate', function ($scope, $element, $interval, $animate) {
-	  var self = this,
-	    slides = self.slides = $scope.slides = [],
-	    NEW_ANIMATE = angular.version.minor >= 4,
-	    NO_TRANSITION = 'uib-noTransition',
-	    SLIDE_DIRECTION = 'uib-slideDirection',
-	    currentIndex = -1,
-	    currentInterval, isPlaying;
-	  self.currentSlide = null;
-	
-	  var destroyed = false;
-	  /* direction: "prev" or "next" */
-	  self.select = $scope.select = function(nextSlide, direction) {
-	    var nextIndex = $scope.indexOfSlide(nextSlide);
-	    //Decide direction if it's not given
-	    if (direction === undefined) {
-	      direction = nextIndex > self.getCurrentIndex() ? 'next' : 'prev';
-	    }
-	    //Prevent this user-triggered transition from occurring if there is already one in progress
-	    if (nextSlide && nextSlide !== self.currentSlide && !$scope.$currentTransition) {
-	      goNext(nextSlide, nextIndex, direction);
-	    }
-	  };
-	
-	  function goNext(slide, index, direction) {
-	    // Scope has been destroyed, stop here.
-	    if (destroyed) { return; }
-	
-	    angular.extend(slide, {direction: direction, active: true});
-	    angular.extend(self.currentSlide || {}, {direction: direction, active: false});
-	    if ($animate.enabled() && !$scope.noTransition && !$scope.$currentTransition &&
-	      slide.$element && self.slides.length > 1) {
-	      slide.$element.data(SLIDE_DIRECTION, slide.direction);
-	      if (self.currentSlide && self.currentSlide.$element) {
-	        self.currentSlide.$element.data(SLIDE_DIRECTION, slide.direction);
-	      }
-	
-	      $scope.$currentTransition = true;
-	      if (NEW_ANIMATE) {
-	        $animate.on('addClass', slide.$element, function (element, phase) {
-	          if (phase === 'close') {
-	            $scope.$currentTransition = null;
-	            $animate.off('addClass', element);
-	          }
-	        });
-	      } else {
-	        slide.$element.one('$animate:close', function closeFn() {
-	          $scope.$currentTransition = null;
-	        });
-	      }
-	    }
-	
-	    self.currentSlide = slide;
-	    currentIndex = index;
-	
-	    //every time you change slides, reset the timer
-	    restartTimer();
-	  }
-	
-	  $scope.$on('$destroy', function () {
-	    destroyed = true;
-	  });
-	
-	  function getSlideByIndex(index) {
-	    if (angular.isUndefined(slides[index].index)) {
-	      return slides[index];
-	    }
-	    var i, len = slides.length;
-	    for (i = 0; i < slides.length; ++i) {
-	      if (slides[i].index == index) {
-	        return slides[i];
-	      }
-	    }
-	  }
-	
-	  self.getCurrentIndex = function() {
-	    if (self.currentSlide && angular.isDefined(self.currentSlide.index)) {
-	      return +self.currentSlide.index;
-	    }
-	    return currentIndex;
-	  };
-	
-	  /* Allow outside people to call indexOf on slides array */
-	  $scope.indexOfSlide = function(slide) {
-	    return angular.isDefined(slide.index) ? +slide.index : slides.indexOf(slide);
-	  };
-	
-	  $scope.next = function() {
-	    var newIndex = (self.getCurrentIndex() + 1) % slides.length;
-	
-	    if (newIndex === 0 && $scope.noWrap()) {
-	      $scope.pause();
-	      return;
-	    }
-	
-	    return self.select(getSlideByIndex(newIndex), 'next');
-	  };
-	
-	  $scope.prev = function() {
-	    var newIndex = self.getCurrentIndex() - 1 < 0 ? slides.length - 1 : self.getCurrentIndex() - 1;
-	
-	    if ($scope.noWrap() && newIndex === slides.length - 1){
-	      $scope.pause();
-	      return;
-	    }
-	
-	    return self.select(getSlideByIndex(newIndex), 'prev');
-	  };
-	
-	  $scope.isActive = function(slide) {
-	     return self.currentSlide === slide;
-	  };
-	
-	  $scope.$watch('interval', restartTimer);
-	  $scope.$on('$destroy', resetTimer);
-	
-	  function restartTimer() {
-	    resetTimer();
-	    var interval = +$scope.interval;
-	    if (!isNaN(interval) && interval > 0) {
-	      currentInterval = $interval(timerFn, interval);
-	    }
-	  }
-	
-	  function resetTimer() {
-	    if (currentInterval) {
-	      $interval.cancel(currentInterval);
-	      currentInterval = null;
-	    }
-	  }
-	
-	  function timerFn() {
-	    var interval = +$scope.interval;
-	    if (isPlaying && !isNaN(interval) && interval > 0 && slides.length) {
-	      $scope.next();
-	    } else {
-	      $scope.pause();
-	    }
-	  }
-	
-	  $scope.play = function() {
-	    if (!isPlaying) {
-	      isPlaying = true;
-	      restartTimer();
-	    }
-	  };
-	  $scope.pause = function() {
-	    if (!$scope.noPause) {
-	      isPlaying = false;
-	      resetTimer();
-	    }
-	  };
-	
-	  self.addSlide = function(slide, element) {
-	    slide.$element = element;
-	    slides.push(slide);
-	    //if this is the first slide or the slide is set to active, select it
-	    if(slides.length === 1 || slide.active) {
-	      self.select(slides[slides.length-1]);
-	      if (slides.length == 1) {
-	        $scope.play();
-	      }
-	    } else {
-	      slide.active = false;
-	    }
-	  };
-	
-	  self.removeSlide = function(slide) {
-	    if (angular.isDefined(slide.index)) {
-	      slides.sort(function(a, b) {
-	        return +a.index > +b.index;
-	      });
-	    }
-	    //get the index of the slide inside the carousel
-	    var index = slides.indexOf(slide);
-	    slides.splice(index, 1);
-	    if (slides.length > 0 && slide.active) {
-	      if (index >= slides.length) {
-	        self.select(slides[index-1]);
-	      } else {
-	        self.select(slides[index]);
-	      }
-	    } else if (currentIndex > index) {
-	      currentIndex--;
-	    }
-	    
-	    //clean the currentSlide when no more slide
-	    if (slides.length === 0) {
-	      self.currentSlide = null;
-	    }
-	  };
-	
-	  $scope.$watch('noTransition', function(noTransition) {
-	    $element.data(NO_TRANSITION, noTransition);
-	  });
-	
-	}])
-	
-	/**
-	 * @ngdoc directive
-	 * @name ui.bootstrap.carousel.directive:carousel
-	 * @restrict EA
-	 *
-	 * @description
-	 * Carousel is the outer container for a set of image 'slides' to showcase.
-	 *
-	 * @param {number=} interval The time, in milliseconds, that it will take the carousel to go to the next slide.
-	 * @param {boolean=} noTransition Whether to disable transitions on the carousel.
-	 * @param {boolean=} noPause Whether to disable pausing on the carousel (by default, the carousel interval pauses on hover).
-	 *
-	 * @example
-	<example module="ui.bootstrap">
-	  <file name="index.html">
-	    <carousel>
-	      <slide>
-	        <img src="http://placekitten.com/150/150" style="margin:auto;">
-	        <div class="carousel-caption">
-	          <p>Beautiful!</p>
-	        </div>
-	      </slide>
-	      <slide>
-	        <img src="http://placekitten.com/100/150" style="margin:auto;">
-	        <div class="carousel-caption">
-	          <p>D'aww!</p>
-	        </div>
-	      </slide>
-	    </carousel>
-	  </file>
-	  <file name="demo.css">
-	    .carousel-indicators {
-	      top: auto;
-	      bottom: 15px;
-	    }
-	  </file>
-	</example>
-	 */
-	.directive('carousel', [function() {
-	  return {
-	    restrict: 'EA',
-	    transclude: true,
-	    replace: true,
-	    controller: 'CarouselController',
-	    controllerAs: 'carousel',
-	    require: 'carousel',
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/carousel/carousel.html';
-	    },
-	    scope: {
-	      interval: '=',
-	      noTransition: '=',
-	      noPause: '=',
-	      noWrap: '&'
-	    }
-	  };
-	}])
-	
-	/**
-	 * @ngdoc directive
-	 * @name ui.bootstrap.carousel.directive:slide
-	 * @restrict EA
-	 *
-	 * @description
-	 * Creates a slide inside a {@link ui.bootstrap.carousel.directive:carousel carousel}.  Must be placed as a child of a carousel element.
-	 *
-	 * @param {boolean=} active Model binding, whether or not this slide is currently active.
-	 * @param {number=} index The index of the slide. The slides will be sorted by this parameter.
-	 *
-	 * @example
-	<example module="ui.bootstrap">
-	  <file name="index.html">
-	<div ng-controller="CarouselDemoCtrl">
-	  <carousel>
-	    <slide ng-repeat="slide in slides" active="slide.active" index="$index">
-	      <img ng-src="{{slide.image}}" style="margin:auto;">
-	      <div class="carousel-caption">
-	        <h4>Slide {{$index}}</h4>
-	        <p>{{slide.text}}</p>
-	      </div>
-	    </slide>
-	  </carousel>
-	  Interval, in milliseconds: <input type="number" ng-model="myInterval">
-	  <br />Enter a negative number to stop the interval.
-	</div>
-	  </file>
-	  <file name="script.js">
-	function CarouselDemoCtrl($scope) {
-	  $scope.myInterval = 5000;
-	}
-	  </file>
-	  <file name="demo.css">
-	    .carousel-indicators {
-	      top: auto;
-	      bottom: 15px;
-	    }
-	  </file>
-	</example>
-	*/
-	
-	.directive('slide', function() {
-	  return {
-	    require: '^carousel',
-	    restrict: 'EA',
-	    transclude: true,
-	    replace: true,
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/carousel/slide.html';
-	    },
-	    scope: {
-	      active: '=?',
-	      index: '=?'
-	    },
-	    link: function (scope, element, attrs, carouselCtrl) {
-	      carouselCtrl.addSlide(scope, element);
-	      //when the scope is destroyed then remove the slide from the current slides array
-	      scope.$on('$destroy', function() {
-	        carouselCtrl.removeSlide(scope);
-	      });
-	
-	      scope.$watch('active', function(active) {
-	        if (active) {
-	          carouselCtrl.select(scope);
-	        }
-	      });
-	    }
-	  };
-	})
-	
-	.animation('.item', [
-	         '$injector', '$animate',
-	function ($injector, $animate) {
-	  var NO_TRANSITION = 'uib-noTransition',
-	    SLIDE_DIRECTION = 'uib-slideDirection',
-	    $animateCss = null;
-	
-	  if ($injector.has('$animateCss')) {
-	    $animateCss = $injector.get('$animateCss');
-	  }
-	
-	  function removeClass(element, className, callback) {
-	    element.removeClass(className);
-	    if (callback) {
-	      callback();
-	    }
-	  }
-	
-	  return {
-	    beforeAddClass: function (element, className, done) {
-	      // Due to transclusion, noTransition property is on parent's scope
-	      if (className == 'active' && element.parent() &&
-	          !element.parent().data(NO_TRANSITION)) {
-	        var stopped = false;
-	        var direction = element.data(SLIDE_DIRECTION);
-	        var directionClass = direction == 'next' ? 'left' : 'right';
-	        var removeClassFn = removeClass.bind(this, element,
-	          directionClass + ' ' + direction, done);
-	        element.addClass(direction);
-	
-	        if ($animateCss) {
-	          $animateCss(element, {addClass: directionClass})
-	            .start()
-	            .done(removeClassFn);
-	        } else {
-	          $animate.addClass(element, directionClass).then(function () {
-	            if (!stopped) {
-	              removeClassFn();
-	            }
-	            done();
-	          });
-	        }
-	
-	        return function () {
-	          stopped = true;
-	        };
-	      }
-	      done();
-	    },
-	    beforeRemoveClass: function (element, className, done) {
-	      // Due to transclusion, noTransition property is on parent's scope
-	      if (className === 'active' && element.parent() &&
-	          !element.parent().data(NO_TRANSITION)) {
-	        var stopped = false;
-	        var direction = element.data(SLIDE_DIRECTION);
-	        var directionClass = direction == 'next' ? 'left' : 'right';
-	        var removeClassFn = removeClass.bind(this, element, directionClass, done);
-	
-	        if ($animateCss) {
-	          $animateCss(element, {addClass: directionClass})
-	            .start()
-	            .done(removeClassFn);
-	        } else {
-	          $animate.addClass(element, directionClass).then(function () {
-	            if (!stopped) {
-	              removeClassFn();
-	            }
-	            done();
-	          });
-	        }
-	        return function () {
-	          stopped = true;
-	        };
-	      }
-	      done();
-	    }
-	  };
-	
-	}])
-	
-	
-	;
-	
-	angular.module('ui.bootstrap.dateparser', [])
-	
-	.service('dateParser', ['$log', '$locale', 'orderByFilter', function($log, $locale, orderByFilter) {
-	  // Pulled from https://github.com/mbostock/d3/blob/master/src/format/requote.js
-	  var SPECIAL_CHARACTERS_REGEXP = /[\\\^\$\*\+\?\|\[\]\(\)\.\{\}]/g;
-	
-	  this.parsers = {};
-	
-	  var formatCodeToRegex = {
-	    'yyyy': {
-	      regex: '\\d{4}',
-	      apply: function(value) { this.year = +value; }
-	    },
-	    'yy': {
-	      regex: '\\d{2}',
-	      apply: function(value) { this.year = +value + 2000; }
-	    },
-	    'y': {
-	      regex: '\\d{1,4}',
-	      apply: function(value) { this.year = +value; }
-	    },
-	    'MMMM': {
-	      regex: $locale.DATETIME_FORMATS.MONTH.join('|'),
-	      apply: function(value) { this.month = $locale.DATETIME_FORMATS.MONTH.indexOf(value); }
-	    },
-	    'MMM': {
-	      regex: $locale.DATETIME_FORMATS.SHORTMONTH.join('|'),
-	      apply: function(value) { this.month = $locale.DATETIME_FORMATS.SHORTMONTH.indexOf(value); }
-	    },
-	    'MM': {
-	      regex: '0[1-9]|1[0-2]',
-	      apply: function(value) { this.month = value - 1; }
-	    },
-	    'M': {
-	      regex: '[1-9]|1[0-2]',
-	      apply: function(value) { this.month = value - 1; }
-	    },
-	    'dd': {
-	      regex: '[0-2][0-9]{1}|3[0-1]{1}',
-	      apply: function(value) { this.date = +value; }
-	    },
-	    'd': {
-	      regex: '[1-2]?[0-9]{1}|3[0-1]{1}',
-	      apply: function(value) { this.date = +value; }
-	    },
-	    'EEEE': {
-	      regex: $locale.DATETIME_FORMATS.DAY.join('|')
-	    },
-	    'EEE': {
-	      regex: $locale.DATETIME_FORMATS.SHORTDAY.join('|')
-	    },
-	    'HH': {
-	      regex: '(?:0|1)[0-9]|2[0-3]',
-	      apply: function(value) { this.hours = +value; }
-	    },
-	    'hh': {
-	      regex: '0[0-9]|1[0-2]',
-	      apply: function(value) { this.hours = +value; }
-	    },
-	    'H': {
-	      regex: '1?[0-9]|2[0-3]',
-	      apply: function(value) { this.hours = +value; }
-	    },
-	    'mm': {
-	      regex: '[0-5][0-9]',
-	      apply: function(value) { this.minutes = +value; }
-	    },
-	    'm': {
-	      regex: '[0-9]|[1-5][0-9]',
-	      apply: function(value) { this.minutes = +value; }
-	    },
-	    'sss': {
-	      regex: '[0-9][0-9][0-9]',
-	      apply: function(value) { this.milliseconds = +value; }
-	    },
-	    'ss': {
-	      regex: '[0-5][0-9]',
-	      apply: function(value) { this.seconds = +value; }
-	    },
-	    's': {
-	      regex: '[0-9]|[1-5][0-9]',
-	      apply: function(value) { this.seconds = +value; }
-	    },
-	    'a': {
-	      regex: $locale.DATETIME_FORMATS.AMPMS.join('|'),
-	      apply: function(value) {
-	        if (this.hours === 12) {
-	          this.hours = 0;
-	        }
-	
-	        if (value === 'PM') {
-	          this.hours += 12;
-	        }
-	      }
-	    }
-	  };
-	
-	  function createParser(format) {
-	    var map = [], regex = format.split('');
-	
-	    angular.forEach(formatCodeToRegex, function(data, code) {
-	      var index = format.indexOf(code);
-	
-	      if (index > -1) {
-	        format = format.split('');
-	
-	        regex[index] = '(' + data.regex + ')';
-	        format[index] = '$'; // Custom symbol to define consumed part of format
-	        for (var i = index + 1, n = index + code.length; i < n; i++) {
-	          regex[i] = '';
-	          format[i] = '$';
-	        }
-	        format = format.join('');
-	
-	        map.push({ index: index, apply: data.apply });
-	      }
-	    });
-	
-	    return {
-	      regex: new RegExp('^' + regex.join('') + '$'),
-	      map: orderByFilter(map, 'index')
-	    };
-	  }
-	
-	  this.parse = function(input, format, baseDate) {
-	    if ( !angular.isString(input) || !format ) {
-	      return input;
-	    }
-	
-	    format = $locale.DATETIME_FORMATS[format] || format;
-	    format = format.replace(SPECIAL_CHARACTERS_REGEXP, '\\$&');
-	
-	    if ( !this.parsers[format] ) {
-	      this.parsers[format] = createParser(format);
-	    }
-	
-	    var parser = this.parsers[format],
-	        regex = parser.regex,
-	        map = parser.map,
-	        results = input.match(regex);
-	
-	    if ( results && results.length ) {
-	      var fields, dt;
-	      if (angular.isDate(baseDate) && !isNaN(baseDate.getTime())) {
-	        fields = {
-	          year: baseDate.getFullYear(),
-	          month: baseDate.getMonth(),
-	          date: baseDate.getDate(),
-	          hours: baseDate.getHours(),
-	          minutes: baseDate.getMinutes(),
-	          seconds: baseDate.getSeconds(),
-	          milliseconds: baseDate.getMilliseconds()
-	        };
-	      } else {
-	        if (baseDate) {
-	          $log.warn('dateparser:', 'baseDate is not a valid date');
-	        }
-	        fields = { year: 1900, month: 0, date: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0 };
-	      }
-	
-	      for( var i = 1, n = results.length; i < n; i++ ) {
-	        var mapper = map[i-1];
-	        if ( mapper.apply ) {
-	          mapper.apply.call(fields, results[i]);
-	        }
-	      }
-	
-	      if ( isValid(fields.year, fields.month, fields.date) ) {
-	        dt = new Date(fields.year, fields.month, fields.date, fields.hours, fields.minutes, fields.seconds,
-	          fields.milliseconds || 0);
-	      }
-	
-	      return dt;
-	    }
-	  };
-	
-	  // Check if date is valid for specific month (and year for February).
-	  // Month: 0 = Jan, 1 = Feb, etc
-	  function isValid(year, month, date) {
-	    if (date < 1) {
-	      return false;
-	    }
-	
-	    if ( month === 1 && date > 28) {
-	        return date === 29 && ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0);
-	    }
-	
-	    if ( month === 3 || month === 5 || month === 8 || month === 10) {
-	        return date < 31;
-	    }
-	
-	    return true;
-	  }
-	}]);
-	
-	angular.module('ui.bootstrap.position', [])
-	
-	/**
-	 * A set of utility methods that can be use to retrieve position of DOM elements.
-	 * It is meant to be used where we need to absolute-position DOM elements in
-	 * relation to other, existing elements (this is the case for tooltips, popovers,
-	 * typeahead suggestions etc.).
-	 */
-	  .factory('$position', ['$document', '$window', function ($document, $window) {
-	
-	    function getStyle(el, cssprop) {
-	      if (el.currentStyle) { //IE
-	        return el.currentStyle[cssprop];
-	      } else if ($window.getComputedStyle) {
-	        return $window.getComputedStyle(el)[cssprop];
-	      }
-	      // finally try and get inline style
-	      return el.style[cssprop];
-	    }
-	
-	    /**
-	     * Checks if a given element is statically positioned
-	     * @param element - raw DOM element
-	     */
-	    function isStaticPositioned(element) {
-	      return (getStyle(element, 'position') || 'static' ) === 'static';
-	    }
-	
-	    /**
-	     * returns the closest, non-statically positioned parentOffset of a given element
-	     * @param element
-	     */
-	    var parentOffsetEl = function (element) {
-	      var docDomEl = $document[0];
-	      var offsetParent = element.offsetParent || docDomEl;
-	      while (offsetParent && offsetParent !== docDomEl && isStaticPositioned(offsetParent) ) {
-	        offsetParent = offsetParent.offsetParent;
-	      }
-	      return offsetParent || docDomEl;
-	    };
-	
-	    return {
-	      /**
-	       * Provides read-only equivalent of jQuery's position function:
-	       * http://api.jquery.com/position/
-	       */
-	      position: function (element) {
-	        var elBCR = this.offset(element);
-	        var offsetParentBCR = { top: 0, left: 0 };
-	        var offsetParentEl = parentOffsetEl(element[0]);
-	        if (offsetParentEl != $document[0]) {
-	          offsetParentBCR = this.offset(angular.element(offsetParentEl));
-	          offsetParentBCR.top += offsetParentEl.clientTop - offsetParentEl.scrollTop;
-	          offsetParentBCR.left += offsetParentEl.clientLeft - offsetParentEl.scrollLeft;
-	        }
-	
-	        var boundingClientRect = element[0].getBoundingClientRect();
-	        return {
-	          width: boundingClientRect.width || element.prop('offsetWidth'),
-	          height: boundingClientRect.height || element.prop('offsetHeight'),
-	          top: elBCR.top - offsetParentBCR.top,
-	          left: elBCR.left - offsetParentBCR.left
-	        };
-	      },
-	
-	      /**
-	       * Provides read-only equivalent of jQuery's offset function:
-	       * http://api.jquery.com/offset/
-	       */
-	      offset: function (element) {
-	        var boundingClientRect = element[0].getBoundingClientRect();
-	        return {
-	          width: boundingClientRect.width || element.prop('offsetWidth'),
-	          height: boundingClientRect.height || element.prop('offsetHeight'),
-	          top: boundingClientRect.top + ($window.pageYOffset || $document[0].documentElement.scrollTop),
-	          left: boundingClientRect.left + ($window.pageXOffset || $document[0].documentElement.scrollLeft)
-	        };
-	      },
-	
-	      /**
-	       * Provides coordinates for the targetEl in relation to hostEl
-	       */
-	      positionElements: function (hostEl, targetEl, positionStr, appendToBody) {
-	
-	        var positionStrParts = positionStr.split('-');
-	        var pos0 = positionStrParts[0], pos1 = positionStrParts[1] || 'center';
-	
-	        var hostElPos,
-	          targetElWidth,
-	          targetElHeight,
-	          targetElPos;
-	
-	        hostElPos = appendToBody ? this.offset(hostEl) : this.position(hostEl);
-	
-	        targetElWidth = targetEl.prop('offsetWidth');
-	        targetElHeight = targetEl.prop('offsetHeight');
-	
-	        var shiftWidth = {
-	          center: function () {
-	            return hostElPos.left + hostElPos.width / 2 - targetElWidth / 2;
-	          },
-	          left: function () {
-	            return hostElPos.left;
-	          },
-	          right: function () {
-	            return hostElPos.left + hostElPos.width;
-	          }
-	        };
-	
-	        var shiftHeight = {
-	          center: function () {
-	            return hostElPos.top + hostElPos.height / 2 - targetElHeight / 2;
-	          },
-	          top: function () {
-	            return hostElPos.top;
-	          },
-	          bottom: function () {
-	            return hostElPos.top + hostElPos.height;
-	          }
-	        };
-	
-	        switch (pos0) {
-	          case 'right':
-	            targetElPos = {
-	              top: shiftHeight[pos1](),
-	              left: shiftWidth[pos0]()
-	            };
-	            break;
-	          case 'left':
-	            targetElPos = {
-	              top: shiftHeight[pos1](),
-	              left: hostElPos.left - targetElWidth
-	            };
-	            break;
-	          case 'bottom':
-	            targetElPos = {
-	              top: shiftHeight[pos0](),
-	              left: shiftWidth[pos1]()
-	            };
-	            break;
-	          default:
-	            targetElPos = {
-	              top: hostElPos.top - targetElHeight,
-	              left: shiftWidth[pos1]()
-	            };
-	            break;
-	        }
-	
-	        return targetElPos;
-	      }
-	    };
-	  }]);
-	
-	angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootstrap.position'])
-	
-	.value('$datepickerSuppressError', false)
-	
-	.constant('datepickerConfig', {
-	  formatDay: 'dd',
-	  formatMonth: 'MMMM',
-	  formatYear: 'yyyy',
-	  formatDayHeader: 'EEE',
-	  formatDayTitle: 'MMMM yyyy',
-	  formatMonthTitle: 'yyyy',
-	  datepickerMode: 'day',
-	  minMode: 'day',
-	  maxMode: 'year',
-	  showWeeks: true,
-	  startingDay: 0,
-	  yearRange: 20,
-	  minDate: null,
-	  maxDate: null,
-	  shortcutPropagation: false
-	})
-	
-	.controller('DatepickerController', ['$scope', '$attrs', '$parse', '$interpolate', '$log', 'dateFilter', 'datepickerConfig', '$datepickerSuppressError', function($scope, $attrs, $parse, $interpolate, $log, dateFilter, datepickerConfig, $datepickerSuppressError) {
-	  var self = this,
-	      ngModelCtrl = { $setViewValue: angular.noop }; // nullModelCtrl;
-	
-	  // Modes chain
-	  this.modes = ['day', 'month', 'year'];
-	
-	  // Configuration attributes
-	  angular.forEach(['formatDay', 'formatMonth', 'formatYear', 'formatDayHeader', 'formatDayTitle', 'formatMonthTitle',
-	                   'showWeeks', 'startingDay', 'yearRange', 'shortcutPropagation'], function( key, index ) {
-	    self[key] = angular.isDefined($attrs[key]) ? (index < 6 ? $interpolate($attrs[key])($scope.$parent) : $scope.$parent.$eval($attrs[key])) : datepickerConfig[key];
-	  });
-	
-	  // Watchable date attributes
-	  angular.forEach(['minDate', 'maxDate'], function( key ) {
-	    if ( $attrs[key] ) {
-	      $scope.$parent.$watch($parse($attrs[key]), function(value) {
-	        self[key] = value ? new Date(value) : null;
-	        self.refreshView();
-	      });
-	    } else {
-	      self[key] = datepickerConfig[key] ? new Date(datepickerConfig[key]) : null;
-	    }
-	  });
-	
-	  angular.forEach(['minMode', 'maxMode'], function( key ) {
-	    if ( $attrs[key] ) {
-	      $scope.$parent.$watch($parse($attrs[key]), function(value) {
-	        self[key] = angular.isDefined(value) ? value : $attrs[key];
-	        $scope[key] = self[key];
-	        if ((key == 'minMode' && self.modes.indexOf( $scope.datepickerMode ) < self.modes.indexOf( self[key] )) || (key == 'maxMode' && self.modes.indexOf( $scope.datepickerMode ) > self.modes.indexOf( self[key] ))) {
-	          $scope.datepickerMode = self[key];
-	        }
-	      });
-	    } else {
-	      self[key] = datepickerConfig[key] || null;
-	      $scope[key] = self[key];
-	    }
-	  });
-	
-	  $scope.datepickerMode = $scope.datepickerMode || datepickerConfig.datepickerMode;
-	  $scope.uniqueId = 'datepicker-' + $scope.$id + '-' + Math.floor(Math.random() * 10000);
-	
-	  if(angular.isDefined($attrs.initDate)) {
-	    this.activeDate = $scope.$parent.$eval($attrs.initDate) || new Date();
-	    $scope.$parent.$watch($attrs.initDate, function(initDate){
-	      if(initDate && (ngModelCtrl.$isEmpty(ngModelCtrl.$modelValue) || ngModelCtrl.$invalid)){
-	        self.activeDate = initDate;
-	        self.refreshView();
-	      }
-	    });
-	  } else {
-	    this.activeDate =  new Date();
-	  }
-	
-	  $scope.isActive = function(dateObject) {
-	    if (self.compare(dateObject.date, self.activeDate) === 0) {
-	      $scope.activeDateId = dateObject.uid;
-	      return true;
-	    }
-	    return false;
-	  };
-	
-	  this.init = function( ngModelCtrl_ ) {
-	    ngModelCtrl = ngModelCtrl_;
-	
-	    ngModelCtrl.$render = function() {
-	      self.render();
-	    };
-	  };
-	
-	  this.render = function() {
-	    if ( ngModelCtrl.$viewValue ) {
-	      var date = new Date( ngModelCtrl.$viewValue ),
-	          isValid = !isNaN(date);
-	
-	      if ( isValid ) {
-	        this.activeDate = date;
-	      } else if ( !$datepickerSuppressError ) {
-	        $log.error('Datepicker directive: "ng-model" value must be a Date object, a number of milliseconds since 01.01.1970 or a string representing an RFC2822 or ISO 8601 date.');
-	      }
-	    }
-	    this.refreshView();
-	  };
-	
-	  this.refreshView = function() {
-	    if ( this.element ) {
-	      this._refreshView();
-	
-	      var date = ngModelCtrl.$viewValue ? new Date(ngModelCtrl.$viewValue) : null;
-	      ngModelCtrl.$setValidity('dateDisabled', !date || (this.element && !this.isDisabled(date)));
-	    }
-	  };
-	
-	  this.createDateObject = function(date, format) {
-	    var model = ngModelCtrl.$viewValue ? new Date(ngModelCtrl.$viewValue) : null;
-	    return {
-	      date: date,
-	      label: dateFilter(date, format),
-	      selected: model && this.compare(date, model) === 0,
-	      disabled: this.isDisabled(date),
-	      current: this.compare(date, new Date()) === 0,
-	      customClass: this.customClass(date)
-	    };
-	  };
-	
-	  this.isDisabled = function( date ) {
-	    return ((this.minDate && this.compare(date, this.minDate) < 0) || (this.maxDate && this.compare(date, this.maxDate) > 0) || ($attrs.dateDisabled && $scope.dateDisabled({date: date, mode: $scope.datepickerMode})));
-	  };
-	
-	  this.customClass = function( date ) {
-	    return $scope.customClass({date: date, mode: $scope.datepickerMode});
-	  };
-	
-	  // Split array into smaller arrays
-	  this.split = function(arr, size) {
-	    var arrays = [];
-	    while (arr.length > 0) {
-	      arrays.push(arr.splice(0, size));
-	    }
-	    return arrays;
-	  };
-	
-	  // Fix a hard-reprodusible bug with timezones
-	  // The bug depends on OS, browser, current timezone and current date
-	  // i.e.
-	  // var date = new Date(2014, 0, 1);
-	  // console.log(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours());
-	  // can result in "2013 11 31 23" because of the bug.
-	  this.fixTimeZone = function(date) {
-	    var hours = date.getHours();
-	    date.setHours(hours === 23 ? hours + 2 : 0);
-	  };
-	
-	  $scope.select = function( date ) {
-	    if ( $scope.datepickerMode === self.minMode ) {
-	      var dt = ngModelCtrl.$viewValue ? new Date( ngModelCtrl.$viewValue ) : new Date(0, 0, 0, 0, 0, 0, 0);
-	      dt.setFullYear( date.getFullYear(), date.getMonth(), date.getDate() );
-	      ngModelCtrl.$setViewValue( dt );
-	      ngModelCtrl.$render();
-	    } else {
-	      self.activeDate = date;
-	      $scope.datepickerMode = self.modes[ self.modes.indexOf( $scope.datepickerMode ) - 1 ];
-	    }
-	  };
-	
-	  $scope.move = function( direction ) {
-	    var year = self.activeDate.getFullYear() + direction * (self.step.years || 0),
-	        month = self.activeDate.getMonth() + direction * (self.step.months || 0);
-	    self.activeDate.setFullYear(year, month, 1);
-	    self.refreshView();
-	  };
-	
-	  $scope.toggleMode = function( direction ) {
-	    direction = direction || 1;
-	
-	    if (($scope.datepickerMode === self.maxMode && direction === 1) || ($scope.datepickerMode === self.minMode && direction === -1)) {
-	      return;
-	    }
-	
-	    $scope.datepickerMode = self.modes[ self.modes.indexOf( $scope.datepickerMode ) + direction ];
-	  };
-	
-	  // Key event mapper
-	  $scope.keys = { 13:'enter', 32:'space', 33:'pageup', 34:'pagedown', 35:'end', 36:'home', 37:'left', 38:'up', 39:'right', 40:'down' };
-	
-	  var focusElement = function() {
-	    self.element[0].focus();
-	  };
-	
-	  // Listen for focus requests from popup directive
-	  $scope.$on('datepicker.focus', focusElement);
-	
-	  $scope.keydown = function( evt ) {
-	    var key = $scope.keys[evt.which];
-	
-	    if ( !key || evt.shiftKey || evt.altKey ) {
-	      return;
-	    }
-	
-	    evt.preventDefault();
-	    if(!self.shortcutPropagation){
-	        evt.stopPropagation();
-	    }
-	
-	    if (key === 'enter' || key === 'space') {
-	      if ( self.isDisabled(self.activeDate)) {
-	        return; // do nothing
-	      }
-	      $scope.select(self.activeDate);
-	      focusElement();
-	    } else if (evt.ctrlKey && (key === 'up' || key === 'down')) {
-	      $scope.toggleMode(key === 'up' ? 1 : -1);
-	      focusElement();
-	    } else {
-	      self.handleKeyDown(key, evt);
-	      self.refreshView();
-	    }
-	  };
-	}])
-	
-	.directive( 'datepicker', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/datepicker/datepicker.html';
-	    },
-	    scope: {
-	      datepickerMode: '=?',
-	      dateDisabled: '&',
-	      customClass: '&',
-	      shortcutPropagation: '&?'
-	    },
-	    require: ['datepicker', '^ngModel'],
-	    controller: 'DatepickerController',
-	    controllerAs: 'datepicker',
-	    link: function(scope, element, attrs, ctrls) {
-	      var datepickerCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-	
-	      datepickerCtrl.init(ngModelCtrl);
-	    }
-	  };
-	})
-	
-	.directive('daypicker', ['dateFilter', function (dateFilter) {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    templateUrl: 'template/datepicker/day.html',
-	    require: '^datepicker',
-	    link: function(scope, element, attrs, ctrl) {
-	      scope.showWeeks = ctrl.showWeeks;
-	
-	      ctrl.step = { months: 1 };
-	      ctrl.element = element;
-	
-	      var DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-	      function getDaysInMonth( year, month ) {
-	        return ((month === 1) && (year % 4 === 0) && ((year % 100 !== 0) || (year % 400 === 0))) ? 29 : DAYS_IN_MONTH[month];
-	      }
-	
-	      function getDates(startDate, n) {
-	        var dates = new Array(n), current = new Date(startDate), i = 0, date;
-	        while ( i < n ) {
-	          date = new Date(current);
-	          ctrl.fixTimeZone(date);
-	          dates[i++] = date;
-	          current.setDate( current.getDate() + 1 );
-	        }
-	        return dates;
-	      }
-	
-	      ctrl._refreshView = function() {
-	        var year = ctrl.activeDate.getFullYear(),
-	          month = ctrl.activeDate.getMonth(),
-	          firstDayOfMonth = new Date(year, month, 1),
-	          difference = ctrl.startingDay - firstDayOfMonth.getDay(),
-	          numDisplayedFromPreviousMonth = (difference > 0) ? 7 - difference : - difference,
-	          firstDate = new Date(firstDayOfMonth);
-	
-	        if ( numDisplayedFromPreviousMonth > 0 ) {
-	          firstDate.setDate( - numDisplayedFromPreviousMonth + 1 );
-	        }
-	
-	        // 42 is the number of days on a six-month calendar
-	        var days = getDates(firstDate, 42);
-	        for (var i = 0; i < 42; i ++) {
-	          days[i] = angular.extend(ctrl.createDateObject(days[i], ctrl.formatDay), {
-	            secondary: days[i].getMonth() !== month,
-	            uid: scope.uniqueId + '-' + i
-	          });
-	        }
-	
-	        scope.labels = new Array(7);
-	        for (var j = 0; j < 7; j++) {
-	          scope.labels[j] = {
-	            abbr: dateFilter(days[j].date, ctrl.formatDayHeader),
-	            full: dateFilter(days[j].date, 'EEEE')
-	          };
-	        }
-	
-	        scope.title = dateFilter(ctrl.activeDate, ctrl.formatDayTitle);
-	        scope.rows = ctrl.split(days, 7);
-	
-	        if ( scope.showWeeks ) {
-	          scope.weekNumbers = [];
-	          var thursdayIndex = (4 + 7 - ctrl.startingDay) % 7,
-	              numWeeks = scope.rows.length;
-	          for (var curWeek = 0; curWeek < numWeeks; curWeek++) {
-	            scope.weekNumbers.push(
-	              getISO8601WeekNumber( scope.rows[curWeek][thursdayIndex].date ));
-	          }
-	        }
-	      };
-	
-	      ctrl.compare = function(date1, date2) {
-	        return (new Date( date1.getFullYear(), date1.getMonth(), date1.getDate() ) - new Date( date2.getFullYear(), date2.getMonth(), date2.getDate() ) );
-	      };
-	
-	      function getISO8601WeekNumber(date) {
-	        var checkDate = new Date(date);
-	        checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7)); // Thursday
-	        var time = checkDate.getTime();
-	        checkDate.setMonth(0); // Compare with Jan 1
-	        checkDate.setDate(1);
-	        return Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
-	      }
-	
-	      ctrl.handleKeyDown = function( key, evt ) {
-	        var date = ctrl.activeDate.getDate();
-	
-	        if (key === 'left') {
-	          date = date - 1;   // up
-	        } else if (key === 'up') {
-	          date = date - 7;   // down
-	        } else if (key === 'right') {
-	          date = date + 1;   // down
-	        } else if (key === 'down') {
-	          date = date + 7;
-	        } else if (key === 'pageup' || key === 'pagedown') {
-	          var month = ctrl.activeDate.getMonth() + (key === 'pageup' ? - 1 : 1);
-	          ctrl.activeDate.setMonth(month, 1);
-	          date = Math.min(getDaysInMonth(ctrl.activeDate.getFullYear(), ctrl.activeDate.getMonth()), date);
-	        } else if (key === 'home') {
-	          date = 1;
-	        } else if (key === 'end') {
-	          date = getDaysInMonth(ctrl.activeDate.getFullYear(), ctrl.activeDate.getMonth());
-	        }
-	        ctrl.activeDate.setDate(date);
-	      };
-	
-	      ctrl.refreshView();
-	    }
-	  };
-	}])
-	
-	.directive('monthpicker', ['dateFilter', function (dateFilter) {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    templateUrl: 'template/datepicker/month.html',
-	    require: '^datepicker',
-	    link: function(scope, element, attrs, ctrl) {
-	      ctrl.step = { years: 1 };
-	      ctrl.element = element;
-	
-	      ctrl._refreshView = function() {
-	        var months = new Array(12),
-	            year = ctrl.activeDate.getFullYear(),
-	            date;
-	
-	        for ( var i = 0; i < 12; i++ ) {
-	          date = new Date(year, i, 1);
-	          ctrl.fixTimeZone(date);
-	          months[i] = angular.extend(ctrl.createDateObject(date, ctrl.formatMonth), {
-	            uid: scope.uniqueId + '-' + i
-	          });
-	        }
-	
-	        scope.title = dateFilter(ctrl.activeDate, ctrl.formatMonthTitle);
-	        scope.rows = ctrl.split(months, 3);
-	      };
-	
-	      ctrl.compare = function(date1, date2) {
-	        return new Date( date1.getFullYear(), date1.getMonth() ) - new Date( date2.getFullYear(), date2.getMonth() );
-	      };
-	
-	      ctrl.handleKeyDown = function( key, evt ) {
-	        var date = ctrl.activeDate.getMonth();
-	
-	        if (key === 'left') {
-	          date = date - 1;   // up
-	        } else if (key === 'up') {
-	          date = date - 3;   // down
-	        } else if (key === 'right') {
-	          date = date + 1;   // down
-	        } else if (key === 'down') {
-	          date = date + 3;
-	        } else if (key === 'pageup' || key === 'pagedown') {
-	          var year = ctrl.activeDate.getFullYear() + (key === 'pageup' ? - 1 : 1);
-	          ctrl.activeDate.setFullYear(year);
-	        } else if (key === 'home') {
-	          date = 0;
-	        } else if (key === 'end') {
-	          date = 11;
-	        }
-	        ctrl.activeDate.setMonth(date);
-	      };
-	
-	      ctrl.refreshView();
-	    }
-	  };
-	}])
-	
-	.directive('yearpicker', ['dateFilter', function (dateFilter) {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    templateUrl: 'template/datepicker/year.html',
-	    require: '^datepicker',
-	    link: function(scope, element, attrs, ctrl) {
-	      var range = ctrl.yearRange;
-	
-	      ctrl.step = { years: range };
-	      ctrl.element = element;
-	
-	      function getStartingYear( year ) {
-	        return parseInt((year - 1) / range, 10) * range + 1;
-	      }
-	
-	      ctrl._refreshView = function() {
-	        var years = new Array(range), date;
-	
-	        for ( var i = 0, start = getStartingYear(ctrl.activeDate.getFullYear()); i < range; i++ ) {
-	          date = new Date(start + i, 0, 1);
-	          ctrl.fixTimeZone(date);
-	          years[i] = angular.extend(ctrl.createDateObject(date, ctrl.formatYear), {
-	            uid: scope.uniqueId + '-' + i
-	          });
-	        }
-	
-	        scope.title = [years[0].label, years[range - 1].label].join(' - ');
-	        scope.rows = ctrl.split(years, 5);
-	      };
-	
-	      ctrl.compare = function(date1, date2) {
-	        return date1.getFullYear() - date2.getFullYear();
-	      };
-	
-	      ctrl.handleKeyDown = function( key, evt ) {
-	        var date = ctrl.activeDate.getFullYear();
-	
-	        if (key === 'left') {
-	          date = date - 1;   // up
-	        } else if (key === 'up') {
-	          date = date - 5;   // down
-	        } else if (key === 'right') {
-	          date = date + 1;   // down
-	        } else if (key === 'down') {
-	          date = date + 5;
-	        } else if (key === 'pageup' || key === 'pagedown') {
-	          date += (key === 'pageup' ? - 1 : 1) * ctrl.step.years;
-	        } else if (key === 'home') {
-	          date = getStartingYear( ctrl.activeDate.getFullYear() );
-	        } else if (key === 'end') {
-	          date = getStartingYear( ctrl.activeDate.getFullYear() ) + range - 1;
-	        }
-	        ctrl.activeDate.setFullYear(date);
-	      };
-	
-	      ctrl.refreshView();
-	    }
-	  };
-	}])
-	
-	.constant('datepickerPopupConfig', {
-	  datepickerPopup: 'yyyy-MM-dd',
-	  datepickerPopupTemplateUrl: 'template/datepicker/popup.html',
-	  datepickerTemplateUrl: 'template/datepicker/datepicker.html',
-	  html5Types: {
-	    date: 'yyyy-MM-dd',
-	    'datetime-local': 'yyyy-MM-ddTHH:mm:ss.sss',
-	    'month': 'yyyy-MM'
-	  },
-	  currentText: 'Today',
-	  clearText: 'Clear',
-	  closeText: 'Done',
-	  closeOnDateSelection: true,
-	  appendToBody: false,
-	  showButtonBar: true,
-	  onOpenFocus: true
-	})
-	
-	.directive('datepickerPopup', ['$compile', '$parse', '$document', '$rootScope', '$position', 'dateFilter', 'dateParser', 'datepickerPopupConfig', '$timeout',
-	function ($compile, $parse, $document, $rootScope, $position, dateFilter, dateParser, datepickerPopupConfig, $timeout) {
-	  return {
-	    restrict: 'EA',
-	    require: 'ngModel',
-	    scope: {
-	      isOpen: '=?',
-	      currentText: '@',
-	      clearText: '@',
-	      closeText: '@',
-	      dateDisabled: '&',
-	      customClass: '&'
-	    },
-	    link: function(scope, element, attrs, ngModel) {
-	      var dateFormat,
-	          closeOnDateSelection = angular.isDefined(attrs.closeOnDateSelection) ? scope.$parent.$eval(attrs.closeOnDateSelection) : datepickerPopupConfig.closeOnDateSelection,
-	          appendToBody = angular.isDefined(attrs.datepickerAppendToBody) ? scope.$parent.$eval(attrs.datepickerAppendToBody) : datepickerPopupConfig.appendToBody,
-	          onOpenFocus = angular.isDefined(attrs.onOpenFocus) ? scope.$parent.$eval(attrs.onOpenFocus) : datepickerPopupConfig.onOpenFocus,
-	          datepickerPopupTemplateUrl = angular.isDefined(attrs.datepickerPopupTemplateUrl) ? attrs.datepickerPopupTemplateUrl : datepickerPopupConfig.datepickerPopupTemplateUrl,
-	          datepickerTemplateUrl = angular.isDefined(attrs.datepickerTemplateUrl) ? attrs.datepickerTemplateUrl : datepickerPopupConfig.datepickerTemplateUrl;
-	
-	      scope.showButtonBar = angular.isDefined(attrs.showButtonBar) ? scope.$parent.$eval(attrs.showButtonBar) : datepickerPopupConfig.showButtonBar;
-	
-	      scope.getText = function( key ) {
-	        return scope[key + 'Text'] || datepickerPopupConfig[key + 'Text'];
-	      };
-	
-	      var isHtml5DateInput = false;
-	      if (datepickerPopupConfig.html5Types[attrs.type]) {
-	        dateFormat = datepickerPopupConfig.html5Types[attrs.type];
-	        isHtml5DateInput = true;
-	      } else {
-	        dateFormat = attrs.datepickerPopup || datepickerPopupConfig.datepickerPopup;
-	        attrs.$observe('datepickerPopup', function(value, oldValue) {
-	            var newDateFormat = value || datepickerPopupConfig.datepickerPopup;
-	            // Invalidate the $modelValue to ensure that formatters re-run
-	            // FIXME: Refactor when PR is merged: https://github.com/angular/angular.js/pull/10764
-	            if (newDateFormat !== dateFormat) {
-	              dateFormat = newDateFormat;
-	              ngModel.$modelValue = null;
-	
-	              if (!dateFormat) {
-	                throw new Error('datepickerPopup must have a date format specified.');
-	              }
-	            }
-	        });
-	      }
-	
-	      if (!dateFormat) {
-	        throw new Error('datepickerPopup must have a date format specified.');
-	      }
-	
-	      if (isHtml5DateInput && attrs.datepickerPopup) {
-	        throw new Error('HTML5 date input types do not support custom formats.');
-	      }
-	
-	      // popup element used to display calendar
-	      var popupEl = angular.element('<div datepicker-popup-wrap><div datepicker></div></div>');
-	      popupEl.attr({
-	        'ng-model': 'date',
-	        'ng-change': 'dateSelection(date)',
-	        'template-url': datepickerPopupTemplateUrl
-	      });
-	
-	      function cameltoDash( string ){
-	        return string.replace(/([A-Z])/g, function($1) { return '-' + $1.toLowerCase(); });
-	      }
-	
-	      // datepicker element
-	      var datepickerEl = angular.element(popupEl.children()[0]);
-	      datepickerEl.attr('template-url', datepickerTemplateUrl);
-	
-	      if (isHtml5DateInput) {
-	        if (attrs.type == 'month') {
-	          datepickerEl.attr('datepicker-mode', '"month"');
-	          datepickerEl.attr('min-mode', 'month');
-	        }
-	      }
-	
-	      if ( attrs.datepickerOptions ) {
-	        var options = scope.$parent.$eval(attrs.datepickerOptions);
-	        if(options && options.initDate) {
-	          scope.initDate = options.initDate;
-	          datepickerEl.attr( 'init-date', 'initDate' );
-	          delete options.initDate;
-	        }
-	        angular.forEach(options, function( value, option ) {
-	          datepickerEl.attr( cameltoDash(option), value );
-	        });
-	      }
-	
-	      scope.watchData = {};
-	      angular.forEach(['minMode', 'maxMode', 'minDate', 'maxDate', 'datepickerMode', 'initDate', 'shortcutPropagation'], function( key ) {
-	        if ( attrs[key] ) {
-	          var getAttribute = $parse(attrs[key]);
-	          scope.$parent.$watch(getAttribute, function(value){
-	            scope.watchData[key] = value;
-	          });
-	          datepickerEl.attr(cameltoDash(key), 'watchData.' + key);
-	
-	          // Propagate changes from datepicker to outside
-	          if ( key === 'datepickerMode' ) {
-	            var setAttribute = getAttribute.assign;
-	            scope.$watch('watchData.' + key, function(value, oldvalue) {
-	              if ( angular.isFunction(setAttribute) && value !== oldvalue ) {
-	                setAttribute(scope.$parent, value);
-	              }
-	            });
-	          }
-	        }
-	      });
-	      if (attrs.dateDisabled) {
-	        datepickerEl.attr('date-disabled', 'dateDisabled({ date: date, mode: mode })');
-	      }
-	
-	      if (attrs.showWeeks) {
-	        datepickerEl.attr('show-weeks', attrs.showWeeks);
-	      }
-	
-	      if (attrs.customClass){
-	        datepickerEl.attr('custom-class', 'customClass({ date: date, mode: mode })');
-	      }
-	
-	      function parseDate(viewValue) {
-	        if (angular.isNumber(viewValue)) {
-	          // presumably timestamp to date object
-	          viewValue = new Date(viewValue);
-	        }
-	
-	        if (!viewValue) {
-	          return null;
-	        } else if (angular.isDate(viewValue) && !isNaN(viewValue)) {
-	          return viewValue;
-	        } else if (angular.isString(viewValue)) {
-	          var date = dateParser.parse(viewValue, dateFormat, scope.date);
-	          if (isNaN(date)) {
-	            return undefined;
-	          } else {
-	            return date;
-	          }
-	        } else {
-	          return undefined;
-	        }
-	      }
-	
-	      function validator(modelValue, viewValue) {
-	        var value = modelValue || viewValue;
-	
-	        if (!attrs.ngRequired && !value) {
-	          return true;
-	        }
-	
-	        if (angular.isNumber(value)) {
-	          value = new Date(value);
-	        }
-	        if (!value) {
-	          return true;
-	        } else if (angular.isDate(value) && !isNaN(value)) {
-	          return true;
-	        } else if (angular.isString(value)) {
-	          var date = dateParser.parse(value, dateFormat);
-	          return !isNaN(date);
-	        } else {
-	          return false;
-	        }
-	      }
-	
-	      if (!isHtml5DateInput) {
-	        // Internal API to maintain the correct ng-invalid-[key] class
-	        ngModel.$$parserName = 'date';
-	        ngModel.$validators.date = validator;
-	        ngModel.$parsers.unshift(parseDate);
-	        ngModel.$formatters.push(function (value) {
-	          scope.date = value;
-	          return ngModel.$isEmpty(value) ? value : dateFilter(value, dateFormat);
-	        });
-	      }
-	      else {
-	        ngModel.$formatters.push(function (value) {
-	          scope.date = value;
-	          return value;
-	        });
-	      }
-	
-	      // Inner change
-	      scope.dateSelection = function(dt) {
-	        if (angular.isDefined(dt)) {
-	          scope.date = dt;
-	        }
-	        var date = scope.date ? dateFilter(scope.date, dateFormat) : null; // Setting to NULL is necessary for form validators to function
-	        element.val(date);
-	        ngModel.$setViewValue(date);
-	
-	        if ( closeOnDateSelection ) {
-	          scope.isOpen = false;
-	          element[0].focus();
-	        }
-	      };
-	
-	      // Detect changes in the view from the text box
-	      ngModel.$viewChangeListeners.push(function () {
-	        scope.date = dateParser.parse(ngModel.$viewValue, dateFormat, scope.date);
-	      });
-	
-	      var documentClickBind = function(event) {
-	        if (scope.isOpen && !element[0].contains(event.target)) {
-	          scope.$apply(function() {
-	            scope.isOpen = false;
-	          });
-	        }
-	      };
-	
-	      var inputKeydownBind = function(evt) {
-	        if (evt.which === 27 && scope.isOpen) {
-	          evt.preventDefault();
-	          evt.stopPropagation();
-	          scope.$apply(function() {
-	            scope.isOpen = false;
-	          });
-	          element[0].focus();
-	        } else if (evt.which === 40 && !scope.isOpen) {
-	          evt.preventDefault();
-	          evt.stopPropagation();
-	          scope.$apply(function() {
-	            scope.isOpen = true;
-	          });
-	        }
-	      };
-	      element.bind('keydown', inputKeydownBind);
-	
-	      scope.keydown = function(evt) {
-	        if (evt.which === 27) {
-	          scope.isOpen = false;
-	          element[0].focus();
-	        }
-	      };
-	
-	      scope.$watch('isOpen', function(value) {
-	        if (value) {
-	          scope.position = appendToBody ? $position.offset(element) : $position.position(element);
-	          scope.position.top = scope.position.top + element.prop('offsetHeight');
-	
-	          $timeout(function() {
-	            if (onOpenFocus) {
-	              scope.$broadcast('datepicker.focus');
-	            }
-	            $document.bind('click', documentClickBind);
-	          }, 0, false);
-	        } else {
-	          $document.unbind('click', documentClickBind);
-	        }
-	      });
-	
-	      scope.select = function( date ) {
-	        if (date === 'today') {
-	          var today = new Date();
-	          if (angular.isDate(scope.date)) {
-	            date = new Date(scope.date);
-	            date.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
-	          } else {
-	            date = new Date(today.setHours(0, 0, 0, 0));
-	          }
-	        }
-	        scope.dateSelection( date );
-	      };
-	
-	      scope.close = function() {
-	        scope.isOpen = false;
-	        element[0].focus();
-	      };
-	
-	      var $popup = $compile(popupEl)(scope);
-	      // Prevent jQuery cache memory leak (template is now redundant after linking)
-	      popupEl.remove();
-	
-	      if ( appendToBody ) {
-	        $document.find('body').append($popup);
-	      } else {
-	        element.after($popup);
-	      }
-	
-	      scope.$on('$destroy', function() {
-	        if (scope.isOpen === true) {
-	          if (!$rootScope.$$phase) {
-	            scope.$apply(function() {
-	              scope.isOpen = false;
-	            });
-	          }
-	        }
-	
-	        $popup.remove();
-	        element.unbind('keydown', inputKeydownBind);
-	        $document.unbind('click', documentClickBind);
-	      });
-	    }
-	  };
-	}])
-	
-	.directive('datepickerPopupWrap', function() {
-	  return {
-	    restrict:'EA',
-	    replace: true,
-	    transclude: true,
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/datepicker/popup.html';
-	    }
-	  };
-	});
-	
-	angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.position'])
-	
-	.constant('dropdownConfig', {
-	  openClass: 'open'
-	})
-	
-	.service('dropdownService', ['$document', '$rootScope', function($document, $rootScope) {
-	  var openScope = null;
-	
-	  this.open = function( dropdownScope ) {
-	    if ( !openScope ) {
-	      $document.bind('click', closeDropdown);
-	      $document.bind('keydown', keybindFilter);
-	    }
-	
-	    if ( openScope && openScope !== dropdownScope ) {
-	      openScope.isOpen = false;
-	    }
-	
-	    openScope = dropdownScope;
-	  };
-	
-	  this.close = function( dropdownScope ) {
-	    if ( openScope === dropdownScope ) {
-	      openScope = null;
-	      $document.unbind('click', closeDropdown);
-	      $document.unbind('keydown', keybindFilter);
-	    }
-	  };
-	
-	  var closeDropdown = function( evt ) {
-	    // This method may still be called during the same mouse event that
-	    // unbound this event handler. So check openScope before proceeding.
-	    if (!openScope) { return; }
-	
-	    if( evt && openScope.getAutoClose() === 'disabled' )  { return ; }
-	
-	    var toggleElement = openScope.getToggleElement();
-	    if ( evt && toggleElement && toggleElement[0].contains(evt.target) ) {
-	      return;
-	    }
-	
-	    var dropdownElement = openScope.getDropdownElement();
-	    if (evt && openScope.getAutoClose() === 'outsideClick' &&
-	      dropdownElement && dropdownElement[0].contains(evt.target)) {
-	      return;
-	    }
-	
-	    openScope.isOpen = false;
-	
-	    if (!$rootScope.$$phase) {
-	      openScope.$apply();
-	    }
-	  };
-	
-	  var keybindFilter = function( evt ) {
-	    if ( evt.which === 27 ) {
-	      openScope.focusToggleElement();
-	      closeDropdown();
-	    }
-	    else if ( openScope.isKeynavEnabled() && /(38|40)/.test(evt.which) && openScope.isOpen ) {
-	      evt.preventDefault();
-	      evt.stopPropagation();
-	      openScope.focusDropdownEntry(evt.which);
-	    }
-	  };
-	}])
-	
-	.controller('DropdownController', ['$scope', '$attrs', '$parse', 'dropdownConfig', 'dropdownService', '$animate', '$position', '$document', '$compile', '$templateRequest', function($scope, $attrs, $parse, dropdownConfig, dropdownService, $animate, $position, $document, $compile, $templateRequest) {
-	  var self = this,
-	    scope = $scope.$new(), // create a child scope so we are not polluting original one
-		templateScope,
-	    openClass = dropdownConfig.openClass,
-	    getIsOpen,
-	    setIsOpen = angular.noop,
-	    toggleInvoker = $attrs.onToggle ? $parse($attrs.onToggle) : angular.noop,
-	    appendToBody = false,
-	    keynavEnabled =false,
-	    selectedOption = null;
-	
-	  this.init = function( element ) {
-	    self.$element = element;
-	
-	    if ( $attrs.isOpen ) {
-	      getIsOpen = $parse($attrs.isOpen);
-	      setIsOpen = getIsOpen.assign;
-	
-	      $scope.$watch(getIsOpen, function(value) {
-	        scope.isOpen = !!value;
-	      });
-	    }
-	
-	    appendToBody = angular.isDefined($attrs.dropdownAppendToBody);
-	    keynavEnabled = angular.isDefined($attrs.keyboardNav);
-	
-	    if ( appendToBody && self.dropdownMenu ) {
-	      $document.find('body').append( self.dropdownMenu );
-	      element.on('$destroy', function handleDestroyEvent() {
-	        self.dropdownMenu.remove();
-	      });
-	    }
-	  };
-	
-	  this.toggle = function( open ) {
-	    return scope.isOpen = arguments.length ? !!open : !scope.isOpen;
-	  };
-	
-	  // Allow other directives to watch status
-	  this.isOpen = function() {
-	    return scope.isOpen;
-	  };
-	
-	  scope.getToggleElement = function() {
-	    return self.toggleElement;
-	  };
-	
-	  scope.getAutoClose = function() {
-	    return $attrs.autoClose || 'always'; //or 'outsideClick' or 'disabled'
-	  };
-	
-	  scope.getElement = function() {
-	    return self.$element;
-	  };
-	
-	  scope.isKeynavEnabled = function() {
-	    return keynavEnabled;
-	  };
-	
-	  scope.focusDropdownEntry = function(keyCode) {
-	    var elems = self.dropdownMenu ? //If append to body is used.
-	      (angular.element(self.dropdownMenu).find('a')) :
-	      (angular.element(self.$element).find('ul').eq(0).find('a'));
-	
-	    switch (keyCode) {
-	      case (40): {
-	        if ( !angular.isNumber(self.selectedOption)) {
-	          self.selectedOption = 0;
-	        } else {
-	          self.selectedOption = (self.selectedOption === elems.length -1 ?
-	            self.selectedOption :
-	            self.selectedOption + 1);
-	        }
-	        break;
-	      }
-	      case (38): {
-	        if ( !angular.isNumber(self.selectedOption)) {
-	          return;
-	        } else {
-	          self.selectedOption = (self.selectedOption === 0 ?
-	            0 :
-	            self.selectedOption - 1);
-	        }
-	        break;
-	      }
-	    }
-	    elems[self.selectedOption].focus();
-	  };
-	
-	  scope.getDropdownElement = function() {
-	    return self.dropdownMenu;
-	  };
-	
-	  scope.focusToggleElement = function() {
-	    if ( self.toggleElement ) {
-	      self.toggleElement[0].focus();
-	    }
-	  };
-	
-	  scope.$watch('isOpen', function( isOpen, wasOpen ) {
-	    if (appendToBody && self.dropdownMenu) {
-	        var pos = $position.positionElements(self.$element, self.dropdownMenu, 'bottom-left', true);
-	        var css = {
-	            top: pos.top + 'px',
-	            display: isOpen ? 'block' : 'none'
-	        };
-	
-	        var rightalign = self.dropdownMenu.hasClass('dropdown-menu-right');
-	        if (!rightalign) {
-	            css.left = pos.left + 'px';
-	            css.right = 'auto';
-	        } else {
-	            css.left = 'auto';
-	            css.right = (window.innerWidth - (pos.left + self.$element.prop('offsetWidth'))) + 'px';
-	        }
-	
-	        self.dropdownMenu.css(css);
-	    }
-	
-	    $animate[isOpen ? 'addClass' : 'removeClass'](self.$element, openClass).then(function() {
-	        if (angular.isDefined(isOpen) && isOpen !== wasOpen) {
-	           toggleInvoker($scope, { open: !!isOpen });
-	        }
-	    });
-	
-	    if ( isOpen ) {
-	      if (self.dropdownMenuTemplateUrl) {
-	        $templateRequest(self.dropdownMenuTemplateUrl).then(function(tplContent) {
-	          templateScope = scope.$new();
-	          $compile(tplContent.trim())(templateScope, function(dropdownElement) {
-	            var newEl = dropdownElement;
-	            self.dropdownMenu.replaceWith(newEl);
-	            self.dropdownMenu = newEl;
-	          });
-	        });
-	      }
-	
-	      scope.focusToggleElement();
-	      dropdownService.open( scope );
-	    } else {
-	      if (self.dropdownMenuTemplateUrl) {
-	        if (templateScope) {
-	          templateScope.$destroy();
-	        }
-	        var newEl = angular.element('<ul class="dropdown-menu"></ul>');
-	        self.dropdownMenu.replaceWith(newEl);
-	        self.dropdownMenu = newEl;
-	      }
-	
-	      dropdownService.close( scope );
-	      self.selectedOption = null;
-	    }
-	
-	    if (angular.isFunction(setIsOpen)) {
-	      setIsOpen($scope, isOpen);
-	    }
-	  });
-	
-	  $scope.$on('$locationChangeSuccess', function() {
-	    if (scope.getAutoClose() !== 'disabled') {
-	      scope.isOpen = false;
-	    }
-	  });
-	
-	  $scope.$on('$destroy', function() {
-	    scope.$destroy();
-	  });
-	}])
-	
-	.directive('dropdown', function() {
-	  return {
-	    controller: 'DropdownController',
-	    link: function(scope, element, attrs, dropdownCtrl) {
-	      dropdownCtrl.init( element );
-	      element.addClass('dropdown');
-	    }
-	  };
-	})
-	
-	.directive('dropdownMenu', function() {
-	  return {
-	    restrict: 'AC',
-	    require: '?^dropdown',
-	    link: function(scope, element, attrs, dropdownCtrl) {
-	      if (!dropdownCtrl) {
-	        return;
-	      }
-	      var tplUrl = attrs.templateUrl;
-	      if (tplUrl) {
-	        dropdownCtrl.dropdownMenuTemplateUrl = tplUrl;
-	      }
-	      if (!dropdownCtrl.dropdownMenu) {
-	        dropdownCtrl.dropdownMenu = element;
-	      }
-	    }
-	  };
-	})
-	
-	.directive('keyboardNav', function() {
-	  return {
-	    restrict: 'A',
-	    require: '?^dropdown',
-	    link: function (scope, element, attrs, dropdownCtrl) {
-	
-	      element.bind('keydown', function(e) {
-	
-	        if ([38, 40].indexOf(e.which) !== -1) {
-	
-	          e.preventDefault();
-	          e.stopPropagation();
-	
-	          var elems = dropdownCtrl.dropdownMenu.find('a');
-	
-	          switch (e.which) {
-	            case (40): { // Down
-	              if ( !angular.isNumber(dropdownCtrl.selectedOption)) {
-	                dropdownCtrl.selectedOption = 0;
-	              } else {
-	                dropdownCtrl.selectedOption = (dropdownCtrl.selectedOption === elems.length -1 ? dropdownCtrl.selectedOption : dropdownCtrl.selectedOption+1);
-	              }
-	
-	            }
-	            break;
-	            case (38): { // Up
-	              dropdownCtrl.selectedOption = (dropdownCtrl.selectedOption === 0 ? 0 : dropdownCtrl.selectedOption-1);
-	            }
-	            break;
-	          }
-	          elems[dropdownCtrl.selectedOption].focus();
-	        }
-	      });
-	    }
-	
-	  };
-	})
-	
-	.directive('dropdownToggle', function() {
-	  return {
-	    require: '?^dropdown',
-	    link: function(scope, element, attrs, dropdownCtrl) {
-	      if ( !dropdownCtrl ) {
-	        return;
-	      }
-	
-	      element.addClass('dropdown-toggle');
-	
-	      dropdownCtrl.toggleElement = element;
-	
-	      var toggleDropdown = function(event) {
-	        event.preventDefault();
-	
-	        if ( !element.hasClass('disabled') && !attrs.disabled ) {
-	          scope.$apply(function() {
-	            dropdownCtrl.toggle();
-	          });
-	        }
-	      };
-	
-	      element.bind('click', toggleDropdown);
-	
-	      // WAI-ARIA
-	      element.attr({ 'aria-haspopup': true, 'aria-expanded': false });
-	      scope.$watch(dropdownCtrl.isOpen, function( isOpen ) {
-	        element.attr('aria-expanded', !!isOpen);
-	      });
-	
-	      scope.$on('$destroy', function() {
-	        element.unbind('click', toggleDropdown);
-	      });
-	    }
-	  };
-	});
-	
-	angular.module('ui.bootstrap.modal', [])
-	
-	/**
-	 * A helper, internal data structure that acts as a map but also allows getting / removing
-	 * elements in the LIFO order
-	 */
-	  .factory('$$stackedMap', function () {
-	    return {
-	      createNew: function () {
-	        var stack = [];
-	
-	        return {
-	          add: function (key, value) {
-	            stack.push({
-	              key: key,
-	              value: value
-	            });
-	          },
-	          get: function (key) {
-	            for (var i = 0; i < stack.length; i++) {
-	              if (key == stack[i].key) {
-	                return stack[i];
-	              }
-	            }
-	          },
-	          keys: function() {
-	            var keys = [];
-	            for (var i = 0; i < stack.length; i++) {
-	              keys.push(stack[i].key);
-	            }
-	            return keys;
-	          },
-	          top: function () {
-	            return stack[stack.length - 1];
-	          },
-	          remove: function (key) {
-	            var idx = -1;
-	            for (var i = 0; i < stack.length; i++) {
-	              if (key == stack[i].key) {
-	                idx = i;
-	                break;
-	              }
-	            }
-	            return stack.splice(idx, 1)[0];
-	          },
-	          removeTop: function () {
-	            return stack.splice(stack.length - 1, 1)[0];
-	          },
-	          length: function () {
-	            return stack.length;
-	          }
-	        };
-	      }
-	    };
-	  })
-	
-	/**
-	 * A helper directive for the $modal service. It creates a backdrop element.
-	 */
-	  .directive('modalBackdrop', [
-	           '$animate', '$injector', '$modalStack',
-	  function ($animate ,  $injector,   $modalStack) {
-	    var $animateCss = null;
-	
-	    if ($injector.has('$animateCss')) {
-	      $animateCss = $injector.get('$animateCss');
-	    }
-	
-	    return {
-	      restrict: 'EA',
-	      replace: true,
-	      templateUrl: 'template/modal/backdrop.html',
-	      compile: function (tElement, tAttrs) {
-	        tElement.addClass(tAttrs.backdropClass);
-	        return linkFn;
-	      }
-	    };
-	
-	    function linkFn(scope, element, attrs) {
-	      if (attrs.modalInClass) {
-	        if ($animateCss) {
-	          $animateCss(element, {
-	            addClass: attrs.modalInClass
-	          }).start();
-	        } else {
-	          $animate.addClass(element, attrs.modalInClass);
-	        }
-	
-	        scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
-	          var done = setIsAsync();
-	          if ($animateCss) {
-	            $animateCss(element, {
-	              removeClass: attrs.modalInClass
-	            }).start().then(done);
-	          } else {
-	            $animate.removeClass(element, attrs.modalInClass).then(done);
-	          }
-	        });
-	      }
-	    }
-	  }])
-	
-	  .directive('modalWindow', [
-	           '$modalStack', '$q', '$animate', '$injector',
-	  function ($modalStack ,  $q ,  $animate,   $injector) {
-	    var $animateCss = null;
-	
-	    if ($injector.has('$animateCss')) {
-	      $animateCss = $injector.get('$animateCss');
-	    }
-	
-	    return {
-	      restrict: 'EA',
-	      scope: {
-	        index: '@'
-	      },
-	      replace: true,
-	      transclude: true,
-	      templateUrl: function(tElement, tAttrs) {
-	        return tAttrs.templateUrl || 'template/modal/window.html';
-	      },
-	      link: function (scope, element, attrs) {
-	        element.addClass(attrs.windowClass || '');
-	        scope.size = attrs.size;
-	
-	        scope.close = function (evt) {
-	          var modal = $modalStack.getTop();
-	          if (modal && modal.value.backdrop && modal.value.backdrop != 'static' && (evt.target === evt.currentTarget)) {
-	            evt.preventDefault();
-	            evt.stopPropagation();
-	            $modalStack.dismiss(modal.key, 'backdrop click');
-	          }
-	        };
-	
-	        // This property is only added to the scope for the purpose of detecting when this directive is rendered.
-	        // We can detect that by using this property in the template associated with this directive and then use
-	        // {@link Attribute#$observe} on it. For more details please see {@link TableColumnResize}.
-	        scope.$isRendered = true;
-	
-	        // Deferred object that will be resolved when this modal is render.
-	        var modalRenderDeferObj = $q.defer();
-	        // Observe function will be called on next digest cycle after compilation, ensuring that the DOM is ready.
-	        // In order to use this way of finding whether DOM is ready, we need to observe a scope property used in modal's template.
-	        attrs.$observe('modalRender', function (value) {
-	          if (value == 'true') {
-	            modalRenderDeferObj.resolve();
-	          }
-	        });
-	
-	        modalRenderDeferObj.promise.then(function () {
-	          if (attrs.modalInClass) {
-	            if ($animateCss) {
-	              $animateCss(element, {
-	                addClass: attrs.modalInClass
-	              }).start();
-	            } else {
-	              $animate.addClass(element, attrs.modalInClass);
-	            }
-	
-	            scope.$on($modalStack.NOW_CLOSING_EVENT, function (e, setIsAsync) {
-	              var done = setIsAsync();
-	              if ($animateCss) {
-	                $animateCss(element, {
-	                  removeClass: attrs.modalInClass
-	                }).start().then(done);
-	              } else {
-	                $animate.removeClass(element, attrs.modalInClass).then(done);
-	              }
-	            });
-	          }
-	
-	          var inputsWithAutofocus = element[0].querySelectorAll('[autofocus]');
-	          /**
-	           * Auto-focusing of a freshly-opened modal element causes any child elements
-	           * with the autofocus attribute to lose focus. This is an issue on touch
-	           * based devices which will show and then hide the onscreen keyboard.
-	           * Attempts to refocus the autofocus element via JavaScript will not reopen
-	           * the onscreen keyboard. Fixed by updated the focusing logic to only autofocus
-	           * the modal element if the modal does not contain an autofocus element.
-	           */
-	          if (inputsWithAutofocus.length) {
-	            inputsWithAutofocus[0].focus();
-	          } else {
-	            element[0].focus();
-	          }
-	
-	          // Notify {@link $modalStack} that modal is rendered.
-	          var modal = $modalStack.getTop();
-	          if (modal) {
-	            $modalStack.modalRendered(modal.key);
-	          }
-	        });
-	      }
-	    };
-	  }])
-	
-	  .directive('modalAnimationClass', [
-	    function () {
-	      return {
-	        compile: function (tElement, tAttrs) {
-	          if (tAttrs.modalAnimation) {
-	            tElement.addClass(tAttrs.modalAnimationClass);
-	          }
-	        }
-	      };
-	    }])
-	
-	  .directive('modalTransclude', function () {
-	    return {
-	      link: function($scope, $element, $attrs, controller, $transclude) {
-	        $transclude($scope.$parent, function(clone) {
-	          $element.empty();
-	          $element.append(clone);
-	        });
-	      }
-	    };
-	  })
-	
-	  .factory('$modalStack', [
-	             '$animate', '$timeout', '$document', '$compile', '$rootScope',
-	             '$q',
-	             '$injector',
-	             '$$stackedMap',
-	    function ($animate ,  $timeout ,  $document ,  $compile ,  $rootScope ,
-	              $q,
-	              $injector,
-	              $$stackedMap) {
-	      var $animateCss = null;
-	
-	      if ($injector.has('$animateCss')) {
-	        $animateCss = $injector.get('$animateCss');
-	      }
-	
-	      var OPENED_MODAL_CLASS = 'modal-open';
-	
-	      var backdropDomEl, backdropScope;
-	      var openedWindows = $$stackedMap.createNew();
-	      var $modalStack = {
-	        NOW_CLOSING_EVENT: 'modal.stack.now-closing'
-	      };
-	
-	      //Modal focus behavior
-	      var focusableElementList;
-	      var focusIndex = 0;
-	      var tababbleSelector = 'a[href], area[href], input:not([disabled]), ' +
-	        'button:not([disabled]),select:not([disabled]), textarea:not([disabled]), ' +
-	        'iframe, object, embed, *[tabindex], *[contenteditable=true]';
-	
-	      function backdropIndex() {
-	        var topBackdropIndex = -1;
-	        var opened = openedWindows.keys();
-	        for (var i = 0; i < opened.length; i++) {
-	          if (openedWindows.get(opened[i]).value.backdrop) {
-	            topBackdropIndex = i;
-	          }
-	        }
-	        return topBackdropIndex;
-	      }
-	
-	      $rootScope.$watch(backdropIndex, function(newBackdropIndex) {
-	        if (backdropScope) {
-	          backdropScope.index = newBackdropIndex;
-	        }
-	      });
-	
-	      function removeModalWindow(modalInstance, elementToReceiveFocus) {
-	
-	        var body = $document.find('body').eq(0);
-	        var modalWindow = openedWindows.get(modalInstance).value;
-	
-	        //clean up the stack
-	        openedWindows.remove(modalInstance);
-	
-	        removeAfterAnimate(modalWindow.modalDomEl, modalWindow.modalScope, function() {
-	          body.toggleClass(modalInstance.openedClass || OPENED_MODAL_CLASS, openedWindows.length() > 0);
-	        });
-	        checkRemoveBackdrop();
-	
-	        //move focus to specified element if available, or else to body
-	        if (elementToReceiveFocus && elementToReceiveFocus.focus) {
-	          elementToReceiveFocus.focus();
-	        } else {
-	          body.focus();
-	        }
-	      }
-	
-	      function checkRemoveBackdrop() {
-	          //remove backdrop if no longer needed
-	          if (backdropDomEl && backdropIndex() == -1) {
-	            var backdropScopeRef = backdropScope;
-	            removeAfterAnimate(backdropDomEl, backdropScope, function () {
-	              backdropScopeRef = null;
-	            });
-	            backdropDomEl = undefined;
-	            backdropScope = undefined;
-	          }
-	      }
-	
-	      function removeAfterAnimate(domEl, scope, done) {
-	        var asyncDeferred;
-	        var asyncPromise = null;
-	        var setIsAsync = function () {
-	          if (!asyncDeferred) {
-	            asyncDeferred = $q.defer();
-	            asyncPromise = asyncDeferred.promise;
-	          }
-	
-	          return function asyncDone() {
-	            asyncDeferred.resolve();
-	          };
-	        };
-	        scope.$broadcast($modalStack.NOW_CLOSING_EVENT, setIsAsync);
-	
-	        // Note that it's intentional that asyncPromise might be null.
-	        // That's when setIsAsync has not been called during the
-	        // NOW_CLOSING_EVENT broadcast.
-	        return $q.when(asyncPromise).then(afterAnimating);
-	
-	        function afterAnimating() {
-	          if (afterAnimating.done) {
-	            return;
-	          }
-	          afterAnimating.done = true;
-	
-	          if ($animateCss) {
-	            $animateCss(domEl, {
-	              event: 'leave'
-	            }).start().then(function() {
-	              domEl.remove();
-	            });
-	          } else {
-	            $animate.leave(domEl);
-	          }
-	          scope.$destroy();
-	          if (done) {
-	            done();
-	          }
-	        }
-	      }
-	
-	      $document.bind('keydown', function (evt) {
-	        if (evt.isDefaultPrevented()) {
-	          return evt;
-	        }
-	
-	        var modal = openedWindows.top();
-	        if (modal && modal.value.keyboard) {
-	          switch (evt.which){
-	            case 27: {
-	              evt.preventDefault();
-	              $rootScope.$apply(function () {
-	                $modalStack.dismiss(modal.key, 'escape key press');
-	              });
-	              break;
-	            }
-	            case 9: {
-	              $modalStack.loadFocusElementList(modal);
-	              var focusChanged = false;
-	              if (evt.shiftKey) {
-	                if ($modalStack.isFocusInFirstItem(evt)) {
-	                  focusChanged = $modalStack.focusLastFocusableElement();
-	                }
-	              } else {
-	                if ($modalStack.isFocusInLastItem(evt)) {
-	                  focusChanged = $modalStack.focusFirstFocusableElement();
-	                }
-	              }
-	
-	              if (focusChanged) {
-	                evt.preventDefault();
-	                evt.stopPropagation();
-	              }
-	              break;
-	            }
-	          }
-	        }
-	      });
-	
-	      $modalStack.open = function (modalInstance, modal) {
-	
-	        var modalOpener = $document[0].activeElement;
-	
-	        openedWindows.add(modalInstance, {
-	          deferred: modal.deferred,
-	          renderDeferred: modal.renderDeferred,
-	          modalScope: modal.scope,
-	          backdrop: modal.backdrop,
-	          keyboard: modal.keyboard,
-	          openedClass: modal.openedClass
-	        });
-	
-	        var body = $document.find('body').eq(0),
-	            currBackdropIndex = backdropIndex();
-	
-	        if (currBackdropIndex >= 0 && !backdropDomEl) {
-	          backdropScope = $rootScope.$new(true);
-	          backdropScope.index = currBackdropIndex;
-	          var angularBackgroundDomEl = angular.element('<div modal-backdrop="modal-backdrop"></div>');
-	          angularBackgroundDomEl.attr('backdrop-class', modal.backdropClass);
-	          if (modal.animation) {
-	            angularBackgroundDomEl.attr('modal-animation', 'true');
-	          }
-	          backdropDomEl = $compile(angularBackgroundDomEl)(backdropScope);
-	          body.append(backdropDomEl);
-	        }
-	
-	        var angularDomEl = angular.element('<div modal-window="modal-window"></div>');
-	        angularDomEl.attr({
-	          'template-url': modal.windowTemplateUrl,
-	          'window-class': modal.windowClass,
-	          'size': modal.size,
-	          'index': openedWindows.length() - 1,
-	          'animate': 'animate'
-	        }).html(modal.content);
-	        if (modal.animation) {
-	          angularDomEl.attr('modal-animation', 'true');
-	        }
-	
-	        var modalDomEl = $compile(angularDomEl)(modal.scope);
-	        openedWindows.top().value.modalDomEl = modalDomEl;
-	        openedWindows.top().value.modalOpener = modalOpener;
-	        body.append(modalDomEl);
-	        body.addClass(modal.openedClass || OPENED_MODAL_CLASS);
-	        $modalStack.clearFocusListCache();
-	      };
-	
-	      function broadcastClosing(modalWindow, resultOrReason, closing) {
-	          return !modalWindow.value.modalScope.$broadcast('modal.closing', resultOrReason, closing).defaultPrevented;
-	      }
-	
-	      $modalStack.close = function (modalInstance, result) {
-	        var modalWindow = openedWindows.get(modalInstance);
-	        if (modalWindow && broadcastClosing(modalWindow, result, true)) {
-	          modalWindow.value.modalScope.$$uibDestructionScheduled = true;
-	          modalWindow.value.deferred.resolve(result);
-	          removeModalWindow(modalInstance, modalWindow.value.modalOpener);
-	          return true;
-	        }
-	        return !modalWindow;
-	      };
-	
-	      $modalStack.dismiss = function (modalInstance, reason) {
-	        var modalWindow = openedWindows.get(modalInstance);
-	        if (modalWindow && broadcastClosing(modalWindow, reason, false)) {
-	          modalWindow.value.modalScope.$$uibDestructionScheduled = true;
-	          modalWindow.value.deferred.reject(reason);
-	          removeModalWindow(modalInstance, modalWindow.value.modalOpener);
-	          return true;
-	        }
-	        return !modalWindow;
-	      };
-	
-	      $modalStack.dismissAll = function (reason) {
-	        var topModal = this.getTop();
-	        while (topModal && this.dismiss(topModal.key, reason)) {
-	          topModal = this.getTop();
-	        }
-	      };
-	
-	      $modalStack.getTop = function () {
-	        return openedWindows.top();
-	      };
-	
-	      $modalStack.modalRendered = function (modalInstance) {
-	        var modalWindow = openedWindows.get(modalInstance);
-	        if (modalWindow) {
-	          modalWindow.value.renderDeferred.resolve();
-	        }
-	      };
-	
-	      $modalStack.focusFirstFocusableElement = function() {
-	        if (focusableElementList.length > 0) {
-	          focusableElementList[0].focus();
-	          return true;
-	        }
-	        return false;
-	      };
-	      $modalStack.focusLastFocusableElement = function() {
-	        if (focusableElementList.length > 0) {
-	          focusableElementList[focusableElementList.length - 1].focus();
-	          return true;
-	        }
-	        return false;
-	      };
-	
-	      $modalStack.isFocusInFirstItem = function(evt) {
-	        if (focusableElementList.length > 0) {
-	          return (evt.target || evt.srcElement) == focusableElementList[0];
-	        }
-	        return false;
-	      };
-	
-	      $modalStack.isFocusInLastItem = function(evt) {
-	        if (focusableElementList.length > 0) {
-	          return (evt.target || evt.srcElement) == focusableElementList[focusableElementList.length - 1];
-	        }
-	        return false;
-	      };
-	
-	      $modalStack.clearFocusListCache = function() {
-	        focusableElementList = [];
-	        focusIndex = 0;
-	      };
-	
-	      $modalStack.loadFocusElementList = function(modalWindow) {
-	        if (focusableElementList === undefined || !focusableElementList.length0) {
-	          if (modalWindow) {
-	            var modalDomE1 = modalWindow.value.modalDomEl;
-	            if (modalDomE1 && modalDomE1.length) {
-	              focusableElementList = modalDomE1[0].querySelectorAll(tababbleSelector);
-	            }
-	          }
-	        }
-	      };
-	
-	      return $modalStack;
-	    }])
-	
-	  .provider('$modal', function () {
-	
-	    var $modalProvider = {
-	      options: {
-	        animation: true,
-	        backdrop: true, //can also be false or 'static'
-	        keyboard: true
-	      },
-	      $get: ['$injector', '$rootScope', '$q', '$templateRequest', '$controller', '$modalStack',
-	        function ($injector, $rootScope, $q, $templateRequest, $controller, $modalStack) {
-	
-	          var $modal = {};
-	
-	          function getTemplatePromise(options) {
-	            return options.template ? $q.when(options.template) :
-	              $templateRequest(angular.isFunction(options.templateUrl) ? (options.templateUrl)() : options.templateUrl);
-	          }
-	
-	          function getResolvePromises(resolves) {
-	            var promisesArr = [];
-	            angular.forEach(resolves, function (value) {
-	              if (angular.isFunction(value) || angular.isArray(value)) {
-	                promisesArr.push($q.when($injector.invoke(value)));
-	              } else if (angular.isString(value)) {
-	                promisesArr.push($q.when($injector.get(value)));
-	              }
-	            });
-	            return promisesArr;
-	          }
-	
-	          $modal.open = function (modalOptions) {
-	
-	            var modalResultDeferred = $q.defer();
-	            var modalOpenedDeferred = $q.defer();
-	            var modalRenderDeferred = $q.defer();
-	
-	            //prepare an instance of a modal to be injected into controllers and returned to a caller
-	            var modalInstance = {
-	              result: modalResultDeferred.promise,
-	              opened: modalOpenedDeferred.promise,
-	              rendered: modalRenderDeferred.promise,
-	              close: function (result) {
-	                return $modalStack.close(modalInstance, result);
-	              },
-	              dismiss: function (reason) {
-	                return $modalStack.dismiss(modalInstance, reason);
-	              }
-	            };
-	
-	            //merge and clean up options
-	            modalOptions = angular.extend({}, $modalProvider.options, modalOptions);
-	            modalOptions.resolve = modalOptions.resolve || {};
-	
-	            //verify options
-	            if (!modalOptions.template && !modalOptions.templateUrl) {
-	              throw new Error('One of template or templateUrl options is required.');
-	            }
-	
-	            var templateAndResolvePromise =
-	              $q.all([getTemplatePromise(modalOptions)].concat(getResolvePromises(modalOptions.resolve)));
-	
-	
-	            templateAndResolvePromise.then(function resolveSuccess(tplAndVars) {
-	
-	              var modalScope = (modalOptions.scope || $rootScope).$new();
-	              modalScope.$close = modalInstance.close;
-	              modalScope.$dismiss = modalInstance.dismiss;
-	
-	              modalScope.$on('$destroy', function() {
-	                if (!modalScope.$$uibDestructionScheduled) {
-	                  modalScope.$dismiss('$uibUnscheduledDestruction');
-	                }
-	              });
-	
-	              var ctrlInstance, ctrlLocals = {};
-	              var resolveIter = 1;
-	
-	              //controllers
-	              if (modalOptions.controller) {
-	                ctrlLocals.$scope = modalScope;
-	                ctrlLocals.$modalInstance = modalInstance;
-	                angular.forEach(modalOptions.resolve, function (value, key) {
-	                  ctrlLocals[key] = tplAndVars[resolveIter++];
-	                });
-	
-	                ctrlInstance = $controller(modalOptions.controller, ctrlLocals);
-	                if (modalOptions.controllerAs) {
-	                  if (modalOptions.bindToController) {
-	                    angular.extend(ctrlInstance, modalScope);
-	                  }
-	
-	                  modalScope[modalOptions.controllerAs] = ctrlInstance;
-	                }
-	              }
-	
-	              $modalStack.open(modalInstance, {
-	                scope: modalScope,
-	                deferred: modalResultDeferred,
-	                renderDeferred: modalRenderDeferred,
-	                content: tplAndVars[0],
-	                animation: modalOptions.animation,
-	                backdrop: modalOptions.backdrop,
-	                keyboard: modalOptions.keyboard,
-	                backdropClass: modalOptions.backdropClass,
-	                windowClass: modalOptions.windowClass,
-	                windowTemplateUrl: modalOptions.windowTemplateUrl,
-	                size: modalOptions.size,
-	                openedClass: modalOptions.openedClass
-	              });
-	
-	            }, function resolveError(reason) {
-	              modalResultDeferred.reject(reason);
-	            });
-	
-	            templateAndResolvePromise.then(function () {
-	              modalOpenedDeferred.resolve(true);
-	            }, function (reason) {
-	              modalOpenedDeferred.reject(reason);
-	            });
-	
-	            return modalInstance;
-	          };
-	
-	          return $modal;
-	        }]
-	    };
-	
-	    return $modalProvider;
-	  });
-	
-	angular.module('ui.bootstrap.pagination', [])
-	.controller('PaginationController', ['$scope', '$attrs', '$parse', function ($scope, $attrs, $parse) {
-	  var self = this,
-	      ngModelCtrl = { $setViewValue: angular.noop }, // nullModelCtrl
-	      setNumPages = $attrs.numPages ? $parse($attrs.numPages).assign : angular.noop;
-	
-	  this.init = function(ngModelCtrl_, config) {
-	    ngModelCtrl = ngModelCtrl_;
-	    this.config = config;
-	
-	    ngModelCtrl.$render = function() {
-	      self.render();
-	    };
-	
-	    if ($attrs.itemsPerPage) {
-	      $scope.$parent.$watch($parse($attrs.itemsPerPage), function(value) {
-	        self.itemsPerPage = parseInt(value, 10);
-	        $scope.totalPages = self.calculateTotalPages();
-	      });
-	    } else {
-	      this.itemsPerPage = config.itemsPerPage;
-	    }
-	
-	    $scope.$watch('totalItems', function() {
-	      $scope.totalPages = self.calculateTotalPages();
-	    });
-	
-	    $scope.$watch('totalPages', function(value) {
-	      setNumPages($scope.$parent, value); // Readonly variable
-	
-	      if ( $scope.page > value ) {
-	        $scope.selectPage(value);
-	      } else {
-	        ngModelCtrl.$render();
-	      }
-	    });
-	  };
-	
-	  this.calculateTotalPages = function() {
-	    var totalPages = this.itemsPerPage < 1 ? 1 : Math.ceil($scope.totalItems / this.itemsPerPage);
-	    return Math.max(totalPages || 0, 1);
-	  };
-	
-	  this.render = function() {
-	    $scope.page = parseInt(ngModelCtrl.$viewValue, 10) || 1;
-	  };
-	
-	  $scope.selectPage = function(page, evt) {
-	    if (evt) {
-	      evt.preventDefault();
-	    }
-	
-	    var clickAllowed = !$scope.ngDisabled || !evt;
-	    if (clickAllowed && $scope.page !== page && page > 0 && page <= $scope.totalPages) {
-	      if (evt && evt.target) {
-	        evt.target.blur();
-	      }
-	      ngModelCtrl.$setViewValue(page);
-	      ngModelCtrl.$render();
-	    }
-	  };
-	
-	  $scope.getText = function( key ) {
-	    return $scope[key + 'Text'] || self.config[key + 'Text'];
-	  };
-	  $scope.noPrevious = function() {
-	    return $scope.page === 1;
-	  };
-	  $scope.noNext = function() {
-	    return $scope.page === $scope.totalPages;
-	  };
-	}])
-	
-	.constant('paginationConfig', {
-	  itemsPerPage: 10,
-	  boundaryLinks: false,
-	  directionLinks: true,
-	  firstText: 'First',
-	  previousText: 'Previous',
-	  nextText: 'Next',
-	  lastText: 'Last',
-	  rotate: true
-	})
-	
-	.directive('pagination', ['$parse', 'paginationConfig', function($parse, paginationConfig) {
-	  return {
-	    restrict: 'EA',
-	    scope: {
-	      totalItems: '=',
-	      firstText: '@',
-	      previousText: '@',
-	      nextText: '@',
-	      lastText: '@',
-	      ngDisabled:'='
-	    },
-	    require: ['pagination', '?ngModel'],
-	    controller: 'PaginationController',
-	    controllerAs: 'pagination',
-	    templateUrl: function(element, attrs) {
-	      return attrs.templateUrl || 'template/pagination/pagination.html';
-	    },
-	    replace: true,
-	    link: function(scope, element, attrs, ctrls) {
-	      var paginationCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-	
-	      if (!ngModelCtrl) {
-	         return; // do nothing if no ng-model
-	      }
-	
-	      // Setup configuration parameters
-	      var maxSize = angular.isDefined(attrs.maxSize) ? scope.$parent.$eval(attrs.maxSize) : paginationConfig.maxSize,
-	          rotate = angular.isDefined(attrs.rotate) ? scope.$parent.$eval(attrs.rotate) : paginationConfig.rotate;
-	      scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : paginationConfig.boundaryLinks;
-	      scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : paginationConfig.directionLinks;
-	
-	      paginationCtrl.init(ngModelCtrl, paginationConfig);
-	
-	      if (attrs.maxSize) {
-	        scope.$parent.$watch($parse(attrs.maxSize), function(value) {
-	          maxSize = parseInt(value, 10);
-	          paginationCtrl.render();
-	        });
-	      }
-	
-	      // Create page object used in template
-	      function makePage(number, text, isActive) {
-	        return {
-	          number: number,
-	          text: text,
-	          active: isActive
-	        };
-	      }
-	
-	      function getPages(currentPage, totalPages) {
-	        var pages = [];
-	
-	        // Default page limits
-	        var startPage = 1, endPage = totalPages;
-	        var isMaxSized = ( angular.isDefined(maxSize) && maxSize < totalPages );
-	
-	        // recompute if maxSize
-	        if ( isMaxSized ) {
-	          if ( rotate ) {
-	            // Current page is displayed in the middle of the visible ones
-	            startPage = Math.max(currentPage - Math.floor(maxSize/2), 1);
-	            endPage   = startPage + maxSize - 1;
-	
-	            // Adjust if limit is exceeded
-	            if (endPage > totalPages) {
-	              endPage   = totalPages;
-	              startPage = endPage - maxSize + 1;
-	            }
-	          } else {
-	            // Visible pages are paginated with maxSize
-	            startPage = ((Math.ceil(currentPage / maxSize) - 1) * maxSize) + 1;
-	
-	            // Adjust last page if limit is exceeded
-	            endPage = Math.min(startPage + maxSize - 1, totalPages);
-	          }
-	        }
-	
-	        // Add page number links
-	        for (var number = startPage; number <= endPage; number++) {
-	          var page = makePage(number, number, number === currentPage);
-	          pages.push(page);
-	        }
-	
-	        // Add links to move between page sets
-	        if ( isMaxSized && ! rotate ) {
-	          if ( startPage > 1 ) {
-	            var previousPageSet = makePage(startPage - 1, '...', false);
-	            pages.unshift(previousPageSet);
-	          }
-	
-	          if ( endPage < totalPages ) {
-	            var nextPageSet = makePage(endPage + 1, '...', false);
-	            pages.push(nextPageSet);
-	          }
-	        }
-	
-	        return pages;
-	      }
-	
-	      var originalRender = paginationCtrl.render;
-	      paginationCtrl.render = function() {
-	        originalRender();
-	        if (scope.page > 0 && scope.page <= scope.totalPages) {
-	          scope.pages = getPages(scope.page, scope.totalPages);
-	        }
-	      };
-	    }
-	  };
-	}])
-	
-	.constant('pagerConfig', {
-	  itemsPerPage: 10,
-	  previousText: '« Previous',
-	  nextText: 'Next »',
-	  align: true
-	})
-	
-	.directive('pager', ['pagerConfig', function(pagerConfig) {
-	  return {
-	    restrict: 'EA',
-	    scope: {
-	      totalItems: '=',
-	      previousText: '@',
-	      nextText: '@'
-	    },
-	    require: ['pager', '?ngModel'],
-	    controller: 'PaginationController',
-	    templateUrl: 'template/pagination/pager.html',
-	    replace: true,
-	    link: function(scope, element, attrs, ctrls) {
-	      var paginationCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-	
-	      if (!ngModelCtrl) {
-	         return; // do nothing if no ng-model
-	      }
-	
-	      scope.align = angular.isDefined(attrs.align) ? scope.$parent.$eval(attrs.align) : pagerConfig.align;
-	      paginationCtrl.init(ngModelCtrl, pagerConfig);
-	    }
-	  };
-	}]);
-	
-	/**
-	 * The following features are still outstanding: animation as a
-	 * function, placement as a function, inside, support for more triggers than
-	 * just mouse enter/leave, html tooltips, and selector delegation.
-	 */
-	angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap.bindHtml' ] )
-	
-	/**
-	 * The $tooltip service creates tooltip- and popover-like directives as well as
-	 * houses global options for them.
-	 */
-	.provider( '$tooltip', function () {
-	  // The default options tooltip and popover.
-	  var defaultOptions = {
-	    placement: 'top',
-	    animation: true,
-	    popupDelay: 0,
-	    useContentExp: false
-	  };
-	
-	  // Default hide triggers for each show trigger
-	  var triggerMap = {
-	    'mouseenter': 'mouseleave',
-	    'click': 'click',
-	    'focus': 'blur'
-	  };
-	
-	  // The options specified to the provider globally.
-	  var globalOptions = {};
-	
-	  /**
-	   * `options({})` allows global configuration of all tooltips in the
-	   * application.
-	   *
-	   *   var app = angular.module( 'App', ['ui.bootstrap.tooltip'], function( $tooltipProvider ) {
-	   *     // place tooltips left instead of top by default
-	   *     $tooltipProvider.options( { placement: 'left' } );
-	   *   });
-	   */
-		this.options = function( value ) {
-			angular.extend( globalOptions, value );
-		};
-	
-	  /**
-	   * This allows you to extend the set of trigger mappings available. E.g.:
-	   *
-	   *   $tooltipProvider.setTriggers( 'openTrigger': 'closeTrigger' );
-	   */
-	  this.setTriggers = function setTriggers ( triggers ) {
-	    angular.extend( triggerMap, triggers );
-	  };
-	
-	  /**
-	   * This is a helper function for translating camel-case to snake-case.
-	   */
-	  function snake_case(name){
-	    var regexp = /[A-Z]/g;
-	    var separator = '-';
-	    return name.replace(regexp, function(letter, pos) {
-	      return (pos ? separator : '') + letter.toLowerCase();
-	    });
-	  }
-	
-	  /**
-	   * Returns the actual instance of the $tooltip service.
-	   * TODO support multiple triggers
-	   */
-	  this.$get = [ '$window', '$compile', '$timeout', '$document', '$position', '$interpolate', '$rootScope', function ( $window, $compile, $timeout, $document, $position, $interpolate, $rootScope ) {
-	    return function $tooltip ( type, prefix, defaultTriggerShow, options ) {
-	      options = angular.extend( {}, defaultOptions, globalOptions, options );
-	
-	      /**
-	       * Returns an object of show and hide triggers.
-	       *
-	       * If a trigger is supplied,
-	       * it is used to show the tooltip; otherwise, it will use the `trigger`
-	       * option passed to the `$tooltipProvider.options` method; else it will
-	       * default to the trigger supplied to this directive factory.
-	       *
-	       * The hide trigger is based on the show trigger. If the `trigger` option
-	       * was passed to the `$tooltipProvider.options` method, it will use the
-	       * mapped trigger from `triggerMap` or the passed trigger if the map is
-	       * undefined; otherwise, it uses the `triggerMap` value of the show
-	       * trigger; else it will just use the show trigger.
-	       */
-	      function getTriggers ( trigger ) {
-	        var show = (trigger || options.trigger || defaultTriggerShow).split(' ');
-	        var hide = show.map(function(trigger) {
-	          return triggerMap[trigger] || trigger;
-	        });
-	        return {
-	          show: show,
-	          hide: hide
-	        };
-	      }
-	
-	      var directiveName = snake_case( type );
-	
-	      var startSym = $interpolate.startSymbol();
-	      var endSym = $interpolate.endSymbol();
-	      var template =
-	        '<div '+ directiveName +'-popup '+
-	          'title="'+startSym+'title'+endSym+'" '+
-	          (options.useContentExp ?
-	            'content-exp="contentExp()" ' :
-	            'content="'+startSym+'content'+endSym+'" ') +
-	          'placement="'+startSym+'placement'+endSym+'" '+
-	          'popup-class="'+startSym+'popupClass'+endSym+'" '+
-	          'animation="animation" '+
-	          'is-open="isOpen"'+
-	          'origin-scope="origScope" '+
-	          '>'+
-	        '</div>';
-	
-	      return {
-	        restrict: 'EA',
-	        compile: function (tElem, tAttrs) {
-	          var tooltipLinker = $compile( template );
-	
-	          return function link ( scope, element, attrs, tooltipCtrl ) {
-	            var tooltip;
-	            var tooltipLinkedScope;
-	            var transitionTimeout;
-	            var popupTimeout;
-	            var appendToBody = angular.isDefined( options.appendToBody ) ? options.appendToBody : false;
-	            var triggers = getTriggers( undefined );
-	            var hasEnableExp = angular.isDefined(attrs[prefix+'Enable']);
-	            var ttScope = scope.$new(true);
-	            var repositionScheduled = false;
-	
-	            var positionTooltip = function () {
-	              if (!tooltip) { return; }
-	
-	              var ttPosition = $position.positionElements(element, tooltip, ttScope.placement, appendToBody);
-	              ttPosition.top += 'px';
-	              ttPosition.left += 'px';
-	
-	              // Now set the calculated positioning.
-	              tooltip.css( ttPosition );
-	            };
-	
-	            var positionTooltipAsync = function () {
-	              $timeout(positionTooltip, 0, false);
-	            };
-	
-	            // Set up the correct scope to allow transclusion later
-	            ttScope.origScope = scope;
-	
-	            // By default, the tooltip is not open.
-	            // TODO add ability to start tooltip opened
-	            ttScope.isOpen = false;
-	
-	            function toggleTooltipBind () {
-	              if ( ! ttScope.isOpen ) {
-	                showTooltipBind();
-	              } else {
-	                hideTooltipBind();
-	              }
-	            }
-	
-	            // Show the tooltip with delay if specified, otherwise show it immediately
-	            function showTooltipBind() {
-	              if(hasEnableExp && !scope.$eval(attrs[prefix+'Enable'])) {
-	                return;
-	              }
-	
-	              prepareTooltip();
-	
-	              if ( ttScope.popupDelay ) {
-	                // Do nothing if the tooltip was already scheduled to pop-up.
-	                // This happens if show is triggered multiple times before any hide is triggered.
-	                if (!popupTimeout) {
-	                  popupTimeout = $timeout( show, ttScope.popupDelay, false );
-	                  popupTimeout.then(function(reposition){reposition();});
-	                }
-	              } else {
-	                show()();
-	              }
-	            }
-	
-	            function hideTooltipBind () {
-	              hide();
-	              if (!$rootScope.$$phase) {
-	                $rootScope.$digest();
-	              }
-	            }
-	
-	            // Show the tooltip popup element.
-	            function show() {
-	
-	              popupTimeout = null;
-	
-	              // If there is a pending remove transition, we must cancel it, lest the
-	              // tooltip be mysteriously removed.
-	              if ( transitionTimeout ) {
-	                $timeout.cancel( transitionTimeout );
-	                transitionTimeout = null;
-	              }
-	
-	              // Don't show empty tooltips.
-	              if ( !(options.useContentExp ? ttScope.contentExp() : ttScope.content) ) {
-	                return angular.noop;
-	              }
-	
-	              createTooltip();
-	
-	              // Set the initial positioning.
-	              tooltip.css({ top: 0, left: 0, display: 'block' });
-	
-	              positionTooltip();
-	
-	              // And show the tooltip.
-	              ttScope.isOpen = true;
-	              ttScope.$apply(); // digest required as $apply is not called
-	
-	              // Return positioning function as promise callback for correct
-	              // positioning after draw.
-	              return positionTooltip;
-	            }
-	
-	            // Hide the tooltip popup element.
-	            function hide() {
-	              // First things first: we don't show it anymore.
-	              ttScope.isOpen = false;
-	
-	              //if tooltip is going to be shown after delay, we must cancel this
-	              $timeout.cancel( popupTimeout );
-	              popupTimeout = null;
-	
-	              // And now we remove it from the DOM. However, if we have animation, we
-	              // need to wait for it to expire beforehand.
-	              // FIXME: this is a placeholder for a port of the transitions library.
-	              if ( ttScope.animation ) {
-	                if (!transitionTimeout) {
-	                  transitionTimeout = $timeout(removeTooltip, 500);
-	                }
-	              } else {
-	                removeTooltip();
-	              }
-	            }
-	
-	            function createTooltip() {
-	              // There can only be one tooltip element per directive shown at once.
-	              if (tooltip) {
-	                removeTooltip();
-	              }
-	              tooltipLinkedScope = ttScope.$new();
-	              tooltip = tooltipLinker(tooltipLinkedScope, function (tooltip) {
-	                if ( appendToBody ) {
-	                  $document.find( 'body' ).append( tooltip );
-	                } else {
-	                  element.after( tooltip );
-	                }
-	              });
-	
-	              if (options.useContentExp) {
-	                tooltipLinkedScope.$watch('contentExp()', function (val) {
-	                  if (!val && ttScope.isOpen) {
-	                    hide();
-	                  }
-	                });
-	                
-	                tooltipLinkedScope.$watch(function() {
-	                  if (!repositionScheduled) {
-	                    repositionScheduled = true;
-	                    tooltipLinkedScope.$$postDigest(function() {
-	                      repositionScheduled = false;
-	                      positionTooltipAsync();
-	                    });
-	                  }
-	                });
-	                
-	              }
-	            }
-	
-	            function removeTooltip() {
-	              transitionTimeout = null;
-	              if (tooltip) {
-	                tooltip.remove();
-	                tooltip = null;
-	              }
-	              if (tooltipLinkedScope) {
-	                tooltipLinkedScope.$destroy();
-	                tooltipLinkedScope = null;
-	              }
-	            }
-	
-	            function prepareTooltip() {
-	              prepPopupClass();
-	              prepPlacement();
-	              prepPopupDelay();
-	            }
-	
-	            ttScope.contentExp = function () {
-	              return scope.$eval(attrs[type]);
-	            };
-	
-	            /**
-	             * Observe the relevant attributes.
-	             */
-	            if (!options.useContentExp) {
-	              attrs.$observe( type, function ( val ) {
-	                ttScope.content = val;
-	
-	                if (!val && ttScope.isOpen) {
-	                  hide();
-	                } else {
-	                  positionTooltipAsync();
-	                }
-	              });
-	            }
-	
-	            attrs.$observe( 'disabled', function ( val ) {
-	              if (popupTimeout && val) {
-	                $timeout.cancel(popupTimeout);
-	              }
-	
-	              if (val && ttScope.isOpen ) {
-	                hide();
-	              }
-	            });
-	
-	            attrs.$observe( prefix+'Title', function ( val ) {
-	              ttScope.title = val;
-	              positionTooltipAsync();
-	            });
-	
-	            attrs.$observe( prefix + 'Placement', function () {
-	              if (ttScope.isOpen) {
-	                $timeout(function () {
-	                  prepPlacement();
-	                  show()();
-	                }, 0, false);
-	              }
-	            });
-	
-	            function prepPopupClass() {
-	              ttScope.popupClass = attrs[prefix + 'Class'];
-	            }
-	
-	            function prepPlacement() {
-	              var val = attrs[ prefix + 'Placement' ];
-	              ttScope.placement = angular.isDefined( val ) ? val : options.placement;
-	            }
-	
-	            function prepPopupDelay() {
-	              var val = attrs[ prefix + 'PopupDelay' ];
-	              var delay = parseInt( val, 10 );
-	              ttScope.popupDelay = ! isNaN(delay) ? delay : options.popupDelay;
-	            }
-	
-	            var unregisterTriggers = function () {
-	              triggers.show.forEach(function(trigger) {
-	                element.unbind(trigger, showTooltipBind);
-	              });
-	              triggers.hide.forEach(function(trigger) {
-	                element.unbind(trigger, hideTooltipBind);
-	              });
-	            };
-	
-	            function prepTriggers() {
-	              var val = attrs[ prefix + 'Trigger' ];
-	              unregisterTriggers();
-	
-	              triggers = getTriggers( val );
-	
-	              triggers.show.forEach(function(trigger, idx) {
-	                if (trigger === triggers.hide[idx]) {
-	                  element.bind(trigger, toggleTooltipBind);
-	                } else if (trigger) {
-	                  element.bind(trigger, showTooltipBind);
-	                  element.bind(triggers.hide[idx], hideTooltipBind);
-	                }
-	              });
-	            }
-	            prepTriggers();
-	
-	            var animation = scope.$eval(attrs[prefix + 'Animation']);
-	            ttScope.animation = angular.isDefined(animation) ? !!animation : options.animation;
-	
-	            var appendToBodyVal = scope.$eval(attrs[prefix + 'AppendToBody']);
-	            appendToBody = angular.isDefined(appendToBodyVal) ? appendToBodyVal : appendToBody;
-	
-	            // if a tooltip is attached to <body> we need to remove it on
-	            // location change as its parent scope will probably not be destroyed
-	            // by the change.
-	            if ( appendToBody ) {
-	              scope.$on('$locationChangeSuccess', function closeTooltipOnLocationChangeSuccess () {
-	              if ( ttScope.isOpen ) {
-	                hide();
-	              }
-	            });
-	            }
-	
-	            // Make sure tooltip is destroyed and removed.
-	            scope.$on('$destroy', function onDestroyTooltip() {
-	              $timeout.cancel( transitionTimeout );
-	              $timeout.cancel( popupTimeout );
-	              unregisterTriggers();
-	              removeTooltip();
-	              ttScope = null;
-	            });
-	          };
-	        }
-	      };
-	    };
-	  }];
-	})
-	
-	// This is mostly ngInclude code but with a custom scope
-	.directive( 'tooltipTemplateTransclude', [
-	         '$animate', '$sce', '$compile', '$templateRequest',
-	function ($animate ,  $sce ,  $compile ,  $templateRequest) {
-	  return {
-	    link: function ( scope, elem, attrs ) {
-	      var origScope = scope.$eval(attrs.tooltipTemplateTranscludeScope);
-	
-	      var changeCounter = 0,
-	        currentScope,
-	        previousElement,
-	        currentElement;
-	
-	      var cleanupLastIncludeContent = function() {
-	        if (previousElement) {
-	          previousElement.remove();
-	          previousElement = null;
-	        }
-	        if (currentScope) {
-	          currentScope.$destroy();
-	          currentScope = null;
-	        }
-	        if (currentElement) {
-	          $animate.leave(currentElement).then(function() {
-	            previousElement = null;
-	          });
-	          previousElement = currentElement;
-	          currentElement = null;
-	        }
-	      };
-	
-	      scope.$watch($sce.parseAsResourceUrl(attrs.tooltipTemplateTransclude), function (src) {
-	        var thisChangeId = ++changeCounter;
-	
-	        if (src) {
-	          //set the 2nd param to true to ignore the template request error so that the inner
-	          //contents and scope can be cleaned up.
-	          $templateRequest(src, true).then(function(response) {
-	            if (thisChangeId !== changeCounter) { return; }
-	            var newScope = origScope.$new();
-	            var template = response;
-	
-	            var clone = $compile(template)(newScope, function(clone) {
-	              cleanupLastIncludeContent();
-	              $animate.enter(clone, elem);
-	            });
-	
-	            currentScope = newScope;
-	            currentElement = clone;
-	
-	            currentScope.$emit('$includeContentLoaded', src);
-	          }, function() {
-	            if (thisChangeId === changeCounter) {
-	              cleanupLastIncludeContent();
-	              scope.$emit('$includeContentError', src);
-	            }
-	          });
-	          scope.$emit('$includeContentRequested', src);
-	        } else {
-	          cleanupLastIncludeContent();
-	        }
-	      });
-	
-	      scope.$on('$destroy', cleanupLastIncludeContent);
-	    }
-	  };
-	}])
-	
-	/**
-	 * Note that it's intentional that these classes are *not* applied through $animate.
-	 * They must not be animated as they're expected to be present on the tooltip on
-	 * initialization.
-	 */
-	.directive('tooltipClasses', function () {
-	  return {
-	    restrict: 'A',
-	    link: function (scope, element, attrs) {
-	      if (scope.placement) {
-	        element.addClass(scope.placement);
-	      }
-	      if (scope.popupClass) {
-	        element.addClass(scope.popupClass);
-	      }
-	      if (scope.animation()) {
-	        element.addClass(attrs.tooltipAnimationClass);
-	      }
-	    }
-	  };
-	})
-	
-	.directive( 'tooltipPopup', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    scope: { content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
-	    templateUrl: 'template/tooltip/tooltip-popup.html'
-	  };
-	})
-	
-	.directive( 'tooltip', [ '$tooltip', function ( $tooltip ) {
-	  return $tooltip( 'tooltip', 'tooltip', 'mouseenter' );
-	}])
-	
-	.directive( 'tooltipTemplatePopup', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    scope: { contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&',
-	      originScope: '&' },
-	    templateUrl: 'template/tooltip/tooltip-template-popup.html'
-	  };
-	})
-	
-	.directive( 'tooltipTemplate', [ '$tooltip', function ( $tooltip ) {
-	  return $tooltip('tooltipTemplate', 'tooltip', 'mouseenter', {
-	    useContentExp: true
-	  });
-	}])
-	
-	.directive( 'tooltipHtmlPopup', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    scope: { contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
-	    templateUrl: 'template/tooltip/tooltip-html-popup.html'
-	  };
-	})
-	
-	.directive( 'tooltipHtml', [ '$tooltip', function ( $tooltip ) {
-	  return $tooltip('tooltipHtml', 'tooltip', 'mouseenter', {
-	    useContentExp: true
-	  });
-	}])
-	
-	/*
-	Deprecated
-	*/
-	.directive( 'tooltipHtmlUnsafePopup', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    scope: { content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
-	    templateUrl: 'template/tooltip/tooltip-html-unsafe-popup.html'
-	  };
-	})
-	
-	.value('tooltipHtmlUnsafeSuppressDeprecated', false)
-	.directive( 'tooltipHtmlUnsafe', [
-	          '$tooltip', 'tooltipHtmlUnsafeSuppressDeprecated', '$log',
-	function ( $tooltip ,  tooltipHtmlUnsafeSuppressDeprecated ,  $log) {
-	  if (!tooltipHtmlUnsafeSuppressDeprecated) {
-	    $log.warn('tooltip-html-unsafe is now deprecated. Use tooltip-html or tooltip-template instead.');
-	  }
-	  return $tooltip( 'tooltipHtmlUnsafe', 'tooltip', 'mouseenter' );
-	}]);
-	
-	/**
-	 * The following features are still outstanding: popup delay, animation as a
-	 * function, placement as a function, inside, support for more triggers than
-	 * just mouse enter/leave, and selector delegatation.
-	 */
-	angular.module( 'ui.bootstrap.popover', [ 'ui.bootstrap.tooltip' ] )
-	
-	.directive( 'popoverTemplatePopup', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    scope: { title: '@', contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&',
-	      originScope: '&' },
-	    templateUrl: 'template/popover/popover-template.html'
-	  };
-	})
-	
-	.directive( 'popoverTemplate', [ '$tooltip', function ( $tooltip ) {
-	  return $tooltip( 'popoverTemplate', 'popover', 'click', {
-	    useContentExp: true
-	  } );
-	}])
-	
-	.directive( 'popoverHtmlPopup', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    scope: { contentExp: '&', title: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
-	    templateUrl: 'template/popover/popover-html.html'
-	  };
-	})
-	
-	.directive( 'popoverHtml', [ '$tooltip', function ( $tooltip ) {
-	  return $tooltip( 'popoverHtml', 'popover', 'click', {
-	    useContentExp: true
-	  });
-	}])
-	
-	.directive( 'popoverPopup', function () {
-	  return {
-	    restrict: 'EA',
-	    replace: true,
-	    scope: { title: '@', content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
-	    templateUrl: 'template/popover/popover.html'
-	  };
-	})
-	
-	.directive( 'popover', [ '$tooltip', function ( $tooltip ) {
-	  return $tooltip( 'popover', 'popover', 'click' );
-	}]);
-	
-	angular.module('ui.bootstrap.progressbar', [])
-	
-	.constant('progressConfig', {
-	  animate: true,
-	  max: 100
-	})
-	
-	.controller('ProgressController', ['$scope', '$attrs', 'progressConfig', function($scope, $attrs, progressConfig) {
-	    var self = this,
-	        animate = angular.isDefined($attrs.animate) ? $scope.$parent.$eval($attrs.animate) : progressConfig.animate;
-	
-	    this.bars = [];
-	    $scope.max = angular.isDefined($scope.max) ? $scope.max : progressConfig.max;
-	
-	    this.addBar = function(bar, element) {
-	        if ( !animate ) {
-	            element.css({'transition': 'none'});
-	        }
-	
-	        this.bars.push(bar);
-	
-	        bar.max = $scope.max;
-	
-	        bar.$watch('value', function( value ) {
-	            bar.recalculatePercentage();
-	        });
-	
-	        bar.recalculatePercentage = function() {
-	            bar.percent = +(100 * bar.value / bar.max).toFixed(2);
-				
-	            var totalPercentage = 0;
-	            self.bars.forEach(function (bar) {
-	                totalPercentage += bar.percent;
-	            });
-	
-	            if (totalPercentage > 100) {
-	                bar.percent -= totalPercentage - 100;
-	            }
-	        };
-	
-	        bar.$on('$destroy', function() {
-	            element = null;
-	            self.removeBar(bar);
-	        });
-	    };
-	
-	    this.removeBar = function(bar) {
-	        this.bars.splice(this.bars.indexOf(bar), 1);
-	    };
-	
-	    $scope.$watch('max', function(max) {
-	        self.bars.forEach(function (bar) {
-	            bar.max = $scope.max;
-	            bar.recalculatePercentage();
-	        });
-	    });
-	}])
-	
-	.directive('progress', function() {
-	    return {
-	        restrict: 'EA',
-	        replace: true,
-	        transclude: true,
-	        controller: 'ProgressController',
-	        require: 'progress',
-	        scope: {
-	          max: '=?'
-	        },
-	        templateUrl: 'template/progressbar/progress.html'
-	    };
-	})
-	
-	.directive('bar', function() {
-	    return {
-	        restrict: 'EA',
-	        replace: true,
-	        transclude: true,
-	        require: '^progress',
-	        scope: {
-	            value: '=',
-	            type: '@'
-	        },
-	        templateUrl: 'template/progressbar/bar.html',
-	        link: function(scope, element, attrs, progressCtrl) {
-	            progressCtrl.addBar(scope, element);
-	        }
-	    };
-	})
-	
-	.directive('progressbar', function() {
-	    return {
-	        restrict: 'EA',
-	        replace: true,
-	        transclude: true,
-	        controller: 'ProgressController',
-	        scope: {
-	            value: '=',
-	            max: '=?',
-	            type: '@'
-	        },
-	        templateUrl: 'template/progressbar/progressbar.html',
-	        link: function(scope, element, attrs, progressCtrl) {
-	            progressCtrl.addBar(scope, angular.element(element.children()[0]));
-	        }
-	    };
-	});
-	
-	angular.module('ui.bootstrap.rating', [])
-	
-	.constant('ratingConfig', {
-	  max: 5,
-	  stateOn: null,
-	  stateOff: null,
-	  titles : ['one', 'two', 'three', 'four', 'five']
-	})
-	
-	.controller('RatingController', ['$scope', '$attrs', 'ratingConfig', function($scope, $attrs, ratingConfig) {
-	  var ngModelCtrl  = { $setViewValue: angular.noop };
-	
-	  this.init = function(ngModelCtrl_) {
-	    ngModelCtrl = ngModelCtrl_;
-	    ngModelCtrl.$render = this.render;
-	
-	    ngModelCtrl.$formatters.push(function(value) {
-	      if (angular.isNumber(value) && value << 0 !== value) {
-	        value = Math.round(value);
-	      }
-	      return value;
-	    });
-	
-	    this.stateOn = angular.isDefined($attrs.stateOn) ? $scope.$parent.$eval($attrs.stateOn) : ratingConfig.stateOn;
-	    this.stateOff = angular.isDefined($attrs.stateOff) ? $scope.$parent.$eval($attrs.stateOff) : ratingConfig.stateOff;
-	    var tmpTitles = angular.isDefined($attrs.titles)  ? $scope.$parent.$eval($attrs.titles) : ratingConfig.titles ;    
-	    this.titles = angular.isArray(tmpTitles) && tmpTitles.length > 0 ?
-	      tmpTitles : ratingConfig.titles;
-	    
-	    var ratingStates = angular.isDefined($attrs.ratingStates) ? $scope.$parent.$eval($attrs.ratingStates) :
-	                        new Array( angular.isDefined($attrs.max) ? $scope.$parent.$eval($attrs.max) : ratingConfig.max );
-	    $scope.range = this.buildTemplateObjects(ratingStates);
-	  };
-	
-	  this.buildTemplateObjects = function(states) {
-	    for (var i = 0, n = states.length; i < n; i++) {
-	      states[i] = angular.extend({ index: i }, { stateOn: this.stateOn, stateOff: this.stateOff, title: this.getTitle(i) }, states[i]);
-	    }
-	    return states;
-	  };
-	  
-	  this.getTitle = function(index) {
-	    if (index >= this.titles.length) {
-	      return index + 1;
-	    } else {
-	      return this.titles[index];
-	    }
-	  };
-	  
-	  $scope.rate = function(value) {
-	    if ( !$scope.readonly && value >= 0 && value <= $scope.range.length ) {
-	      ngModelCtrl.$setViewValue(ngModelCtrl.$viewValue === value ? 0 : value);
-	      ngModelCtrl.$render();
-	    }
-	  };
-	
-	  $scope.enter = function(value) {
-	    if ( !$scope.readonly ) {
-	      $scope.value = value;
-	    }
-	    $scope.onHover({value: value});
-	  };
-	
-	  $scope.reset = function() {
-	    $scope.value = ngModelCtrl.$viewValue;
-	    $scope.onLeave();
-	  };
-	
-	  $scope.onKeydown = function(evt) {
-	    if (/(37|38|39|40)/.test(evt.which)) {
-	      evt.preventDefault();
-	      evt.stopPropagation();
-	      $scope.rate( $scope.value + (evt.which === 38 || evt.which === 39 ? 1 : -1) );
-	    }
-	  };
-	
-	  this.render = function() {
-	    $scope.value = ngModelCtrl.$viewValue;
-	  };
-	}])
-	
-	.directive('rating', function() {
-	  return {
-	    restrict: 'EA',
-	    require: ['rating', 'ngModel'],
-	    scope: {
-	      readonly: '=?',
-	      onHover: '&',
-	      onLeave: '&'
-	    },
-	    controller: 'RatingController',
-	    templateUrl: 'template/rating/rating.html',
-	    replace: true,
-	    link: function(scope, element, attrs, ctrls) {
-	      var ratingCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-	      ratingCtrl.init( ngModelCtrl );
-	    }
-	  };
-	});
-	
-	
-	/**
-	 * @ngdoc overview
-	 * @name ui.bootstrap.tabs
-	 *
-	 * @description
-	 * AngularJS version of the tabs directive.
-	 */
-	
-	angular.module('ui.bootstrap.tabs', [])
-	
-	.controller('TabsetController', ['$scope', function TabsetCtrl($scope) {
-	  var ctrl = this,
-	      tabs = ctrl.tabs = $scope.tabs = [];
-	
-	  ctrl.select = function(selectedTab) {
-	    angular.forEach(tabs, function(tab) {
-	      if (tab.active && tab !== selectedTab) {
-	        tab.active = false;
-	        tab.onDeselect();
-	      }
-	    });
-	    selectedTab.active = true;
-	    selectedTab.onSelect();
-	  };
-	
-	  ctrl.addTab = function addTab(tab) {
-	    tabs.push(tab);
-	    // we can't run the select function on the first tab
-	    // since that would select it twice
-	    if (tabs.length === 1 && tab.active !== false) {
-	      tab.active = true;
-	    } else if (tab.active) {
-	      ctrl.select(tab);
-	    }
-	    else {
-	      tab.active = false;
-	    }
-	  };
-	
-	  ctrl.removeTab = function removeTab(tab) {
-	    var index = tabs.indexOf(tab);
-	    //Select a new tab if the tab to be removed is selected and not destroyed
-	    if (tab.active && tabs.length > 1 && !destroyed) {
-	      //If this is the last tab, select the previous tab. else, the next tab.
-	      var newActiveIndex = index == tabs.length - 1 ? index - 1 : index + 1;
-	      ctrl.select(tabs[newActiveIndex]);
-	    }
-	    tabs.splice(index, 1);
-	  };
-	
-	  var destroyed;
-	  $scope.$on('$destroy', function() {
-	    destroyed = true;
-	  });
-	}])
-	
-	/**
-	 * @ngdoc directive
-	 * @name ui.bootstrap.tabs.directive:tabset
-	 * @restrict EA
-	 *
-	 * @description
-	 * Tabset is the outer container for the tabs directive
-	 *
-	 * @param {boolean=} vertical Whether or not to use vertical styling for the tabs.
-	 * @param {boolean=} justified Whether or not to use justified styling for the tabs.
-	 *
-	 * @example
-	<example module="ui.bootstrap">
-	  <file name="index.html">
-	    <tabset>
-	      <tab heading="Tab 1"><b>First</b> Content!</tab>
-	      <tab heading="Tab 2"><i>Second</i> Content!</tab>
-	    </tabset>
-	    <hr />
-	    <tabset vertical="true">
-	      <tab heading="Vertical Tab 1"><b>First</b> Vertical Content!</tab>
-	      <tab heading="Vertical Tab 2"><i>Second</i> Vertical Content!</tab>
-	    </tabset>
-	    <tabset justified="true">
-	      <tab heading="Justified Tab 1"><b>First</b> Justified Content!</tab>
-	      <tab heading="Justified Tab 2"><i>Second</i> Justified Content!</tab>
-	    </tabset>
-	  </file>
-	</example>
-	 */
-	.directive('tabset', function() {
-	  return {
-	    restrict: 'EA',
-	    transclude: true,
-	    replace: true,
-	    scope: {
-	      type: '@'
-	    },
-	    controller: 'TabsetController',
-	    templateUrl: 'template/tabs/tabset.html',
-	    link: function(scope, element, attrs) {
-	      scope.vertical = angular.isDefined(attrs.vertical) ? scope.$parent.$eval(attrs.vertical) : false;
-	      scope.justified = angular.isDefined(attrs.justified) ? scope.$parent.$eval(attrs.justified) : false;
-	    }
-	  };
-	})
-	
-	/**
-	 * @ngdoc directive
-	 * @name ui.bootstrap.tabs.directive:tab
-	 * @restrict EA
-	 *
-	 * @param {string=} heading The visible heading, or title, of the tab. Set HTML headings with {@link ui.bootstrap.tabs.directive:tabHeading tabHeading}.
-	 * @param {string=} select An expression to evaluate when the tab is selected.
-	 * @param {boolean=} active A binding, telling whether or not this tab is selected.
-	 * @param {boolean=} disabled A binding, telling whether or not this tab is disabled.
-	 *
-	 * @description
-	 * Creates a tab with a heading and content. Must be placed within a {@link ui.bootstrap.tabs.directive:tabset tabset}.
-	 *
-	 * @example
-	<example module="ui.bootstrap">
-	  <file name="index.html">
-	    <div ng-controller="TabsDemoCtrl">
-	      <button class="btn btn-small" ng-click="items[0].active = true">
-	        Select item 1, using active binding
-	      </button>
-	      <button class="btn btn-small" ng-click="items[1].disabled = !items[1].disabled">
-	        Enable/disable item 2, using disabled binding
-	      </button>
-	      <br />
-	      <tabset>
-	        <tab heading="Tab 1">First Tab</tab>
-	        <tab select="alertMe()">
-	          <tab-heading><i class="icon-bell"></i> Alert me!</tab-heading>
-	          Second Tab, with alert callback and html heading!
-	        </tab>
-	        <tab ng-repeat="item in items"
-	          heading="{{item.title}}"
-	          disabled="item.disabled"
-	          active="item.active">
-	          {{item.content}}
-	        </tab>
-	      </tabset>
-	    </div>
-	  </file>
-	  <file name="script.js">
-	    function TabsDemoCtrl($scope) {
-	      $scope.items = [
-	        { title:"Dynamic Title 1", content:"Dynamic Item 0" },
-	        { title:"Dynamic Title 2", content:"Dynamic Item 1", disabled: true }
-	      ];
-	
-	      $scope.alertMe = function() {
-	        setTimeout(function() {
-	          alert("You've selected the alert tab!");
-	        });
-	      };
-	    };
-	  </file>
-	</example>
-	 */
-	
-	/**
-	 * @ngdoc directive
-	 * @name ui.bootstrap.tabs.directive:tabHeading
-	 * @restrict EA
-	 *
-	 * @description
-	 * Creates an HTML heading for a {@link ui.bootstrap.tabs.directive:tab tab}. Must be placed as a child of a tab element.
-	 *
-	 * @example
-	<example module="ui.bootstrap">
-	  <file name="index.html">
-	    <tabset>
-	      <tab>
-	        <tab-heading><b>HTML</b> in my titles?!</tab-heading>
-	        And some content, too!
-	      </tab>
-	      <tab>
-	        <tab-heading><i class="icon-heart"></i> Icon heading?!?</tab-heading>
-	        That's right.
-	      </tab>
-	    </tabset>
-	  </file>
-	</example>
-	 */
-	.directive('tab', ['$parse', '$log', function($parse, $log) {
-	  return {
-	    require: '^tabset',
-	    restrict: 'EA',
-	    replace: true,
-	    templateUrl: 'template/tabs/tab.html',
-	    transclude: true,
-	    scope: {
-	      active: '=?',
-	      heading: '@',
-	      onSelect: '&select', //This callback is called in contentHeadingTransclude
-	                          //once it inserts the tab's content into the dom
-	      onDeselect: '&deselect'
-	    },
-	    controller: function() {
-	      //Empty controller so other directives can require being 'under' a tab
-	    },
-	    link: function(scope, elm, attrs, tabsetCtrl, transclude) {
-	      scope.$watch('active', function(active) {
-	        if (active) {
-	          tabsetCtrl.select(scope);
-	        }
-	      });
-	
-	      scope.disabled = false;
-	      if ( attrs.disable ) {
-	        scope.$parent.$watch($parse(attrs.disable), function(value) {
-	          scope.disabled = !! value;
-	        });
-	      }
-	
-	      // Deprecation support of "disabled" parameter
-	      // fix(tab): IE9 disabled attr renders grey text on enabled tab #2677
-	      // This code is duplicated from the lines above to make it easy to remove once
-	      // the feature has been completely deprecated
-	      if ( attrs.disabled ) {
-	        $log.warn('Use of "disabled" attribute has been deprecated, please use "disable"');
-	        scope.$parent.$watch($parse(attrs.disabled), function(value) {
-	          scope.disabled = !! value;
-	        });
-	      }
-	
-	      scope.select = function() {
-	        if ( !scope.disabled ) {
-	          scope.active = true;
-	        }
-	      };
-	
-	      tabsetCtrl.addTab(scope);
-	      scope.$on('$destroy', function() {
-	        tabsetCtrl.removeTab(scope);
-	      });
-	
-	      //We need to transclude later, once the content container is ready.
-	      //when this link happens, we're inside a tab heading.
-	      scope.$transcludeFn = transclude;
-	    }
-	  };
-	}])
-	
-	.directive('tabHeadingTransclude', [function() {
-	  return {
-	    restrict: 'A',
-	    require: '^tab',
-	    link: function(scope, elm, attrs, tabCtrl) {
-	      scope.$watch('headingElement', function updateHeadingElement(heading) {
-	        if (heading) {
-	          elm.html('');
-	          elm.append(heading);
-	        }
-	      });
-	    }
-	  };
-	}])
-	
-	.directive('tabContentTransclude', function() {
-	  return {
-	    restrict: 'A',
-	    require: '^tabset',
-	    link: function(scope, elm, attrs) {
-	      var tab = scope.$eval(attrs.tabContentTransclude);
-	
-	      //Now our tab is ready to be transcluded: both the tab heading area
-	      //and the tab content area are loaded.  Transclude 'em both.
-	      tab.$transcludeFn(tab.$parent, function(contents) {
-	        angular.forEach(contents, function(node) {
-	          if (isTabHeading(node)) {
-	            //Let tabHeadingTransclude know.
-	            tab.headingElement = node;
-	          } else {
-	            elm.append(node);
-	          }
-	        });
-	      });
-	    }
-	  };
-	  function isTabHeading(node) {
-	    return node.tagName &&  (
-	      node.hasAttribute('tab-heading') ||
-	      node.hasAttribute('data-tab-heading') ||
-	      node.tagName.toLowerCase() === 'tab-heading' ||
-	      node.tagName.toLowerCase() === 'data-tab-heading'
-	    );
-	  }
-	})
-	
-	;
-	
-	angular.module('ui.bootstrap.timepicker', [])
-	
-	.constant('timepickerConfig', {
-	  hourStep: 1,
-	  minuteStep: 1,
-	  showMeridian: true,
-	  meridians: null,
-	  readonlyInput: false,
-	  mousewheel: true,
-	  arrowkeys: true,
-	  showSpinners: true
-	})
-	
-	.controller('TimepickerController', ['$scope', '$attrs', '$parse', '$log', '$locale', 'timepickerConfig', function($scope, $attrs, $parse, $log, $locale, timepickerConfig) {
-	  var selected = new Date(),
-	      ngModelCtrl = { $setViewValue: angular.noop }, // nullModelCtrl
-	      meridians = angular.isDefined($attrs.meridians) ? $scope.$parent.$eval($attrs.meridians) : timepickerConfig.meridians || $locale.DATETIME_FORMATS.AMPMS;
-	
-	  this.init = function( ngModelCtrl_, inputs ) {
-	    ngModelCtrl = ngModelCtrl_;
-	    ngModelCtrl.$render = this.render;
-	
-	    ngModelCtrl.$formatters.unshift(function (modelValue) {
-	      return modelValue ? new Date( modelValue ) : null;
-	    });
-	
-	    var hoursInputEl = inputs.eq(0),
-	        minutesInputEl = inputs.eq(1);
-	
-	    var mousewheel = angular.isDefined($attrs.mousewheel) ? $scope.$parent.$eval($attrs.mousewheel) : timepickerConfig.mousewheel;
-	    if ( mousewheel ) {
-	      this.setupMousewheelEvents( hoursInputEl, minutesInputEl );
-	    }
-	
-	    var arrowkeys = angular.isDefined($attrs.arrowkeys) ? $scope.$parent.$eval($attrs.arrowkeys) : timepickerConfig.arrowkeys;
-	    if (arrowkeys) {
-	      this.setupArrowkeyEvents( hoursInputEl, minutesInputEl );
-	    }
-	
-	    $scope.readonlyInput = angular.isDefined($attrs.readonlyInput) ? $scope.$parent.$eval($attrs.readonlyInput) : timepickerConfig.readonlyInput;
-	    this.setupInputEvents( hoursInputEl, minutesInputEl );
-	  };
-	
-	  var hourStep = timepickerConfig.hourStep;
-	  if ($attrs.hourStep) {
-	    $scope.$parent.$watch($parse($attrs.hourStep), function(value) {
-	      hourStep = parseInt(value, 10);
-	    });
-	  }
-	
-	  var minuteStep = timepickerConfig.minuteStep;
-	  if ($attrs.minuteStep) {
-	    $scope.$parent.$watch($parse($attrs.minuteStep), function(value) {
-	      minuteStep = parseInt(value, 10);
-	    });
-	  }
-	
-	  var min;
-	  $scope.$parent.$watch($parse($attrs.min), function(value) {
-	    var dt = new Date(value);
-	    min = isNaN(dt) ? undefined : dt;
-	  });
-	
-	  var max;
-	  $scope.$parent.$watch($parse($attrs.max), function(value) {
-	    var dt = new Date(value);
-	    max = isNaN(dt) ? undefined : dt;
-	  });
-	
-	  $scope.noIncrementHours = function() {
-	    var incrementedSelected = addMinutes(selected, hourStep * 60);
-	    return incrementedSelected > max ||
-	      (incrementedSelected < selected && incrementedSelected < min);
-	  };
-	
-	  $scope.noDecrementHours = function() {
-	    var decrementedSelected = addMinutes(selected, - hourStep * 60);
-	    return decrementedSelected < min ||
-	      (decrementedSelected > selected && decrementedSelected > max);
-	  };
-	
-	  $scope.noIncrementMinutes = function() {
-	    var incrementedSelected = addMinutes(selected, minuteStep);
-	    return incrementedSelected > max ||
-	      (incrementedSelected < selected && incrementedSelected < min);
-	  };
-	
-	  $scope.noDecrementMinutes = function() {
-	    var decrementedSelected = addMinutes(selected, - minuteStep);
-	    return decrementedSelected < min ||
-	      (decrementedSelected > selected && decrementedSelected > max);
-	  };
-	
-	  $scope.noToggleMeridian = function() {
-	    if (selected.getHours() < 13) {
-	      return addMinutes(selected, 12 * 60) > max;
-	    } else {
-	      return addMinutes(selected, - 12 * 60) < min;
-	    }
-	  };
-	
-	  // 12H / 24H mode
-	  $scope.showMeridian = timepickerConfig.showMeridian;
-	  if ($attrs.showMeridian) {
-	    $scope.$parent.$watch($parse($attrs.showMeridian), function(value) {
-	      $scope.showMeridian = !!value;
-	
-	      if ( ngModelCtrl.$error.time ) {
-	        // Evaluate from template
-	        var hours = getHoursFromTemplate(), minutes = getMinutesFromTemplate();
-	        if (angular.isDefined( hours ) && angular.isDefined( minutes )) {
-	          selected.setHours( hours );
-	          refresh();
-	        }
-	      } else {
-	        updateTemplate();
-	      }
-	    });
-	  }
-	
-	  // Get $scope.hours in 24H mode if valid
-	  function getHoursFromTemplate ( ) {
-	    var hours = parseInt( $scope.hours, 10 );
-	    var valid = ( $scope.showMeridian ) ? (hours > 0 && hours < 13) : (hours >= 0 && hours < 24);
-	    if ( !valid ) {
-	      return undefined;
-	    }
-	
-	    if ( $scope.showMeridian ) {
-	      if ( hours === 12 ) {
-	        hours = 0;
-	      }
-	      if ( $scope.meridian === meridians[1] ) {
-	        hours = hours + 12;
-	      }
-	    }
-	    return hours;
-	  }
-	
-	  function getMinutesFromTemplate() {
-	    var minutes = parseInt($scope.minutes, 10);
-	    return ( minutes >= 0 && minutes < 60 ) ? minutes : undefined;
-	  }
-	
-	  function pad( value ) {
-	    return ( angular.isDefined(value) && value.toString().length < 2 ) ? '0' + value : value.toString();
-	  }
-	
-	  // Respond on mousewheel spin
-	  this.setupMousewheelEvents = function( hoursInputEl, minutesInputEl ) {
-	    var isScrollingUp = function(e) {
-	      if (e.originalEvent) {
-	        e = e.originalEvent;
-	      }
-	      //pick correct delta variable depending on event
-	      var delta = (e.wheelDelta) ? e.wheelDelta : -e.deltaY;
-	      return (e.detail || delta > 0);
-	    };
-	
-	    hoursInputEl.bind('mousewheel wheel', function(e) {
-	      $scope.$apply( (isScrollingUp(e)) ? $scope.incrementHours() : $scope.decrementHours() );
-	      e.preventDefault();
-	    });
-	
-	    minutesInputEl.bind('mousewheel wheel', function(e) {
-	      $scope.$apply( (isScrollingUp(e)) ? $scope.incrementMinutes() : $scope.decrementMinutes() );
-	      e.preventDefault();
-	    });
-	
-	  };
-	
-	  // Respond on up/down arrowkeys
-	  this.setupArrowkeyEvents = function( hoursInputEl, minutesInputEl ) {
-	    hoursInputEl.bind('keydown', function(e) {
-	      if ( e.which === 38 ) { // up
-	        e.preventDefault();
-	        $scope.incrementHours();
-	        $scope.$apply();
-	      }
-	      else if ( e.which === 40 ) { // down
-	        e.preventDefault();
-	        $scope.decrementHours();
-	        $scope.$apply();
-	      }
-	    });
-	
-	    minutesInputEl.bind('keydown', function(e) {
-	      if ( e.which === 38 ) { // up
-	        e.preventDefault();
-	        $scope.incrementMinutes();
-	        $scope.$apply();
-	      }
-	      else if ( e.which === 40 ) { // down
-	        e.preventDefault();
-	        $scope.decrementMinutes();
-	        $scope.$apply();
-	      }
-	    });
-	  };
-	
-	  this.setupInputEvents = function( hoursInputEl, minutesInputEl ) {
-	    if ( $scope.readonlyInput ) {
-	      $scope.updateHours = angular.noop;
-	      $scope.updateMinutes = angular.noop;
-	      return;
-	    }
-	
-	    var invalidate = function(invalidHours, invalidMinutes) {
-	      ngModelCtrl.$setViewValue( null );
-	      ngModelCtrl.$setValidity('time', false);
-	      if (angular.isDefined(invalidHours)) {
-	        $scope.invalidHours = invalidHours;
-	      }
-	      if (angular.isDefined(invalidMinutes)) {
-	        $scope.invalidMinutes = invalidMinutes;
-	      }
-	    };
-	
-	    $scope.updateHours = function() {
-	      var hours = getHoursFromTemplate();
-	
-	      if ( angular.isDefined(hours) ) {
-	        selected.setHours( hours );
-	        if (selected < min || selected > max) {
-	          invalidate(true);
-	        } else {
-	          refresh( 'h' );
-	        }
-	      } else {
-	        invalidate(true);
-	      }
-	    };
-	
-	    hoursInputEl.bind('blur', function(e) {
-	      if ( !$scope.invalidHours && $scope.hours < 10) {
-	        $scope.$apply( function() {
-	          $scope.hours = pad( $scope.hours );
-	        });
-	      }
-	    });
-	
-	    $scope.updateMinutes = function() {
-	      var minutes = getMinutesFromTemplate();
-	
-	      if ( angular.isDefined(minutes) ) {
-	        selected.setMinutes( minutes );
-	        if (selected < min || selected > max) {
-	          invalidate(undefined, true);
-	        } else {
-	          refresh( 'm' );
-	        }
-	      } else {
-	        invalidate(undefined, true);
-	      }
-	    };
-	
-	    minutesInputEl.bind('blur', function(e) {
-	      if ( !$scope.invalidMinutes && $scope.minutes < 10 ) {
-	        $scope.$apply( function() {
-	          $scope.minutes = pad( $scope.minutes );
-	        });
-	      }
-	    });
-	
-	  };
-	
-	  this.render = function() {
-	    var date = ngModelCtrl.$viewValue;
-	
-	    if ( isNaN(date) ) {
-	      ngModelCtrl.$setValidity('time', false);
-	      $log.error('Timepicker directive: "ng-model" value must be a Date object, a number of milliseconds since 01.01.1970 or a string representing an RFC2822 or ISO 8601 date.');
-	    } else {
-	      if ( date ) {
-	        selected = date;
-	      }
-	
-	      if (selected < min || selected > max) {
-	        ngModelCtrl.$setValidity('time', false);
-	        $scope.invalidHours = true;
-	        $scope.invalidMinutes = true;
-	      } else {
-	        makeValid();
-	      }
-	      updateTemplate();
-	    }
-	  };
-	
-	  // Call internally when we know that model is valid.
-	  function refresh( keyboardChange ) {
-	    makeValid();
-	    ngModelCtrl.$setViewValue( new Date(selected) );
-	    updateTemplate( keyboardChange );
-	  }
-	
-	  function makeValid() {
-	    ngModelCtrl.$setValidity('time', true);
-	    $scope.invalidHours = false;
-	    $scope.invalidMinutes = false;
-	  }
-	
-	  function updateTemplate( keyboardChange ) {
-	    var hours = selected.getHours(), minutes = selected.getMinutes();
-	
-	    if ( $scope.showMeridian ) {
-	      hours = ( hours === 0 || hours === 12 ) ? 12 : hours % 12; // Convert 24 to 12 hour system
-	    }
-	
-	    $scope.hours = keyboardChange === 'h' ? hours : pad(hours);
-	    if (keyboardChange !== 'm') {
-	      $scope.minutes = pad(minutes);
-	    }
-	    $scope.meridian = selected.getHours() < 12 ? meridians[0] : meridians[1];
-	  }
-	
-	  function addMinutes(date,  minutes) {
-	    var dt = new Date(date.getTime() + minutes * 60000);
-	    var newDate = new Date(date);
-	    newDate.setHours(dt.getHours(), dt.getMinutes());
-	    return newDate;
-	  }
-	
-	  function addMinutesToSelected( minutes ) {
-	    selected = addMinutes( selected, minutes );
-	    refresh();
-	  }
-	  
-	  $scope.showSpinners = angular.isDefined($attrs.showSpinners) ?
-	    $scope.$parent.$eval($attrs.showSpinners) : timepickerConfig.showSpinners;
-	  
-	  $scope.incrementHours = function() {
-	    if (!$scope.noIncrementHours()) {
-	      addMinutesToSelected(hourStep * 60);
-	    }
-	  };
-	  $scope.decrementHours = function() {
-	    if (!$scope.noDecrementHours()) {
-	      addMinutesToSelected(-hourStep * 60);
-	    }
-	  };
-	  $scope.incrementMinutes = function() {
-	    if (!$scope.noIncrementMinutes()) {
-	      addMinutesToSelected(minuteStep);
-	    }
-	  };
-	  $scope.decrementMinutes = function() {
-	    if (!$scope.noDecrementMinutes()) {
-	      addMinutesToSelected(-minuteStep);
-	    }
-	  };
-	  $scope.toggleMeridian = function() {
-	    if (!$scope.noToggleMeridian()) {
-	      addMinutesToSelected(12 * 60 * (selected.getHours() < 12 ? 1 : -1));
-	    }
-	  };
-	}])
-	
-	.directive('timepicker', function () {
-	  return {
-	    restrict: 'EA',
-	    require: ['timepicker', '?^ngModel'],
-	    controller:'TimepickerController',
-	    replace: true,
-	    scope: {},
-	    templateUrl: 'template/timepicker/timepicker.html',
-	    link: function(scope, element, attrs, ctrls) {
-	      var timepickerCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-	
-	      if ( ngModelCtrl ) {
-	        timepickerCtrl.init( ngModelCtrl, element.find('input') );
-	      }
-	    }
-	  };
-	});
-	
-	angular.module('ui.bootstrap.transition', [])
-	
-	.value('$transitionSuppressDeprecated', false)
-	/**
-	 * $transition service provides a consistent interface to trigger CSS 3 transitions and to be informed when they complete.
-	 * @param  {DOMElement} element  The DOMElement that will be animated.
-	 * @param  {string|object|function} trigger  The thing that will cause the transition to start:
-	 *   - As a string, it represents the css class to be added to the element.
-	 *   - As an object, it represents a hash of style attributes to be applied to the element.
-	 *   - As a function, it represents a function to be called that will cause the transition to occur.
-	 * @return {Promise}  A promise that is resolved when the transition finishes.
-	 */
-	.factory('$transition', [
-	        '$q', '$timeout', '$rootScope', '$log', '$transitionSuppressDeprecated',
-	function($q ,  $timeout ,  $rootScope ,  $log ,  $transitionSuppressDeprecated) {
-	
-	  if (!$transitionSuppressDeprecated) {
-	    $log.warn('$transition is now deprecated. Use $animate from ngAnimate instead.');
-	  }
-	
-	  var $transition = function(element, trigger, options) {
-	    options = options || {};
-	    var deferred = $q.defer();
-	    var endEventName = $transition[options.animation ? 'animationEndEventName' : 'transitionEndEventName'];
-	
-	    var transitionEndHandler = function(event) {
-	      $rootScope.$apply(function() {
-	        element.unbind(endEventName, transitionEndHandler);
-	        deferred.resolve(element);
-	      });
-	    };
-	
-	    if (endEventName) {
-	      element.bind(endEventName, transitionEndHandler);
-	    }
-	
-	    // Wrap in a timeout to allow the browser time to update the DOM before the transition is to occur
-	    $timeout(function() {
-	      if ( angular.isString(trigger) ) {
-	        element.addClass(trigger);
-	      } else if ( angular.isFunction(trigger) ) {
-	        trigger(element);
-	      } else if ( angular.isObject(trigger) ) {
-	        element.css(trigger);
-	      }
-	      //If browser does not support transitions, instantly resolve
-	      if ( !endEventName ) {
-	        deferred.resolve(element);
-	      }
-	    });
-	
-	    // Add our custom cancel function to the promise that is returned
-	    // We can call this if we are about to run a new transition, which we know will prevent this transition from ending,
-	    // i.e. it will therefore never raise a transitionEnd event for that transition
-	    deferred.promise.cancel = function() {
-	      if ( endEventName ) {
-	        element.unbind(endEventName, transitionEndHandler);
-	      }
-	      deferred.reject('Transition cancelled');
-	    };
-	
-	    return deferred.promise;
-	  };
-	
-	  // Work out the name of the transitionEnd event
-	  var transElement = document.createElement('trans');
-	  var transitionEndEventNames = {
-	    'WebkitTransition': 'webkitTransitionEnd',
-	    'MozTransition': 'transitionend',
-	    'OTransition': 'oTransitionEnd',
-	    'transition': 'transitionend'
-	  };
-	  var animationEndEventNames = {
-	    'WebkitTransition': 'webkitAnimationEnd',
-	    'MozTransition': 'animationend',
-	    'OTransition': 'oAnimationEnd',
-	    'transition': 'animationend'
-	  };
-	  function findEndEventName(endEventNames) {
-	    for (var name in endEventNames){
-	      if (transElement.style[name] !== undefined) {
-	        return endEventNames[name];
-	      }
-	    }
-	  }
-	  $transition.transitionEndEventName = findEndEventName(transitionEndEventNames);
-	  $transition.animationEndEventName = findEndEventName(animationEndEventNames);
-	  return $transition;
-	}]);
-	
-	angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap.bindHtml'])
-	
-	/**
-	 * A helper service that can parse typeahead's syntax (string provided by users)
-	 * Extracted to a separate service for ease of unit testing
-	 */
-	  .factory('typeaheadParser', ['$parse', function ($parse) {
-	
-	  //                      00000111000000000000022200000000000000003333333333333330000000000044000
-	  var TYPEAHEAD_REGEXP = /^\s*([\s\S]+?)(?:\s+as\s+([\s\S]+?))?\s+for\s+(?:([\$\w][\$\w\d]*))\s+in\s+([\s\S]+?)$/;
-	
-	  return {
-	    parse:function (input) {
-	
-	      var match = input.match(TYPEAHEAD_REGEXP);
-	      if (!match) {
-	        throw new Error(
-	          'Expected typeahead specification in form of "_modelValue_ (as _label_)? for _item_ in _collection_"' +
-	            ' but got "' + input + '".');
-	      }
-	
-	      return {
-	        itemName:match[3],
-	        source:$parse(match[4]),
-	        viewMapper:$parse(match[2] || match[1]),
-	        modelMapper:$parse(match[1])
-	      };
-	    }
-	  };
-	}])
-	
-	  .directive('typeahead', ['$compile', '$parse', '$q', '$timeout', '$document', '$window', '$rootScope', '$position', 'typeaheadParser',
-	       function ($compile, $parse, $q, $timeout, $document, $window, $rootScope, $position, typeaheadParser) {
-	
-	  var HOT_KEYS = [9, 13, 27, 38, 40];
-	  var eventDebounceTime = 200;
-	
-	  return {
-	    require:'ngModel',
-	    link:function (originalScope, element, attrs, modelCtrl) {
-	
-	      //SUPPORTED ATTRIBUTES (OPTIONS)
-	
-	      //minimal no of characters that needs to be entered before typeahead kicks-in
-	      var minLength = originalScope.$eval(attrs.typeaheadMinLength);
-	      if (!minLength && minLength !== 0) {
-	        minLength = 1;
-	      }
-	
-	      //minimal wait time after last character typed before typeahead kicks-in
-	      var waitTime = originalScope.$eval(attrs.typeaheadWaitMs) || 0;
-	
-	      //should it restrict model values to the ones selected from the popup only?
-	      var isEditable = originalScope.$eval(attrs.typeaheadEditable) !== false;
-	
-	      //binding to a variable that indicates if matches are being retrieved asynchronously
-	      var isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop;
-	
-	      //a callback executed when a match is selected
-	      var onSelectCallback = $parse(attrs.typeaheadOnSelect);
-	
-	      //should it select highlighted popup value when losing focus?
-	      var isSelectOnBlur = angular.isDefined(attrs.typeaheadSelectOnBlur) ? originalScope.$eval(attrs.typeaheadSelectOnBlur) : false;
-	
-	      //binding to a variable that indicates if there were no results after the query is completed
-	      var isNoResultsSetter = $parse(attrs.typeaheadNoResults).assign || angular.noop;
-	
-	      var inputFormatter = attrs.typeaheadInputFormatter ? $parse(attrs.typeaheadInputFormatter) : undefined;
-	
-	      var appendToBody =  attrs.typeaheadAppendToBody ? originalScope.$eval(attrs.typeaheadAppendToBody) : false;
-	
-	      var focusFirst = originalScope.$eval(attrs.typeaheadFocusFirst) !== false;
-	
-	      //If input matches an item of the list exactly, select it automatically
-	      var selectOnExact = attrs.typeaheadSelectOnExact ? originalScope.$eval(attrs.typeaheadSelectOnExact) : false;
-	
-	      //INTERNAL VARIABLES
-	
-	      //model setter executed upon match selection
-	      var $setModelValue = $parse(attrs.ngModel).assign;
-	
-	      //expressions used by typeahead
-	      var parserResult = typeaheadParser.parse(attrs.typeahead);
-	
-	      var hasFocus;
-	
-	      //Used to avoid bug in iOS webview where iOS keyboard does not fire
-	      //mousedown & mouseup events
-	      //Issue #3699
-	      var selected;
-	
-	      //create a child scope for the typeahead directive so we are not polluting original scope
-	      //with typeahead-specific data (matches, query etc.)
-	      var scope = originalScope.$new();
-	      originalScope.$on('$destroy', function(){
-	        scope.$destroy();
-	      });
-	
-	      // WAI-ARIA
-	      var popupId = 'typeahead-' + scope.$id + '-' + Math.floor(Math.random() * 10000);
-	      element.attr({
-	        'aria-autocomplete': 'list',
-	        'aria-expanded': false,
-	        'aria-owns': popupId
-	      });
-	
-	      //pop-up element used to display matches
-	      var popUpEl = angular.element('<div typeahead-popup></div>');
-	      popUpEl.attr({
-	        id: popupId,
-	        matches: 'matches',
-	        active: 'activeIdx',
-	        select: 'select(activeIdx)',
-	        'move-in-progress': 'moveInProgress',
-	        query: 'query',
-	        position: 'position'
-	      });
-	      //custom item template
-	      if (angular.isDefined(attrs.typeaheadTemplateUrl)) {
-	        popUpEl.attr('template-url', attrs.typeaheadTemplateUrl);
-	      }
-	
-	      var resetMatches = function() {
-	        scope.matches = [];
-	        scope.activeIdx = -1;
-	        element.attr('aria-expanded', false);
-	      };
-	
-	      var getMatchId = function(index) {
-	        return popupId + '-option-' + index;
-	      };
-	
-	      // Indicate that the specified match is the active (pre-selected) item in the list owned by this typeahead.
-	      // This attribute is added or removed automatically when the `activeIdx` changes.
-	      scope.$watch('activeIdx', function(index) {
-	        if (index < 0) {
-	          element.removeAttr('aria-activedescendant');
-	        } else {
-	          element.attr('aria-activedescendant', getMatchId(index));
-	        }
-	      });
-	
-	      var inputIsExactMatch = function(inputValue, index) {
-	
-	        if (scope.matches.length > index && inputValue) {
-	          return inputValue.toUpperCase() === scope.matches[index].label.toUpperCase();
-	        }
-	
-	        return false;
-	      };
-	
-	      var getMatchesAsync = function(inputValue) {
-	
-	        var locals = {$viewValue: inputValue};
-	        isLoadingSetter(originalScope, true);
-	        isNoResultsSetter(originalScope, false);
-	        $q.when(parserResult.source(originalScope, locals)).then(function(matches) {
-	
-	          //it might happen that several async queries were in progress if a user were typing fast
-	          //but we are interested only in responses that correspond to the current view value
-	          var onCurrentRequest = (inputValue === modelCtrl.$viewValue);
-	          if (onCurrentRequest && hasFocus) {
-	            if (matches && matches.length > 0) {
-	
-	              scope.activeIdx = focusFirst ? 0 : -1;
-	              isNoResultsSetter(originalScope, false);
-	              scope.matches.length = 0;
-	
-	              //transform labels
-	              for(var i=0; i<matches.length; i++) {
-	                locals[parserResult.itemName] = matches[i];
-	                scope.matches.push({
-	                  id: getMatchId(i),
-	                  label: parserResult.viewMapper(scope, locals),
-	                  model: matches[i]
-	                });
-	              }
-	
-	              scope.query = inputValue;
-	              //position pop-up with matches - we need to re-calculate its position each time we are opening a window
-	              //with matches as a pop-up might be absolute-positioned and position of an input might have changed on a page
-	              //due to other elements being rendered
-	              recalculatePosition();
-	
-	              element.attr('aria-expanded', true);
-	
-	              //Select the single remaining option if user input matches
-	              if (selectOnExact && scope.matches.length === 1 && inputIsExactMatch(inputValue, 0)) {
-	                scope.select(0);
-	              }
-	            } else {
-	              resetMatches();
-	              isNoResultsSetter(originalScope, true);
-	            }
-	          }
-	          if (onCurrentRequest) {
-	            isLoadingSetter(originalScope, false);
-	          }
-	        }, function(){
-	          resetMatches();
-	          isLoadingSetter(originalScope, false);
-	          isNoResultsSetter(originalScope, true);
-	        });
-	      };
-	
-	      // bind events only if appendToBody params exist - performance feature
-	      if (appendToBody) {
-	        angular.element($window).bind('resize', fireRecalculating);
-	        $document.find('body').bind('scroll', fireRecalculating);
-	      }
-	
-	      // Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
-	      var timeoutEventPromise;
-	
-	      // Default progress type
-	      scope.moveInProgress = false;
-	
-	      function fireRecalculating() {
-	        if(!scope.moveInProgress){
-	          scope.moveInProgress = true;
-	          scope.$digest();
-	        }
-	
-	        // Cancel previous timeout
-	        if (timeoutEventPromise) {
-	          $timeout.cancel(timeoutEventPromise);
-	        }
-	
-	        // Debounced executing recalculate after events fired
-	        timeoutEventPromise = $timeout(function () {
-	          // if popup is visible
-	          if (scope.matches.length) {
-	            recalculatePosition();
-	          }
-	
-	          scope.moveInProgress = false;
-	          scope.$digest();
-	        }, eventDebounceTime);
-	      }
-	
-	      // recalculate actual position and set new values to scope
-	      // after digest loop is popup in right position
-	      function recalculatePosition() {
-	        scope.position = appendToBody ? $position.offset(element) : $position.position(element);
-	        scope.position.top += element.prop('offsetHeight');
-	      }
-	
-	      resetMatches();
-	
-	      //we need to propagate user's query so we can higlight matches
-	      scope.query = undefined;
-	
-	      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
-	      var timeoutPromise;
-	
-	      var scheduleSearchWithTimeout = function(inputValue) {
-	        timeoutPromise = $timeout(function () {
-	          getMatchesAsync(inputValue);
-	        }, waitTime);
-	      };
-	
-	      var cancelPreviousTimeout = function() {
-	        if (timeoutPromise) {
-	          $timeout.cancel(timeoutPromise);
-	        }
-	      };
-	
-	      //plug into $parsers pipeline to open a typeahead on view changes initiated from DOM
-	      //$parsers kick-in on all the changes coming from the view as well as manually triggered by $setViewValue
-	      modelCtrl.$parsers.unshift(function (inputValue) {
-	
-	        hasFocus = true;
-	
-	        if (minLength === 0 || inputValue && inputValue.length >= minLength) {
-	          if (waitTime > 0) {
-	            cancelPreviousTimeout();
-	            scheduleSearchWithTimeout(inputValue);
-	          } else {
-	            getMatchesAsync(inputValue);
-	          }
-	        } else {
-	          isLoadingSetter(originalScope, false);
-	          cancelPreviousTimeout();
-	          resetMatches();
-	        }
-	
-	        if (isEditable) {
-	          return inputValue;
-	        } else {
-	          if (!inputValue) {
-	            // Reset in case user had typed something previously.
-	            modelCtrl.$setValidity('editable', true);
-	            return null;
-	          } else {
-	            modelCtrl.$setValidity('editable', false);
-	            return undefined;
-	          }
-	        }
-	      });
-	
-	      modelCtrl.$formatters.push(function (modelValue) {
-	
-	        var candidateViewValue, emptyViewValue;
-	        var locals = {};
-	
-	        // The validity may be set to false via $parsers (see above) if
-	        // the model is restricted to selected values. If the model
-	        // is set manually it is considered to be valid.
-	        if (!isEditable) {
-	          modelCtrl.$setValidity('editable', true);
-	        }
-	
-	        if (inputFormatter) {
-	
-	          locals.$model = modelValue;
-	          return inputFormatter(originalScope, locals);
-	
-	        } else {
-	
-	          //it might happen that we don't have enough info to properly render input value
-	          //we need to check for this situation and simply return model value if we can't apply custom formatting
-	          locals[parserResult.itemName] = modelValue;
-	          candidateViewValue = parserResult.viewMapper(originalScope, locals);
-	          locals[parserResult.itemName] = undefined;
-	          emptyViewValue = parserResult.viewMapper(originalScope, locals);
-	
-	          return candidateViewValue!== emptyViewValue ? candidateViewValue : modelValue;
-	        }
-	      });
-	
-	      scope.select = function (activeIdx) {
-	        //called from within the $digest() cycle
-	        var locals = {};
-	        var model, item;
-	
-	        selected = true;
-	        locals[parserResult.itemName] = item = scope.matches[activeIdx].model;
-	        model = parserResult.modelMapper(originalScope, locals);
-	        $setModelValue(originalScope, model);
-	        modelCtrl.$setValidity('editable', true);
-	        modelCtrl.$setValidity('parse', true);
-	
-	        onSelectCallback(originalScope, {
-	          $item: item,
-	          $model: model,
-	          $label: parserResult.viewMapper(originalScope, locals)
-	        });
-	
-	        resetMatches();
-	
-	        //return focus to the input element if a match was selected via a mouse click event
-	        // use timeout to avoid $rootScope:inprog error
-	        $timeout(function() { element[0].focus(); }, 0, false);
-	      };
-	
-	      //bind keyboard events: arrows up(38) / down(40), enter(13) and tab(9), esc(27)
-	      element.bind('keydown', function (evt) {
-	
-	        //typeahead is open and an "interesting" key was pressed
-	        if (scope.matches.length === 0 || HOT_KEYS.indexOf(evt.which) === -1) {
-	          return;
-	        }
-	
-	        // if there's nothing selected (i.e. focusFirst) and enter or tab is hit, clear the results
-	        if (scope.activeIdx === -1 && (evt.which === 9 || evt.which === 13)) {
-	          resetMatches();
-	          scope.$digest();
-	          return;
-	        }
-	
-	        evt.preventDefault();
-	
-	        if (evt.which === 40) {
-	          scope.activeIdx = (scope.activeIdx + 1) % scope.matches.length;
-	          scope.$digest();
-	
-	        } else if (evt.which === 38) {
-	          scope.activeIdx = (scope.activeIdx > 0 ? scope.activeIdx : scope.matches.length) - 1;
-	          scope.$digest();
-	
-	        } else if (evt.which === 13 || evt.which === 9) {
-	          scope.$apply(function () {
-	            scope.select(scope.activeIdx);
-	          });
-	
-	        } else if (evt.which === 27) {
-	          evt.stopPropagation();
-	
-	          resetMatches();
-	          scope.$digest();
-	        }
-	      });
-	
-	      element.bind('blur', function () {
-	        if (isSelectOnBlur && scope.matches.length && scope.activeIdx !== -1 && !selected) {
-	          selected = true;
-	          scope.$apply(function () {
-	            scope.select(scope.activeIdx);
-	          });
-	        }
-	        hasFocus = false;
-	        selected = false;
-	      });
-	
-	      // Keep reference to click handler to unbind it.
-	      var dismissClickHandler = function (evt) {
-	        // Issue #3973
-	        // Firefox treats right click as a click on document
-	        if (element[0] !== evt.target && evt.which !== 3 && scope.matches.length !== 0) {
-	          resetMatches();
-	          if (!$rootScope.$$phase) {
-	            scope.$digest();
-	          }
-	        }
-	      };
-	
-	      $document.bind('click', dismissClickHandler);
-	
-	      originalScope.$on('$destroy', function(){
-	        $document.unbind('click', dismissClickHandler);
-	        if (appendToBody) {
-	          $popup.remove();
-	        }
-	        // Prevent jQuery cache memory leak
-	        popUpEl.remove();
-	      });
-	
-	      var $popup = $compile(popUpEl)(scope);
-	
-	      if (appendToBody) {
-	        $document.find('body').append($popup);
-	      } else {
-	        element.after($popup);
-	      }
-	    }
-	  };
-	
-	}])
-	
-	  .directive('typeaheadPopup', function () {
-	    return {
-	      restrict:'EA',
-	      scope:{
-	        matches:'=',
-	        query:'=',
-	        active:'=',
-	        position:'&',
-	        moveInProgress:'=',
-	        select:'&'
-	      },
-	      replace:true,
-	      templateUrl:'template/typeahead/typeahead-popup.html',
-	      link:function (scope, element, attrs) {
-	
-	        scope.templateUrl = attrs.templateUrl;
-	
-	        scope.isOpen = function () {
-	          return scope.matches.length > 0;
-	        };
-	
-	        scope.isActive = function (matchIdx) {
-	          return scope.active == matchIdx;
-	        };
-	
-	        scope.selectActive = function (matchIdx) {
-	          scope.active = matchIdx;
-	        };
-	
-	        scope.selectMatch = function (activeIdx) {
-	          scope.select({activeIdx:activeIdx});
-	        };
-	      }
-	    };
-	  })
-	
-	  .directive('typeaheadMatch', ['$templateRequest', '$compile', '$parse', function ($templateRequest, $compile, $parse) {
-	    return {
-	      restrict:'EA',
-	      scope:{
-	        index:'=',
-	        match:'=',
-	        query:'='
-	      },
-	      link:function (scope, element, attrs) {
-	        var tplUrl = $parse(attrs.templateUrl)(scope.$parent) || 'template/typeahead/typeahead-match.html';
-	        $templateRequest(tplUrl).then(function(tplContent) {
-	          $compile(tplContent.trim())(scope, function(clonedElement){
-	            element.replaceWith(clonedElement);
-	          });
-	        });
-	      }
-	    };
-	  }])
-	
-	  .filter('typeaheadHighlight', function() {
-	
-	    function escapeRegexp(queryToEscape) {
-	      return queryToEscape.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
-	    }
-	
-	    return function(matchItem, query) {
-	      return query ? ('' + matchItem).replace(new RegExp(escapeRegexp(query), 'gi'), '<strong>$&</strong>') : matchItem;
-	    };
-	  });
-	
-	angular.module("template/accordion/accordion-group.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/accordion/accordion-group.html",
-	    "<div class=\"panel panel-default\" ng-class=\"{'panel-open': isOpen}\">\n" +
-	    "  <div class=\"panel-heading\">\n" +
-	    "    <h4 class=\"panel-title\">\n" +
-	    "      <a href tabindex=\"0\" class=\"accordion-toggle\" ng-click=\"toggleOpen()\" accordion-transclude=\"heading\"><span ng-class=\"{'text-muted': isDisabled}\">{{heading}}</span></a>\n" +
-	    "    </h4>\n" +
-	    "  </div>\n" +
-	    "  <div class=\"panel-collapse collapse\" collapse=\"!isOpen\">\n" +
-	    "	  <div class=\"panel-body\" ng-transclude></div>\n" +
-	    "  </div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/accordion/accordion.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/accordion/accordion.html",
-	    "<div class=\"panel-group\" ng-transclude></div>");
-	}]);
-	
-	angular.module("template/alert/alert.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/alert/alert.html",
-	    "<div class=\"alert\" ng-class=\"['alert-' + (type || 'warning'), closeable ? 'alert-dismissible' : null]\" role=\"alert\">\n" +
-	    "    <button ng-show=\"closeable\" type=\"button\" class=\"close\" ng-click=\"close($event)\">\n" +
-	    "        <span aria-hidden=\"true\">&times;</span>\n" +
-	    "        <span class=\"sr-only\">Close</span>\n" +
-	    "    </button>\n" +
-	    "    <div ng-transclude></div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/carousel/carousel.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/carousel/carousel.html",
-	    "<div ng-mouseenter=\"pause()\" ng-mouseleave=\"play()\" class=\"carousel\" ng-swipe-right=\"prev()\" ng-swipe-left=\"next()\">\n" +
-	    "    <ol class=\"carousel-indicators\" ng-show=\"slides.length > 1\">\n" +
-	    "        <li ng-repeat=\"slide in slides | orderBy:indexOfSlide track by $index\" ng-class=\"{active: isActive(slide)}\" ng-click=\"select(slide)\"></li>\n" +
-	    "    </ol>\n" +
-	    "    <div class=\"carousel-inner\" ng-transclude></div>\n" +
-	    "    <a class=\"left carousel-control\" ng-click=\"prev()\" ng-show=\"slides.length > 1\"><span class=\"glyphicon glyphicon-chevron-left\"></span></a>\n" +
-	    "    <a class=\"right carousel-control\" ng-click=\"next()\" ng-show=\"slides.length > 1\"><span class=\"glyphicon glyphicon-chevron-right\"></span></a>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/carousel/slide.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/carousel/slide.html",
-	    "<div ng-class=\"{\n" +
-	    "    'active': active\n" +
-	    "  }\" class=\"item text-center\" ng-transclude></div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/datepicker/datepicker.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/datepicker/datepicker.html",
-	    "<div ng-switch=\"datepickerMode\" role=\"application\" ng-keydown=\"keydown($event)\">\n" +
-	    "  <daypicker ng-switch-when=\"day\" tabindex=\"0\"></daypicker>\n" +
-	    "  <monthpicker ng-switch-when=\"month\" tabindex=\"0\"></monthpicker>\n" +
-	    "  <yearpicker ng-switch-when=\"year\" tabindex=\"0\"></yearpicker>\n" +
-	    "</div>");
-	}]);
-	
-	angular.module("template/datepicker/day.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/datepicker/day.html",
-	    "<table role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
-	    "  <thead>\n" +
-	    "    <tr>\n" +
-	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
-	    "      <th colspan=\"{{::5 + showWeeks}}\"><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\" style=\"width:100%;\"><strong>{{title}}</strong></button></th>\n" +
-	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
-	    "    </tr>\n" +
-	    "    <tr>\n" +
-	    "      <th ng-if=\"showWeeks\" class=\"text-center\"></th>\n" +
-	    "      <th ng-repeat=\"label in ::labels track by $index\" class=\"text-center\"><small aria-label=\"{{::label.full}}\">{{::label.abbr}}</small></th>\n" +
-	    "    </tr>\n" +
-	    "  </thead>\n" +
-	    "  <tbody>\n" +
-	    "    <tr ng-repeat=\"row in rows track by $index\">\n" +
-	    "      <td ng-if=\"showWeeks\" class=\"text-center h6\"><em>{{ weekNumbers[$index] }}</em></td>\n" +
-	    "      <td ng-repeat=\"dt in row track by dt.date\" class=\"text-center\" role=\"gridcell\" id=\"{{::dt.uid}}\" ng-class=\"::dt.customClass\">\n" +
-	    "        <button type=\"button\" style=\"min-width:100%;\" class=\"btn btn-default btn-sm\" ng-class=\"{'btn-info': dt.selected, active: isActive(dt)}\" ng-click=\"select(dt.date)\" ng-disabled=\"dt.disabled\" tabindex=\"-1\"><span ng-class=\"::{'text-muted': dt.secondary, 'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
-	    "      </td>\n" +
-	    "    </tr>\n" +
-	    "  </tbody>\n" +
-	    "</table>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/datepicker/month.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/datepicker/month.html",
-	    "<table role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
-	    "  <thead>\n" +
-	    "    <tr>\n" +
-	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
-	    "      <th><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\" style=\"width:100%;\"><strong>{{title}}</strong></button></th>\n" +
-	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
-	    "    </tr>\n" +
-	    "  </thead>\n" +
-	    "  <tbody>\n" +
-	    "    <tr ng-repeat=\"row in rows track by $index\">\n" +
-	    "      <td ng-repeat=\"dt in row track by dt.date\" class=\"text-center\" role=\"gridcell\" id=\"{{::dt.uid}}\" ng-class=\"::dt.customClass\">\n" +
-	    "        <button type=\"button\" style=\"min-width:100%;\" class=\"btn btn-default\" ng-class=\"{'btn-info': dt.selected, active: isActive(dt)}\" ng-click=\"select(dt.date)\" ng-disabled=\"dt.disabled\" tabindex=\"-1\"><span ng-class=\"::{'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
-	    "      </td>\n" +
-	    "    </tr>\n" +
-	    "  </tbody>\n" +
-	    "</table>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/datepicker/popup.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/datepicker/popup.html",
-	    "<ul class=\"dropdown-menu\" ng-if=\"isOpen\" style=\"display: block\" ng-style=\"{top: position.top+'px', left: position.left+'px'}\" ng-keydown=\"keydown($event)\" ng-click=\"$event.stopPropagation()\">\n" +
-	    "	<li ng-transclude></li>\n" +
-	    "	<li ng-if=\"showButtonBar\" style=\"padding:10px 9px 2px\">\n" +
-	    "		<span class=\"btn-group pull-left\">\n" +
-	    "			<button type=\"button\" class=\"btn btn-sm btn-info\" ng-click=\"select('today')\">{{ getText('current') }}</button>\n" +
-	    "			<button type=\"button\" class=\"btn btn-sm btn-danger\" ng-click=\"select(null)\">{{ getText('clear') }}</button>\n" +
-	    "		</span>\n" +
-	    "		<button type=\"button\" class=\"btn btn-sm btn-success pull-right\" ng-click=\"close()\">{{ getText('close') }}</button>\n" +
-	    "	</li>\n" +
-	    "</ul>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/datepicker/year.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/datepicker/year.html",
-	    "<table role=\"grid\" aria-labelledby=\"{{::uniqueId}}-title\" aria-activedescendant=\"{{activeDateId}}\">\n" +
-	    "  <thead>\n" +
-	    "    <tr>\n" +
-	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-left\" ng-click=\"move(-1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-left\"></i></button></th>\n" +
-	    "      <th colspan=\"3\"><button id=\"{{::uniqueId}}-title\" role=\"heading\" aria-live=\"assertive\" aria-atomic=\"true\" type=\"button\" class=\"btn btn-default btn-sm\" ng-click=\"toggleMode()\" ng-disabled=\"datepickerMode === maxMode\" tabindex=\"-1\" style=\"width:100%;\"><strong>{{title}}</strong></button></th>\n" +
-	    "      <th><button type=\"button\" class=\"btn btn-default btn-sm pull-right\" ng-click=\"move(1)\" tabindex=\"-1\"><i class=\"glyphicon glyphicon-chevron-right\"></i></button></th>\n" +
-	    "    </tr>\n" +
-	    "  </thead>\n" +
-	    "  <tbody>\n" +
-	    "    <tr ng-repeat=\"row in rows track by $index\">\n" +
-	    "      <td ng-repeat=\"dt in row track by dt.date\" class=\"text-center\" role=\"gridcell\" id=\"{{::dt.uid}}\">\n" +
-	    "        <button type=\"button\" style=\"min-width:100%;\" class=\"btn btn-default\" ng-class=\"{'btn-info': dt.selected, active: isActive(dt)}\" ng-click=\"select(dt.date)\" ng-disabled=\"dt.disabled\" tabindex=\"-1\"><span ng-class=\"::{'text-info': dt.current}\">{{::dt.label}}</span></button>\n" +
-	    "      </td>\n" +
-	    "    </tr>\n" +
-	    "  </tbody>\n" +
-	    "</table>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/modal/backdrop.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/modal/backdrop.html",
-	    "<div class=\"modal-backdrop\"\n" +
-	    "     modal-animation-class=\"fade\"\n" +
-	    "     modal-in-class=\"in\"\n" +
-	    "     ng-style=\"{'z-index': 1040 + (index && 1 || 0) + index*10}\"\n" +
-	    "></div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/modal/window.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/modal/window.html",
-	    "<div modal-render=\"{{$isRendered}}\" tabindex=\"-1\" role=\"dialog\" class=\"modal\"\n" +
-	    "    modal-animation-class=\"fade\"\n" +
-	    "    modal-in-class=\"in\"\n" +
-	    "	ng-style=\"{'z-index': 1050 + index*10, display: 'block'}\" ng-click=\"close($event)\">\n" +
-	    "    <div class=\"modal-dialog\" ng-class=\"size ? 'modal-' + size : ''\"><div class=\"modal-content\" modal-transclude></div></div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/pagination/pager.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/pagination/pager.html",
-	    "<ul class=\"pager\">\n" +
-	    "  <li ng-class=\"{disabled: noPrevious(), previous: align}\"><a href ng-click=\"selectPage(page - 1, $event)\">{{::getText('previous')}}</a></li>\n" +
-	    "  <li ng-class=\"{disabled: noNext(), next: align}\"><a href ng-click=\"selectPage(page + 1, $event)\">{{::getText('next')}}</a></li>\n" +
-	    "</ul>");
-	}]);
-	
-	angular.module("template/pagination/pagination.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/pagination/pagination.html",
-	    "<ul class=\"pagination\">\n" +
-	    "  <li ng-if=\"::boundaryLinks\" ng-class=\"{disabled: noPrevious()||ngDisabled}\" class=\"pagination-first\"><a href ng-click=\"selectPage(1, $event)\">{{::getText('first')}}</a></li>\n" +
-	    "  <li ng-if=\"::directionLinks\" ng-class=\"{disabled: noPrevious()||ngDisabled}\" class=\"pagination-prev\"><a href ng-click=\"selectPage(page - 1, $event)\">{{::getText('previous')}}</a></li>\n" +
-	    "  <li ng-repeat=\"page in pages track by $index\" ng-class=\"{active: page.active,disabled: ngDisabled&&!page.active}\" class=\"pagination-page\"><a href ng-click=\"selectPage(page.number, $event)\">{{page.text}}</a></li>\n" +
-	    "  <li ng-if=\"::directionLinks\" ng-class=\"{disabled: noNext()||ngDisabled}\" class=\"pagination-next\"><a href ng-click=\"selectPage(page + 1, $event)\">{{::getText('next')}}</a></li>\n" +
-	    "  <li ng-if=\"::boundaryLinks\" ng-class=\"{disabled: noNext()||ngDisabled}\" class=\"pagination-last\"><a href ng-click=\"selectPage(totalPages, $event)\">{{::getText('last')}}</a></li>\n" +
-	    "</ul>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/tooltip/tooltip-html-popup.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/tooltip/tooltip-html-popup.html",
-	    "<div class=\"tooltip\"\n" +
-	    "  tooltip-animation-class=\"fade\"\n" +
-	    "  tooltip-classes\n" +
-	    "  ng-class=\"{ in: isOpen() }\">\n" +
-	    "  <div class=\"tooltip-arrow\"></div>\n" +
-	    "  <div class=\"tooltip-inner\" ng-bind-html=\"contentExp()\"></div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/tooltip/tooltip-html-unsafe-popup.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/tooltip/tooltip-html-unsafe-popup.html",
-	    "<div class=\"tooltip\"\n" +
-	    "  tooltip-animation-class=\"fade\"\n" +
-	    "  tooltip-classes\n" +
-	    "  ng-class=\"{ in: isOpen() }\">\n" +
-	    "  <div class=\"tooltip-arrow\"></div>\n" +
-	    "  <div class=\"tooltip-inner\" bind-html-unsafe=\"content\"></div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/tooltip/tooltip-popup.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/tooltip/tooltip-popup.html",
-	    "<div class=\"tooltip\"\n" +
-	    "  tooltip-animation-class=\"fade\"\n" +
-	    "  tooltip-classes\n" +
-	    "  ng-class=\"{ in: isOpen() }\">\n" +
-	    "  <div class=\"tooltip-arrow\"></div>\n" +
-	    "  <div class=\"tooltip-inner\" ng-bind=\"content\"></div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/tooltip/tooltip-template-popup.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/tooltip/tooltip-template-popup.html",
-	    "<div class=\"tooltip\"\n" +
-	    "  tooltip-animation-class=\"fade\"\n" +
-	    "  tooltip-classes\n" +
-	    "  ng-class=\"{ in: isOpen() }\">\n" +
-	    "  <div class=\"tooltip-arrow\"></div>\n" +
-	    "  <div class=\"tooltip-inner\"\n" +
-	    "    tooltip-template-transclude=\"contentExp()\"\n" +
-	    "    tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/popover/popover-html.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/popover/popover-html.html",
-	    "<div class=\"popover\"\n" +
-	    "  tooltip-animation-class=\"fade\"\n" +
-	    "  tooltip-classes\n" +
-	    "  ng-class=\"{ in: isOpen() }\">\n" +
-	    "  <div class=\"arrow\"></div>\n" +
-	    "\n" +
-	    "  <div class=\"popover-inner\">\n" +
-	    "      <h3 class=\"popover-title\" ng-bind=\"title\" ng-if=\"title\"></h3>\n" +
-	    "      <div class=\"popover-content\" ng-bind-html=\"contentExp()\"></div>\n" +
-	    "  </div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/popover/popover-template.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/popover/popover-template.html",
-	    "<div class=\"popover\"\n" +
-	    "  tooltip-animation-class=\"fade\"\n" +
-	    "  tooltip-classes\n" +
-	    "  ng-class=\"{ in: isOpen() }\">\n" +
-	    "  <div class=\"arrow\"></div>\n" +
-	    "\n" +
-	    "  <div class=\"popover-inner\">\n" +
-	    "      <h3 class=\"popover-title\" ng-bind=\"title\" ng-if=\"title\"></h3>\n" +
-	    "      <div class=\"popover-content\"\n" +
-	    "        tooltip-template-transclude=\"contentExp()\"\n" +
-	    "        tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
-	    "  </div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/popover/popover.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/popover/popover.html",
-	    "<div class=\"popover\"\n" +
-	    "  tooltip-animation-class=\"fade\"\n" +
-	    "  tooltip-classes\n" +
-	    "  ng-class=\"{ in: isOpen() }\">\n" +
-	    "  <div class=\"arrow\"></div>\n" +
-	    "\n" +
-	    "  <div class=\"popover-inner\">\n" +
-	    "      <h3 class=\"popover-title\" ng-bind=\"title\" ng-if=\"title\"></h3>\n" +
-	    "      <div class=\"popover-content\" ng-bind=\"content\"></div>\n" +
-	    "  </div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/progressbar/bar.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/progressbar/bar.html",
-	    "<div class=\"progress-bar\" ng-class=\"type && 'progress-bar-' + type\" role=\"progressbar\" aria-valuenow=\"{{value}}\" aria-valuemin=\"0\" aria-valuemax=\"{{max}}\" ng-style=\"{width: (percent < 100 ? percent : 100) + '%'}\" aria-valuetext=\"{{percent | number:0}}%\" style=\"min-width: 0;\" ng-transclude></div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/progressbar/progress.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/progressbar/progress.html",
-	    "<div class=\"progress\" ng-transclude></div>");
-	}]);
-	
-	angular.module("template/progressbar/progressbar.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/progressbar/progressbar.html",
-	    "<div class=\"progress\">\n" +
-	    "  <div class=\"progress-bar\" ng-class=\"type && 'progress-bar-' + type\" role=\"progressbar\" aria-valuenow=\"{{value}}\" aria-valuemin=\"0\" aria-valuemax=\"{{max}}\" ng-style=\"{width: (percent < 100 ? percent : 100) + '%'}\" aria-valuetext=\"{{percent | number:0}}%\" style=\"min-width: 0;\" ng-transclude></div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/rating/rating.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/rating/rating.html",
-	    "<span ng-mouseleave=\"reset()\" ng-keydown=\"onKeydown($event)\" tabindex=\"0\" role=\"slider\" aria-valuemin=\"0\" aria-valuemax=\"{{range.length}}\" aria-valuenow=\"{{value}}\">\n" +
-	    "    <span ng-repeat-start=\"r in range track by $index\" class=\"sr-only\">({{ $index < value ? '*' : ' ' }})</span>\n" +
-	    "    <i ng-repeat-end ng-mouseenter=\"enter($index + 1)\" ng-click=\"rate($index + 1)\" class=\"glyphicon\" ng-class=\"$index < value && (r.stateOn || 'glyphicon-star') || (r.stateOff || 'glyphicon-star-empty')\" ng-attr-title=\"{{r.title}}\" ></i>\n" +
-	    "</span>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/tabs/tab.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/tabs/tab.html",
-	    "<li ng-class=\"{active: active, disabled: disabled}\">\n" +
-	    "  <a href ng-click=\"select()\" tab-heading-transclude>{{heading}}</a>\n" +
-	    "</li>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/tabs/tabset.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/tabs/tabset.html",
-	    "<div>\n" +
-	    "  <ul class=\"nav nav-{{type || 'tabs'}}\" ng-class=\"{'nav-stacked': vertical, 'nav-justified': justified}\" ng-transclude></ul>\n" +
-	    "  <div class=\"tab-content\">\n" +
-	    "    <div class=\"tab-pane\" \n" +
-	    "         ng-repeat=\"tab in tabs\" \n" +
-	    "         ng-class=\"{active: tab.active}\"\n" +
-	    "         tab-content-transclude=\"tab\">\n" +
-	    "    </div>\n" +
-	    "  </div>\n" +
-	    "</div>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/timepicker/timepicker.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/timepicker/timepicker.html",
-	    "<table>\n" +
-	    "  <tbody>\n" +
-	    "    <tr class=\"text-center\" ng-show=\"::showSpinners\">\n" +
-	    "      <td><a ng-click=\"incrementHours()\" ng-class=\"{disabled: noIncrementHours()}\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a></td>\n" +
-	    "      <td>&nbsp;</td>\n" +
-	    "      <td><a ng-click=\"incrementMinutes()\" ng-class=\"{disabled: noIncrementMinutes()}\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a></td>\n" +
-	    "      <td ng-show=\"showMeridian\"></td>\n" +
-	    "    </tr>\n" +
-	    "    <tr>\n" +
-	    "      <td class=\"form-group\" ng-class=\"{'has-error': invalidHours}\">\n" +
-	    "        <input style=\"width:50px;\" type=\"text\" ng-model=\"hours\" ng-change=\"updateHours()\" class=\"form-control text-center\" ng-readonly=\"::readonlyInput\" maxlength=\"2\">\n" +
-	    "      </td>\n" +
-	    "      <td>:</td>\n" +
-	    "      <td class=\"form-group\" ng-class=\"{'has-error': invalidMinutes}\">\n" +
-	    "        <input style=\"width:50px;\" type=\"text\" ng-model=\"minutes\" ng-change=\"updateMinutes()\" class=\"form-control text-center\" ng-readonly=\"::readonlyInput\" maxlength=\"2\">\n" +
-	    "      </td>\n" +
-	    "      <td ng-show=\"showMeridian\"><button type=\"button\" ng-class=\"{disabled: noToggleMeridian()}\" class=\"btn btn-default text-center\" ng-click=\"toggleMeridian()\">{{meridian}}</button></td>\n" +
-	    "    </tr>\n" +
-	    "    <tr class=\"text-center\" ng-show=\"::showSpinners\">\n" +
-	    "      <td><a ng-click=\"decrementHours()\" ng-class=\"{disabled: noDecrementHours()}\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>\n" +
-	    "      <td>&nbsp;</td>\n" +
-	    "      <td><a ng-click=\"decrementMinutes()\" ng-class=\"{disabled: noDecrementMinutes()}\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>\n" +
-	    "      <td ng-show=\"showMeridian\"></td>\n" +
-	    "    </tr>\n" +
-	    "  </tbody>\n" +
-	    "</table>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/typeahead/typeahead-match.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/typeahead/typeahead-match.html",
-	    "<a href tabindex=\"-1\" bind-html-unsafe=\"match.label | typeaheadHighlight:query\"></a>\n" +
-	    "");
-	}]);
-	
-	angular.module("template/typeahead/typeahead-popup.html", []).run(["$templateCache", function($templateCache) {
-	  $templateCache.put("template/typeahead/typeahead-popup.html",
-	    "<ul class=\"dropdown-menu\" ng-show=\"isOpen() && !moveInProgress\" ng-style=\"{top: position().top+'px', left: position().left+'px'}\" style=\"display: block;\" role=\"listbox\" aria-hidden=\"{{!isOpen()}}\">\n" +
-	    "    <li ng-repeat=\"match in matches track by $index\" ng-class=\"{active: isActive($index) }\" ng-mouseenter=\"selectActive($index)\" ng-click=\"selectMatch($index)\" role=\"option\" id=\"{{::match.id}}\">\n" +
-	    "        <div typeahead-match index=\"$index\" match=\"match\" query=\"query\" template-url=\"templateUrl\"></div>\n" +
-	    "    </li>\n" +
-	    "</ul>\n" +
-	    "");
-	}]);
-	!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">.ng-animate.item:not(.left):not(.right){-webkit-transition:0s ease-in-out left;transition:0s ease-in-out left}</style>');
-
-/***/ },
-/* 369 */
+/* 353 */
 /***/ function(module, exports) {
 
 	/**
@@ -92552,7 +91857,7 @@
 	})( window, window.angular );
 
 /***/ },
-/* 370 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// # ngReact
@@ -92566,10 +91871,10 @@
 	(function (root, factory) {
 	  if (typeof module !== 'undefined' && module.exports) {
 	    // CommonJS
-	    module.exports = factory(__webpack_require__(371), __webpack_require__(188));
+	    module.exports = factory(__webpack_require__(355), __webpack_require__(174));
 	  } else if (true) {
 	    // AMD
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(371), __webpack_require__(188)], __WEBPACK_AMD_DEFINE_RESULT__ = function (react, angular) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(355), __webpack_require__(174)], __WEBPACK_AMD_DEFINE_RESULT__ = function (react, angular) {
 	      return (root.ngReact = factory(react, angular));
 	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	  } else {
@@ -92800,14 +92105,14 @@
 
 
 /***/ },
-/* 371 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(194);
+	module.exports = __webpack_require__(203);
 
 
 /***/ },
-/* 372 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! angular-highlightjs
@@ -92818,7 +92123,7 @@
 	
 	(function (root, factory) {
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(188), __webpack_require__(373)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(174), __webpack_require__(357)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	  } else if (typeof module === "object" && module.exports) {
 	    module.exports = factory(require("angular"), require("highlight.js"));
 	  } else {
@@ -93197,146 +92502,146 @@
 	}));
 
 /***/ },
-/* 373 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var hljs = __webpack_require__(374);
+	var hljs = __webpack_require__(358);
 	
-	hljs.registerLanguage('1c', __webpack_require__(375));
-	hljs.registerLanguage('actionscript', __webpack_require__(376));
-	hljs.registerLanguage('apache', __webpack_require__(377));
-	hljs.registerLanguage('applescript', __webpack_require__(378));
-	hljs.registerLanguage('armasm', __webpack_require__(379));
-	hljs.registerLanguage('xml', __webpack_require__(380));
-	hljs.registerLanguage('asciidoc', __webpack_require__(381));
-	hljs.registerLanguage('aspectj', __webpack_require__(382));
-	hljs.registerLanguage('autohotkey', __webpack_require__(383));
-	hljs.registerLanguage('autoit', __webpack_require__(384));
-	hljs.registerLanguage('avrasm', __webpack_require__(385));
-	hljs.registerLanguage('axapta', __webpack_require__(386));
-	hljs.registerLanguage('bash', __webpack_require__(387));
-	hljs.registerLanguage('brainfuck', __webpack_require__(388));
-	hljs.registerLanguage('cal', __webpack_require__(389));
-	hljs.registerLanguage('capnproto', __webpack_require__(390));
-	hljs.registerLanguage('ceylon', __webpack_require__(391));
-	hljs.registerLanguage('clojure', __webpack_require__(392));
-	hljs.registerLanguage('clojure-repl', __webpack_require__(393));
-	hljs.registerLanguage('cmake', __webpack_require__(394));
-	hljs.registerLanguage('coffeescript', __webpack_require__(395));
-	hljs.registerLanguage('cpp', __webpack_require__(396));
-	hljs.registerLanguage('cs', __webpack_require__(397));
-	hljs.registerLanguage('css', __webpack_require__(398));
-	hljs.registerLanguage('d', __webpack_require__(399));
-	hljs.registerLanguage('markdown', __webpack_require__(400));
-	hljs.registerLanguage('dart', __webpack_require__(401));
-	hljs.registerLanguage('delphi', __webpack_require__(402));
-	hljs.registerLanguage('diff', __webpack_require__(403));
-	hljs.registerLanguage('django', __webpack_require__(404));
-	hljs.registerLanguage('dns', __webpack_require__(405));
-	hljs.registerLanguage('dockerfile', __webpack_require__(406));
-	hljs.registerLanguage('dos', __webpack_require__(407));
-	hljs.registerLanguage('dust', __webpack_require__(408));
-	hljs.registerLanguage('elixir', __webpack_require__(409));
-	hljs.registerLanguage('elm', __webpack_require__(410));
-	hljs.registerLanguage('ruby', __webpack_require__(411));
-	hljs.registerLanguage('erb', __webpack_require__(412));
-	hljs.registerLanguage('erlang-repl', __webpack_require__(413));
-	hljs.registerLanguage('erlang', __webpack_require__(414));
-	hljs.registerLanguage('fix', __webpack_require__(415));
-	hljs.registerLanguage('fortran', __webpack_require__(416));
-	hljs.registerLanguage('fsharp', __webpack_require__(417));
-	hljs.registerLanguage('gcode', __webpack_require__(418));
-	hljs.registerLanguage('gherkin', __webpack_require__(419));
-	hljs.registerLanguage('glsl', __webpack_require__(420));
-	hljs.registerLanguage('go', __webpack_require__(421));
-	hljs.registerLanguage('gradle', __webpack_require__(422));
-	hljs.registerLanguage('groovy', __webpack_require__(423));
-	hljs.registerLanguage('haml', __webpack_require__(424));
-	hljs.registerLanguage('handlebars', __webpack_require__(425));
-	hljs.registerLanguage('haskell', __webpack_require__(426));
-	hljs.registerLanguage('haxe', __webpack_require__(427));
-	hljs.registerLanguage('http', __webpack_require__(428));
-	hljs.registerLanguage('inform7', __webpack_require__(429));
-	hljs.registerLanguage('ini', __webpack_require__(430));
-	hljs.registerLanguage('java', __webpack_require__(431));
-	hljs.registerLanguage('javascript', __webpack_require__(432));
-	hljs.registerLanguage('json', __webpack_require__(433));
-	hljs.registerLanguage('julia', __webpack_require__(434));
-	hljs.registerLanguage('kotlin', __webpack_require__(435));
-	hljs.registerLanguage('lasso', __webpack_require__(436));
-	hljs.registerLanguage('less', __webpack_require__(437));
-	hljs.registerLanguage('lisp', __webpack_require__(438));
-	hljs.registerLanguage('livecodeserver', __webpack_require__(439));
-	hljs.registerLanguage('livescript', __webpack_require__(440));
-	hljs.registerLanguage('lua', __webpack_require__(441));
-	hljs.registerLanguage('makefile', __webpack_require__(442));
-	hljs.registerLanguage('mathematica', __webpack_require__(443));
-	hljs.registerLanguage('matlab', __webpack_require__(444));
-	hljs.registerLanguage('mel', __webpack_require__(445));
-	hljs.registerLanguage('mercury', __webpack_require__(446));
-	hljs.registerLanguage('mizar', __webpack_require__(447));
-	hljs.registerLanguage('perl', __webpack_require__(448));
-	hljs.registerLanguage('mojolicious', __webpack_require__(449));
-	hljs.registerLanguage('monkey', __webpack_require__(450));
-	hljs.registerLanguage('nginx', __webpack_require__(451));
-	hljs.registerLanguage('nimrod', __webpack_require__(452));
-	hljs.registerLanguage('nix', __webpack_require__(453));
-	hljs.registerLanguage('nsis', __webpack_require__(454));
-	hljs.registerLanguage('objectivec', __webpack_require__(455));
-	hljs.registerLanguage('ocaml', __webpack_require__(456));
-	hljs.registerLanguage('openscad', __webpack_require__(457));
-	hljs.registerLanguage('oxygene', __webpack_require__(458));
-	hljs.registerLanguage('parser3', __webpack_require__(459));
-	hljs.registerLanguage('pf', __webpack_require__(460));
-	hljs.registerLanguage('php', __webpack_require__(461));
-	hljs.registerLanguage('powershell', __webpack_require__(462));
-	hljs.registerLanguage('processing', __webpack_require__(463));
-	hljs.registerLanguage('profile', __webpack_require__(464));
-	hljs.registerLanguage('prolog', __webpack_require__(465));
-	hljs.registerLanguage('protobuf', __webpack_require__(466));
-	hljs.registerLanguage('puppet', __webpack_require__(467));
-	hljs.registerLanguage('python', __webpack_require__(468));
-	hljs.registerLanguage('q', __webpack_require__(469));
-	hljs.registerLanguage('r', __webpack_require__(470));
-	hljs.registerLanguage('rib', __webpack_require__(471));
-	hljs.registerLanguage('roboconf', __webpack_require__(472));
-	hljs.registerLanguage('rsl', __webpack_require__(473));
-	hljs.registerLanguage('ruleslanguage', __webpack_require__(474));
-	hljs.registerLanguage('rust', __webpack_require__(475));
-	hljs.registerLanguage('scala', __webpack_require__(476));
-	hljs.registerLanguage('scheme', __webpack_require__(477));
-	hljs.registerLanguage('scilab', __webpack_require__(478));
-	hljs.registerLanguage('scss', __webpack_require__(479));
-	hljs.registerLanguage('smali', __webpack_require__(480));
-	hljs.registerLanguage('smalltalk', __webpack_require__(481));
-	hljs.registerLanguage('sml', __webpack_require__(482));
-	hljs.registerLanguage('sql', __webpack_require__(483));
-	hljs.registerLanguage('stata', __webpack_require__(484));
-	hljs.registerLanguage('step21', __webpack_require__(485));
-	hljs.registerLanguage('stylus', __webpack_require__(486));
-	hljs.registerLanguage('swift', __webpack_require__(487));
-	hljs.registerLanguage('tcl', __webpack_require__(488));
-	hljs.registerLanguage('tex', __webpack_require__(489));
-	hljs.registerLanguage('thrift', __webpack_require__(490));
-	hljs.registerLanguage('tp', __webpack_require__(491));
-	hljs.registerLanguage('twig', __webpack_require__(492));
-	hljs.registerLanguage('typescript', __webpack_require__(493));
-	hljs.registerLanguage('vala', __webpack_require__(494));
-	hljs.registerLanguage('vbnet', __webpack_require__(495));
-	hljs.registerLanguage('vbscript', __webpack_require__(496));
-	hljs.registerLanguage('vbscript-html', __webpack_require__(497));
-	hljs.registerLanguage('verilog', __webpack_require__(498));
-	hljs.registerLanguage('vhdl', __webpack_require__(499));
-	hljs.registerLanguage('vim', __webpack_require__(500));
-	hljs.registerLanguage('x86asm', __webpack_require__(501));
-	hljs.registerLanguage('xl', __webpack_require__(502));
-	hljs.registerLanguage('xquery', __webpack_require__(503));
-	hljs.registerLanguage('zephir', __webpack_require__(504));
+	hljs.registerLanguage('1c', __webpack_require__(359));
+	hljs.registerLanguage('actionscript', __webpack_require__(360));
+	hljs.registerLanguage('apache', __webpack_require__(361));
+	hljs.registerLanguage('applescript', __webpack_require__(362));
+	hljs.registerLanguage('armasm', __webpack_require__(363));
+	hljs.registerLanguage('xml', __webpack_require__(364));
+	hljs.registerLanguage('asciidoc', __webpack_require__(365));
+	hljs.registerLanguage('aspectj', __webpack_require__(366));
+	hljs.registerLanguage('autohotkey', __webpack_require__(367));
+	hljs.registerLanguage('autoit', __webpack_require__(368));
+	hljs.registerLanguage('avrasm', __webpack_require__(369));
+	hljs.registerLanguage('axapta', __webpack_require__(370));
+	hljs.registerLanguage('bash', __webpack_require__(371));
+	hljs.registerLanguage('brainfuck', __webpack_require__(372));
+	hljs.registerLanguage('cal', __webpack_require__(373));
+	hljs.registerLanguage('capnproto', __webpack_require__(374));
+	hljs.registerLanguage('ceylon', __webpack_require__(375));
+	hljs.registerLanguage('clojure', __webpack_require__(376));
+	hljs.registerLanguage('clojure-repl', __webpack_require__(377));
+	hljs.registerLanguage('cmake', __webpack_require__(378));
+	hljs.registerLanguage('coffeescript', __webpack_require__(379));
+	hljs.registerLanguage('cpp', __webpack_require__(380));
+	hljs.registerLanguage('cs', __webpack_require__(381));
+	hljs.registerLanguage('css', __webpack_require__(382));
+	hljs.registerLanguage('d', __webpack_require__(383));
+	hljs.registerLanguage('markdown', __webpack_require__(384));
+	hljs.registerLanguage('dart', __webpack_require__(385));
+	hljs.registerLanguage('delphi', __webpack_require__(386));
+	hljs.registerLanguage('diff', __webpack_require__(387));
+	hljs.registerLanguage('django', __webpack_require__(388));
+	hljs.registerLanguage('dns', __webpack_require__(389));
+	hljs.registerLanguage('dockerfile', __webpack_require__(390));
+	hljs.registerLanguage('dos', __webpack_require__(391));
+	hljs.registerLanguage('dust', __webpack_require__(392));
+	hljs.registerLanguage('elixir', __webpack_require__(393));
+	hljs.registerLanguage('elm', __webpack_require__(394));
+	hljs.registerLanguage('ruby', __webpack_require__(395));
+	hljs.registerLanguage('erb', __webpack_require__(396));
+	hljs.registerLanguage('erlang-repl', __webpack_require__(397));
+	hljs.registerLanguage('erlang', __webpack_require__(398));
+	hljs.registerLanguage('fix', __webpack_require__(399));
+	hljs.registerLanguage('fortran', __webpack_require__(400));
+	hljs.registerLanguage('fsharp', __webpack_require__(401));
+	hljs.registerLanguage('gcode', __webpack_require__(402));
+	hljs.registerLanguage('gherkin', __webpack_require__(403));
+	hljs.registerLanguage('glsl', __webpack_require__(404));
+	hljs.registerLanguage('go', __webpack_require__(405));
+	hljs.registerLanguage('gradle', __webpack_require__(406));
+	hljs.registerLanguage('groovy', __webpack_require__(407));
+	hljs.registerLanguage('haml', __webpack_require__(408));
+	hljs.registerLanguage('handlebars', __webpack_require__(409));
+	hljs.registerLanguage('haskell', __webpack_require__(410));
+	hljs.registerLanguage('haxe', __webpack_require__(411));
+	hljs.registerLanguage('http', __webpack_require__(412));
+	hljs.registerLanguage('inform7', __webpack_require__(413));
+	hljs.registerLanguage('ini', __webpack_require__(414));
+	hljs.registerLanguage('java', __webpack_require__(415));
+	hljs.registerLanguage('javascript', __webpack_require__(416));
+	hljs.registerLanguage('json', __webpack_require__(417));
+	hljs.registerLanguage('julia', __webpack_require__(418));
+	hljs.registerLanguage('kotlin', __webpack_require__(419));
+	hljs.registerLanguage('lasso', __webpack_require__(420));
+	hljs.registerLanguage('less', __webpack_require__(421));
+	hljs.registerLanguage('lisp', __webpack_require__(422));
+	hljs.registerLanguage('livecodeserver', __webpack_require__(423));
+	hljs.registerLanguage('livescript', __webpack_require__(424));
+	hljs.registerLanguage('lua', __webpack_require__(425));
+	hljs.registerLanguage('makefile', __webpack_require__(426));
+	hljs.registerLanguage('mathematica', __webpack_require__(427));
+	hljs.registerLanguage('matlab', __webpack_require__(428));
+	hljs.registerLanguage('mel', __webpack_require__(429));
+	hljs.registerLanguage('mercury', __webpack_require__(430));
+	hljs.registerLanguage('mizar', __webpack_require__(431));
+	hljs.registerLanguage('perl', __webpack_require__(432));
+	hljs.registerLanguage('mojolicious', __webpack_require__(433));
+	hljs.registerLanguage('monkey', __webpack_require__(434));
+	hljs.registerLanguage('nginx', __webpack_require__(435));
+	hljs.registerLanguage('nimrod', __webpack_require__(436));
+	hljs.registerLanguage('nix', __webpack_require__(437));
+	hljs.registerLanguage('nsis', __webpack_require__(438));
+	hljs.registerLanguage('objectivec', __webpack_require__(439));
+	hljs.registerLanguage('ocaml', __webpack_require__(440));
+	hljs.registerLanguage('openscad', __webpack_require__(441));
+	hljs.registerLanguage('oxygene', __webpack_require__(442));
+	hljs.registerLanguage('parser3', __webpack_require__(443));
+	hljs.registerLanguage('pf', __webpack_require__(444));
+	hljs.registerLanguage('php', __webpack_require__(445));
+	hljs.registerLanguage('powershell', __webpack_require__(446));
+	hljs.registerLanguage('processing', __webpack_require__(447));
+	hljs.registerLanguage('profile', __webpack_require__(448));
+	hljs.registerLanguage('prolog', __webpack_require__(449));
+	hljs.registerLanguage('protobuf', __webpack_require__(450));
+	hljs.registerLanguage('puppet', __webpack_require__(451));
+	hljs.registerLanguage('python', __webpack_require__(452));
+	hljs.registerLanguage('q', __webpack_require__(453));
+	hljs.registerLanguage('r', __webpack_require__(454));
+	hljs.registerLanguage('rib', __webpack_require__(455));
+	hljs.registerLanguage('roboconf', __webpack_require__(456));
+	hljs.registerLanguage('rsl', __webpack_require__(457));
+	hljs.registerLanguage('ruleslanguage', __webpack_require__(458));
+	hljs.registerLanguage('rust', __webpack_require__(459));
+	hljs.registerLanguage('scala', __webpack_require__(460));
+	hljs.registerLanguage('scheme', __webpack_require__(461));
+	hljs.registerLanguage('scilab', __webpack_require__(462));
+	hljs.registerLanguage('scss', __webpack_require__(463));
+	hljs.registerLanguage('smali', __webpack_require__(464));
+	hljs.registerLanguage('smalltalk', __webpack_require__(465));
+	hljs.registerLanguage('sml', __webpack_require__(466));
+	hljs.registerLanguage('sql', __webpack_require__(467));
+	hljs.registerLanguage('stata', __webpack_require__(468));
+	hljs.registerLanguage('step21', __webpack_require__(469));
+	hljs.registerLanguage('stylus', __webpack_require__(470));
+	hljs.registerLanguage('swift', __webpack_require__(471));
+	hljs.registerLanguage('tcl', __webpack_require__(472));
+	hljs.registerLanguage('tex', __webpack_require__(473));
+	hljs.registerLanguage('thrift', __webpack_require__(474));
+	hljs.registerLanguage('tp', __webpack_require__(475));
+	hljs.registerLanguage('twig', __webpack_require__(476));
+	hljs.registerLanguage('typescript', __webpack_require__(477));
+	hljs.registerLanguage('vala', __webpack_require__(478));
+	hljs.registerLanguage('vbnet', __webpack_require__(479));
+	hljs.registerLanguage('vbscript', __webpack_require__(480));
+	hljs.registerLanguage('vbscript-html', __webpack_require__(481));
+	hljs.registerLanguage('verilog', __webpack_require__(482));
+	hljs.registerLanguage('vhdl', __webpack_require__(483));
+	hljs.registerLanguage('vim', __webpack_require__(484));
+	hljs.registerLanguage('x86asm', __webpack_require__(485));
+	hljs.registerLanguage('xl', __webpack_require__(486));
+	hljs.registerLanguage('xquery', __webpack_require__(487));
+	hljs.registerLanguage('zephir', __webpack_require__(488));
 	
 	module.exports = hljs;
 
 /***/ },
-/* 374 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -94113,7 +93418,7 @@
 
 
 /***/ },
-/* 375 */
+/* 359 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs){
@@ -94203,7 +93508,7 @@
 	};
 
 /***/ },
-/* 376 */
+/* 360 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -94282,7 +93587,7 @@
 	};
 
 /***/ },
-/* 377 */
+/* 361 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -94332,7 +93637,7 @@
 	};
 
 /***/ },
-/* 378 */
+/* 362 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -94433,7 +93738,7 @@
 	};
 
 /***/ },
-/* 379 */
+/* 363 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -94529,7 +93834,7 @@
 	};
 
 /***/ },
-/* 380 */
+/* 364 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -94636,7 +93941,7 @@
 	};
 
 /***/ },
-/* 381 */
+/* 365 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -94832,7 +94137,7 @@
 	};
 
 /***/ },
-/* 382 */
+/* 366 */
 /***/ function(module, exports) {
 
 	module.exports = function (hljs) {
@@ -94974,7 +94279,7 @@
 	};
 
 /***/ },
-/* 383 */
+/* 367 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -95040,7 +94345,7 @@
 	};
 
 /***/ },
-/* 384 */
+/* 368 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -96798,7 +96103,7 @@
 	};
 
 /***/ },
-/* 385 */
+/* 369 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -96864,7 +96169,7 @@
 	};
 
 /***/ },
-/* 386 */
+/* 370 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -96899,7 +96204,7 @@
 	};
 
 /***/ },
-/* 387 */
+/* 371 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -96979,7 +96284,7 @@
 	};
 
 /***/ },
-/* 388 */
+/* 372 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs){
@@ -97020,7 +96325,7 @@
 	};
 
 /***/ },
-/* 389 */
+/* 373 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97103,7 +96408,7 @@
 	};
 
 /***/ },
-/* 390 */
+/* 374 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97156,7 +96461,7 @@
 	};
 
 /***/ },
-/* 391 */
+/* 375 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97228,7 +96533,7 @@
 	};
 
 /***/ },
-/* 392 */
+/* 376 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97329,7 +96634,7 @@
 	};
 
 /***/ },
-/* 393 */
+/* 377 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97348,7 +96653,7 @@
 	};
 
 /***/ },
-/* 394 */
+/* 378 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97391,7 +96696,7 @@
 	};
 
 /***/ },
-/* 395 */
+/* 379 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97536,7 +96841,7 @@
 	};
 
 /***/ },
-/* 396 */
+/* 380 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97676,7 +96981,7 @@
 	};
 
 /***/ },
-/* 397 */
+/* 381 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97799,7 +97104,7 @@
 	};
 
 /***/ },
-/* 398 */
+/* 382 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -97906,7 +97211,7 @@
 	};
 
 /***/ },
-/* 399 */
+/* 383 */
 /***/ function(module, exports) {
 
 	module.exports = /**
@@ -98168,7 +97473,7 @@
 	};
 
 /***/ },
-/* 400 */
+/* 384 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98274,7 +97579,7 @@
 	};
 
 /***/ },
-/* 401 */
+/* 385 */
 /***/ function(module, exports) {
 
 	module.exports = function (hljs) {
@@ -98379,7 +97684,7 @@
 	};
 
 /***/ },
-/* 402 */
+/* 386 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98450,7 +97755,7 @@
 	};
 
 /***/ },
-/* 403 */
+/* 387 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98494,7 +97799,7 @@
 	};
 
 /***/ },
-/* 404 */
+/* 388 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98548,7 +97853,7 @@
 	};
 
 /***/ },
-/* 405 */
+/* 389 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98580,7 +97885,7 @@
 	};
 
 /***/ },
-/* 406 */
+/* 390 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98619,7 +97924,7 @@
 	};
 
 /***/ },
-/* 407 */
+/* 391 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98671,7 +97976,7 @@
 	};
 
 /***/ },
-/* 408 */
+/* 392 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98710,7 +98015,7 @@
 	};
 
 /***/ },
-/* 409 */
+/* 393 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98816,7 +98121,7 @@
 	};
 
 /***/ },
-/* 410 */
+/* 394 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -98907,7 +98212,7 @@
 	};
 
 /***/ },
-/* 411 */
+/* 395 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99081,7 +98386,7 @@
 	};
 
 /***/ },
-/* 412 */
+/* 396 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99100,7 +98405,7 @@
 	};
 
 /***/ },
-/* 413 */
+/* 397 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99152,7 +98457,7 @@
 	};
 
 /***/ },
-/* 414 */
+/* 398 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99308,7 +98613,7 @@
 	};
 
 /***/ },
-/* 415 */
+/* 399 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99341,7 +98646,7 @@
 	};
 
 /***/ },
-/* 416 */
+/* 400 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99415,7 +98720,7 @@
 	};
 
 /***/ },
-/* 417 */
+/* 401 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99475,7 +98780,7 @@
 	};
 
 /***/ },
-/* 418 */
+/* 402 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99552,7 +98857,7 @@
 	};
 
 /***/ },
-/* 419 */
+/* 403 */
 /***/ function(module, exports) {
 
 	module.exports = function (hljs) {
@@ -99589,7 +98894,7 @@
 	};
 
 /***/ },
-/* 420 */
+/* 404 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99687,7 +98992,7 @@
 	};
 
 /***/ },
-/* 421 */
+/* 405 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99730,7 +99035,7 @@
 	};
 
 /***/ },
-/* 422 */
+/* 406 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99769,7 +99074,7 @@
 	};
 
 /***/ },
-/* 423 */
+/* 407 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -99861,7 +99166,7 @@
 	};
 
 /***/ },
-/* 424 */
+/* 408 */
 /***/ function(module, exports) {
 
 	module.exports = // TODO support filter tags like :javascript, support inline HTML
@@ -99973,7 +99278,7 @@
 	};
 
 /***/ },
-/* 425 */
+/* 409 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100010,7 +99315,7 @@
 	};
 
 /***/ },
-/* 426 */
+/* 410 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100138,7 +99443,7 @@
 	};
 
 /***/ },
-/* 427 */
+/* 411 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100203,7 +99508,7 @@
 	};
 
 /***/ },
-/* 428 */
+/* 412 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100242,7 +99547,7 @@
 	};
 
 /***/ },
-/* 429 */
+/* 413 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100314,7 +99619,7 @@
 	};
 
 /***/ },
-/* 430 */
+/* 414 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100378,7 +99683,7 @@
 	};
 
 /***/ },
-/* 431 */
+/* 415 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100482,7 +99787,7 @@
 	};
 
 /***/ },
-/* 432 */
+/* 416 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100599,7 +99904,7 @@
 	};
 
 /***/ },
-/* 433 */
+/* 417 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100641,7 +99946,7 @@
 	};
 
 /***/ },
-/* 434 */
+/* 418 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -100806,7 +100111,7 @@
 	};
 
 /***/ },
-/* 435 */
+/* 419 */
 /***/ function(module, exports) {
 
 	module.exports = function (hljs) {
@@ -100911,7 +100216,7 @@
 	};
 
 /***/ },
-/* 436 */
+/* 420 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101101,7 +100406,7 @@
 	};
 
 /***/ },
-/* 437 */
+/* 421 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101242,7 +100547,7 @@
 	};
 
 /***/ },
-/* 438 */
+/* 422 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101353,7 +100658,7 @@
 	};
 
 /***/ },
-/* 439 */
+/* 423 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101515,7 +100820,7 @@
 	};
 
 /***/ },
-/* 440 */
+/* 424 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101670,7 +100975,7 @@
 	};
 
 /***/ },
-/* 441 */
+/* 425 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101730,7 +101035,7 @@
 	};
 
 /***/ },
-/* 442 */
+/* 426 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101780,7 +101085,7 @@
 	};
 
 /***/ },
-/* 443 */
+/* 427 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101843,7 +101148,7 @@
 	};
 
 /***/ },
-/* 444 */
+/* 428 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -101938,7 +101243,7 @@
 	};
 
 /***/ },
-/* 445 */
+/* 429 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102172,7 +101477,7 @@
 	};
 
 /***/ },
-/* 446 */
+/* 430 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102265,7 +101570,7 @@
 	};
 
 /***/ },
-/* 447 */
+/* 431 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102288,7 +101593,7 @@
 	};
 
 /***/ },
-/* 448 */
+/* 432 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102449,7 +101754,7 @@
 	};
 
 /***/ },
-/* 449 */
+/* 433 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102478,7 +101783,7 @@
 	};
 
 /***/ },
-/* 450 */
+/* 434 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102560,7 +101865,7 @@
 	};
 
 /***/ },
-/* 451 */
+/* 435 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102646,7 +101951,7 @@
 	};
 
 /***/ },
-/* 452 */
+/* 436 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102702,7 +102007,7 @@
 	};
 
 /***/ },
-/* 453 */
+/* 437 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102757,7 +102062,7 @@
 	};
 
 /***/ },
-/* 454 */
+/* 438 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102849,7 +102154,7 @@
 	};
 
 /***/ },
-/* 455 */
+/* 439 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -102932,7 +102237,7 @@
 	};
 
 /***/ },
-/* 456 */
+/* 440 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103006,7 +102311,7 @@
 	};
 
 /***/ },
-/* 457 */
+/* 441 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103069,7 +102374,7 @@
 	};
 
 /***/ },
-/* 458 */
+/* 442 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103142,7 +102447,7 @@
 	};
 
 /***/ },
-/* 459 */
+/* 443 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103194,7 +102499,7 @@
 	};
 
 /***/ },
-/* 460 */
+/* 444 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103250,7 +102555,7 @@
 	};
 
 /***/ },
-/* 461 */
+/* 445 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103370,7 +102675,7 @@
 	};
 
 /***/ },
-/* 462 */
+/* 446 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103426,7 +102731,7 @@
 	};
 
 /***/ },
-/* 463 */
+/* 447 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103478,7 +102783,7 @@
 	};
 
 /***/ },
-/* 464 */
+/* 448 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103524,7 +102829,7 @@
 	};
 
 /***/ },
-/* 465 */
+/* 449 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103617,7 +102922,7 @@
 	};
 
 /***/ },
-/* 466 */
+/* 450 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103658,7 +102963,7 @@
 	};
 
 /***/ },
-/* 467 */
+/* 451 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103770,7 +103075,7 @@
 	};
 
 /***/ },
-/* 468 */
+/* 452 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103859,7 +103164,7 @@
 	};
 
 /***/ },
-/* 469 */
+/* 453 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103886,7 +103191,7 @@
 	};
 
 /***/ },
-/* 470 */
+/* 454 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103960,7 +103265,7 @@
 	};
 
 /***/ },
-/* 471 */
+/* 455 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -103991,7 +103296,7 @@
 	};
 
 /***/ },
-/* 472 */
+/* 456 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104055,7 +103360,7 @@
 	};
 
 /***/ },
-/* 473 */
+/* 457 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104096,7 +103401,7 @@
 	};
 
 /***/ },
-/* 474 */
+/* 458 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104161,7 +103466,7 @@
 	};
 
 /***/ },
-/* 475 */
+/* 459 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104245,7 +103550,7 @@
 	};
 
 /***/ },
-/* 476 */
+/* 460 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104312,7 +103617,7 @@
 	};
 
 /***/ },
-/* 477 */
+/* 461 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104438,7 +103743,7 @@
 	};
 
 /***/ },
-/* 478 */
+/* 462 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104497,7 +103802,7 @@
 	};
 
 /***/ },
-/* 479 */
+/* 463 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104618,7 +103923,7 @@
 	};
 
 /***/ },
-/* 480 */
+/* 464 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104705,7 +104010,7 @@
 	};
 
 /***/ },
-/* 481 */
+/* 465 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104762,7 +104067,7 @@
 	};
 
 /***/ },
-/* 482 */
+/* 466 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104831,7 +104136,7 @@
 	};
 
 /***/ },
-/* 483 */
+/* 467 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -104995,7 +104300,7 @@
 	};
 
 /***/ },
-/* 484 */
+/* 468 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105037,7 +104342,7 @@
 	};
 
 /***/ },
-/* 485 */
+/* 469 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105093,7 +104398,7 @@
 	};
 
 /***/ },
-/* 486 */
+/* 470 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105540,7 +104845,7 @@
 	};
 
 /***/ },
-/* 487 */
+/* 471 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105655,7 +104960,7 @@
 	};
 
 /***/ },
-/* 488 */
+/* 472 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105721,7 +105026,7 @@
 	};
 
 /***/ },
-/* 489 */
+/* 473 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105780,7 +105085,7 @@
 	};
 
 /***/ },
-/* 490 */
+/* 474 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105819,7 +105124,7 @@
 	};
 
 /***/ },
-/* 491 */
+/* 475 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105907,7 +105212,7 @@
 	};
 
 /***/ },
-/* 492 */
+/* 476 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -105968,7 +105273,7 @@
 	};
 
 /***/ },
-/* 493 */
+/* 477 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106070,7 +105375,7 @@
 	};
 
 /***/ },
-/* 494 */
+/* 478 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106129,7 +105434,7 @@
 	};
 
 /***/ },
-/* 495 */
+/* 479 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106189,7 +105494,7 @@
 	};
 
 /***/ },
-/* 496 */
+/* 480 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106232,7 +105537,7 @@
 	};
 
 /***/ },
-/* 497 */
+/* 481 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106248,7 +105553,7 @@
 	};
 
 /***/ },
-/* 498 */
+/* 482 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106302,7 +105607,7 @@
 	};
 
 /***/ },
-/* 499 */
+/* 483 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106362,7 +105667,7 @@
 	};
 
 /***/ },
-/* 500 */
+/* 484 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106429,7 +105734,7 @@
 	};
 
 /***/ },
-/* 501 */
+/* 485 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106569,7 +105874,7 @@
 	};
 
 /***/ },
-/* 502 */
+/* 486 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106653,7 +105958,7 @@
 	};
 
 /***/ },
-/* 503 */
+/* 487 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106730,7 +106035,7 @@
 	};
 
 /***/ },
-/* 504 */
+/* 488 */
 /***/ function(module, exports) {
 
 	module.exports = function(hljs) {
@@ -106841,7 +106146,7 @@
 	};
 
 /***/ },
-/* 505 */
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -106849,14 +106154,14 @@
 	 */
 	'use strict';
 	
-	__webpack_require__(506);
+	__webpack_require__(490);
 	
 	//import './helpers/helpers';
 	//import './resources/resources';
 	//import './services/services';
 
 /***/ },
-/* 506 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -106865,7 +106170,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _annotationsNgDecorator = __webpack_require__(507);
+	var _annotationsNgDecorator = __webpack_require__(491);
 	
 	var Configuration = (function () {
 	    function Configuration() {
@@ -106909,7 +106214,7 @@
 	})();
 
 /***/ },
-/* 507 */
+/* 491 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -106924,11 +106229,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _angular = __webpack_require__(188);
+	var _angular = __webpack_require__(174);
 	
 	var _angular2 = _interopRequireDefault(_angular);
 	
-	var _mainModule = __webpack_require__(508);
+	var _mainModule = __webpack_require__(492);
 	
 	var _mainModule2 = _interopRequireDefault(_mainModule);
 	
@@ -106985,7 +106290,7 @@
 	exports.Filter = Filter;
 
 /***/ },
-/* 508 */
+/* 492 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -106999,7 +106304,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _angular = __webpack_require__(188);
+	var _angular = __webpack_require__(174);
 	
 	var _angular2 = _interopRequireDefault(_angular);
 	
@@ -107013,7 +106318,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 509 */
+/* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107022,17 +106327,17 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _mainAppHtml = __webpack_require__(510);
+	var _mainAppHtml = __webpack_require__(494);
 	
 	var _mainAppHtml2 = _interopRequireDefault(_mainAppHtml);
 	
-	var _annotationsRouteDecorator = __webpack_require__(511);
+	var _annotationsRouteDecorator = __webpack_require__(495);
 	
-	__webpack_require__(512);
+	__webpack_require__(496);
 	
-	__webpack_require__(514);
+	__webpack_require__(498);
 	
-	__webpack_require__(516);
+	__webpack_require__(500);
 	
 	//
 	
@@ -107053,13 +106358,13 @@
 	})();
 
 /***/ },
-/* 510 */
+/* 494 */
 /***/ function(module, exports) {
 
 	module.exports = "<header class=\"header\">\r\n    <div class=\"navbar navbar-default navbar-fixed-top\">\r\n        <div class=\"container\">\r\n            <div class=\"navbar-header\">\r\n                <a class=\"navbar-brand\">Simple Angular + ES6/ES7 + React Starter</a>\r\n                <ul class=\"nav navbar-nav pull-right\">\r\n                    <li><a href=https://github.com/dennis-b/demo-app><i class=\"fa fa-github\"></i> Github</a>\r\n                    </li>\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</header>\r\n<main>\r\n    <span class=\"container-fluid\">\r\n        <span class=\"row\">\r\n            <span class=\"col-md-2\">\r\n               <span class=\"row\">\r\n                       <ul class=\"nav nav-list well\">\r\n                           <li class=\"nav-header title\">\r\n                               <span class=\"title-text\" title=\"components demo\">Components</span>\r\n                           </li>\r\n\r\n                           <li class=\"api-list-item expand\">\r\n                               <a class=\"guide\" ui-sref=\".rtdemo\">React demo</a>\r\n                           </li>\r\n\r\n                           <li class=\"api-list-item expand\">\r\n                               <a class=\"guide\" ui-sref=\".viewdemo\">View demo</a>\r\n                           </li>\r\n\r\n                           <li class=\"api-list-item expand\">\r\n                               <a class=\"guide\" ui-sref=\".directivedemo\">Directive demo</a>\r\n                           </li>\r\n                       </ul>\r\n               </span>\r\n            </span>\r\n            <span class=\"col-md-9 ui-view-container\">\r\n                 <span ui-view class=\"well1\"></span>\r\n            </span>\r\n        </span>\r\n    </span>\r\n</main>\r\n<footer></footer>"
 
 /***/ },
-/* 511 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -107074,11 +106379,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _angular = __webpack_require__(188);
+	var _angular = __webpack_require__(174);
 	
 	var _angular2 = _interopRequireDefault(_angular);
 	
-	var _mainModule = __webpack_require__(508);
+	var _mainModule = __webpack_require__(492);
 	
 	var _mainModule2 = _interopRequireDefault(_mainModule);
 	
@@ -107097,7 +106402,7 @@
 	exports.RouteConfig = RouteConfig;
 
 /***/ },
-/* 512 */
+/* 496 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107106,11 +106411,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _reactDemoHtml = __webpack_require__(513);
+	var _reactDemoHtml = __webpack_require__(497);
 	
 	var _reactDemoHtml2 = _interopRequireDefault(_reactDemoHtml);
 	
-	var _annotationsRouteDecorator = __webpack_require__(511);
+	var _annotationsRouteDecorator = __webpack_require__(495);
 	
 	//
 	
@@ -107130,13 +106435,13 @@
 	})();
 
 /***/ },
-/* 513 */
+/* 497 */
 /***/ function(module, exports) {
 
 	module.exports = "<rt-component-demo></rt-component-demo>\r\n\r\n"
 
 /***/ },
-/* 514 */
+/* 498 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107145,11 +106450,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _viewDemoHtml = __webpack_require__(515);
+	var _viewDemoHtml = __webpack_require__(499);
 	
 	var _viewDemoHtml2 = _interopRequireDefault(_viewDemoHtml);
 	
-	var _annotationsRouteDecorator = __webpack_require__(511);
+	var _annotationsRouteDecorator = __webpack_require__(495);
 	
 	//
 	
@@ -107169,13 +106474,13 @@
 	//nothing here, implement for template logic
 
 /***/ },
-/* 515 */
+/* 499 */
 /***/ function(module, exports) {
 
 	module.exports = "<ng-view-demo></ng-view-demo>"
 
 /***/ },
-/* 516 */
+/* 500 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107184,11 +106489,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _directiveDemoHtml = __webpack_require__(517);
+	var _directiveDemoHtml = __webpack_require__(501);
 	
 	var _directiveDemoHtml2 = _interopRequireDefault(_directiveDemoHtml);
 	
-	var _annotationsRouteDecorator = __webpack_require__(511);
+	var _annotationsRouteDecorator = __webpack_require__(495);
 	
 	//
 	
@@ -107208,13 +106513,13 @@
 	})();
 
 /***/ },
-/* 517 */
+/* 501 */
 /***/ function(module, exports) {
 
 	module.exports = "<ng-directive-demo items=\"vm.items\"></ng-directive-demo>"
 
 /***/ },
-/* 518 */
+/* 502 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -107222,14 +106527,14 @@
 	 */
 	'use strict';
 	
-	__webpack_require__(519);
+	__webpack_require__(503);
 	
-	__webpack_require__(530);
+	__webpack_require__(514);
 	
-	__webpack_require__(534);
+	__webpack_require__(518);
 
 /***/ },
-/* 519 */
+/* 503 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107244,19 +106549,19 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(520);
+	__webpack_require__(504);
 	
-	var _annotationsDirectiveDecorator = __webpack_require__(524);
+	var _annotationsDirectiveDecorator = __webpack_require__(508);
 	
-	var _reactAddons = __webpack_require__(190);
+	var _reactAddons = __webpack_require__(176);
 	
 	var _reactAddons2 = _interopRequireDefault(_reactAddons);
 	
-	var _rtDemoTemplateRt = __webpack_require__(527);
+	var _rtDemoTemplateRt = __webpack_require__(511);
 	
 	var _rtDemoTemplateRt2 = _interopRequireDefault(_rtDemoTemplateRt);
 	
-	var _coreUtilsAppUtils = __webpack_require__(525);
+	var _coreUtilsAppUtils = __webpack_require__(509);
 	
 	var _coreUtilsAppUtils2 = _interopRequireDefault(_coreUtilsAppUtils);
 	
@@ -107290,16 +106595,16 @@
 	})(_reactAddons2['default'].Component);
 
 /***/ },
-/* 520 */
+/* 504 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(521);
+	var content = __webpack_require__(505);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(523)(content, {});
+	var update = __webpack_require__(507)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -107316,10 +106621,10 @@
 	}
 
 /***/ },
-/* 521 */
+/* 505 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(522)();
+	exports = module.exports = __webpack_require__(506)();
 	// imports
 	
 	
@@ -107330,7 +106635,7 @@
 
 
 /***/ },
-/* 522 */
+/* 506 */
 /***/ function(module, exports) {
 
 	/*
@@ -107386,7 +106691,7 @@
 
 
 /***/ },
-/* 523 */
+/* 507 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -107611,7 +106916,7 @@
 
 
 /***/ },
-/* 524 */
+/* 508 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -107626,19 +106931,19 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _angular = __webpack_require__(188);
+	var _angular = __webpack_require__(174);
 	
 	var _angular2 = _interopRequireDefault(_angular);
 	
-	var _mainModule = __webpack_require__(508);
+	var _mainModule = __webpack_require__(492);
 	
 	var _mainModule2 = _interopRequireDefault(_mainModule);
 	
-	var _utilsAppUtils = __webpack_require__(525);
+	var _utilsAppUtils = __webpack_require__(509);
 	
 	var _utilsAppUtils2 = _interopRequireDefault(_utilsAppUtils);
 	
-	var _utilsModule = __webpack_require__(526);
+	var _utilsModule = __webpack_require__(510);
 	
 	var _utilsModule2 = _interopRequireDefault(_utilsModule);
 	
@@ -107689,7 +106994,7 @@
 	exports.Directive = Directive;
 
 /***/ },
-/* 525 */
+/* 509 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -107706,7 +107011,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _annotationsNgDecorator = __webpack_require__(507);
+	var _annotationsNgDecorator = __webpack_require__(491);
 	
 	var AppUtils = (function () {
 	    function AppUtils() {
@@ -107751,7 +107056,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 526 */
+/* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107767,11 +107072,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _appUtils = __webpack_require__(525);
+	var _appUtils = __webpack_require__(509);
 	
 	var _appUtils2 = _interopRequireDefault(_appUtils);
 	
-	var _annotationsNgDecorator = __webpack_require__(507);
+	var _annotationsNgDecorator = __webpack_require__(491);
 	
 	var Module = (function () {
 	    function Module() {
@@ -107858,12 +107163,12 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 527 */
+/* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(190), __webpack_require__(186), __webpack_require__(528)], __WEBPACK_AMD_DEFINE_RESULT__ = function (React, _, Highlight) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(176), __webpack_require__(172), __webpack_require__(512)], __WEBPACK_AMD_DEFINE_RESULT__ = function (React, _, Highlight) {
 	    'use strict';
 	    function repeatData1(data, dataIndex) {
 	        return React.createElement('tr', { 'key': dataIndex }, React.createElement('td', {}, data), React.createElement('td', {}, data), React.createElement('td', {}, data));
@@ -107874,19 +107179,19 @@
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 528 */
+/* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(529);
+	module.exports = __webpack_require__(513);
 
 /***/ },
-/* 529 */
+/* 513 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var hljs = __webpack_require__(373);
-	var React = __webpack_require__(371);
+	var hljs = __webpack_require__(357);
+	var React = __webpack_require__(355);
 	
 	var Highlight = React.createClass({
 	  displayName: 'Highlight',
@@ -107932,7 +107237,7 @@
 	module.exports = Highlight;
 
 /***/ },
-/* 530 */
+/* 514 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107945,13 +107250,13 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	__webpack_require__(531);
+	__webpack_require__(515);
 	
-	var _viewDemoHtml = __webpack_require__(533);
+	var _viewDemoHtml = __webpack_require__(517);
 	
 	var _viewDemoHtml2 = _interopRequireDefault(_viewDemoHtml);
 	
-	var _annotationsDirectiveDecorator = __webpack_require__(524);
+	var _annotationsDirectiveDecorator = __webpack_require__(508);
 	
 	//
 	
@@ -107975,16 +107280,16 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 531 */
+/* 515 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(532);
+	var content = __webpack_require__(516);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(523)(content, {});
+	var update = __webpack_require__(507)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -108001,10 +107306,10 @@
 	}
 
 /***/ },
-/* 532 */
+/* 516 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(522)();
+	exports = module.exports = __webpack_require__(506)();
 	// imports
 	
 	
@@ -108015,13 +107320,13 @@
 
 
 /***/ },
-/* 533 */
+/* 517 */
 /***/ function(module, exports) {
 
 	module.exports = "<div class=\"container-fluid\">\r\n    <div class=\"row margin-top-10\">\r\n        <h2>\r\n            Angular View simple example.\r\n        </h2>\r\n        <hr>\r\n    </div>\r\n    <div class=\"row\">\r\n        This is regular angular directive that using: <span class=\"color-text\">bindToController</span> and <span\r\n            class=\"color-text\">controllerAs</span> syntax\r\n        <br>\r\n        The class will be the controller and exposed as vm object on the scope.\r\n        <hr>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Create View directive. by default using Class name as Directive name : 'ng-view-demo'\r\n            <br>\r\n            Or you can specify selector in View options\r\n        </div>\r\n        <div hljs language=\"javascript\">\r\nimport   './style/view-demo.css'\r\nimport template from './view-demo.html';\r\nimport {View} from 'annotations/directive-decorator';\r\n\r\n@View({\r\n    selector: 'ng-view-demo',\r\n    template: template\r\n})\r\n//\r\nclass NgViewDemo {\r\n    constructor($window) {\r\n        this.$window = $window;//service injected\r\n        this.items = ['One', 'Two', 'Three'];//using the object for  directive state\r\n    }\r\n}\r\n\r\nexport default NgViewDemo\r\n\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Template Sample:\r\n        </div>\r\n        <div hljs>\r\n            <div class=\"container-fluid\">\r\n                <div class=\"row margin-top-10\">\r\n                    <table class=\"table\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th><span class=\"contact-label\">Title one</span></th>\r\n                            <th><span class=\"contact-label\">Title two</span></th>\r\n                            <th><span class=\"contact-label\">Title three</span></th>\r\n                        </tr>\r\n                        </thead>\r\n                        <tbody>\r\n                        <tr ng-repeat=\"item in vm.items\">\r\n                            <td>{{item}}</td>\r\n                            <td>{{item}}</td>\r\n                            <td>{{item}}</td>\r\n                        </tr>\r\n                        </tbody>\r\n                    </table>\r\n    </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Rendered Directive:\r\n        </div>\r\n        <pre>\r\n           <table class=\"table\">\r\n               <thead>\r\n               <tr>\r\n                   <th><span class=\"contact-label\">Title one</span></th>\r\n                   <th><span class=\"contact-label\">Title two</span></th>\r\n                   <th><span class=\"contact-label\">Title three</span></th>\r\n               </tr>\r\n               </thead>\r\n               <tbody>\r\n               <tr ng-repeat=\"item in vm.items\">\r\n                   <td>{{item}}</td>\r\n                   <td>{{item}}</td>\r\n                   <td>{{item}}</td>\r\n               </tr>\r\n               </tbody>\r\n           </table>\r\n         </pre>\r\n    </div>\r\n</div>\r\n"
 
 /***/ },
-/* 534 */
+/* 518 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -108036,13 +107341,13 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	__webpack_require__(535);
+	__webpack_require__(519);
 	
-	var _directiveDemoHtml = __webpack_require__(537);
+	var _directiveDemoHtml = __webpack_require__(521);
 	
 	var _directiveDemoHtml2 = _interopRequireDefault(_directiveDemoHtml);
 	
-	var _annotationsDirectiveDecorator = __webpack_require__(524);
+	var _annotationsDirectiveDecorator = __webpack_require__(508);
 	
 	//
 	
@@ -108072,16 +107377,16 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 535 */
+/* 519 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(536);
+	var content = __webpack_require__(520);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(523)(content, {});
+	var update = __webpack_require__(507)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -108098,10 +107403,10 @@
 	}
 
 /***/ },
-/* 536 */
+/* 520 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(522)();
+	exports = module.exports = __webpack_require__(506)();
 	// imports
 	
 	
@@ -108112,10 +107417,10 @@
 
 
 /***/ },
-/* 537 */
+/* 521 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"container-fluid\">\r\n    <div class=\"row margin-top-10\">\r\n        <h2>\r\n            Angular Directive simple example.\r\n        </h2>\r\n        <hr>\r\n    </div>\r\n    <div class=\"row\">\r\n        This is regular angular directive that using: <span class=\"color-text\">@Directive </span>annotation\r\n        <br>\r\n        You can specify link/compile/controller functions\r\n        <hr>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Create View directive. by default using Class name as Directive name : 'ng-directive-demo'\r\n            <br>\r\n            Or you can specify selector in View options\r\n        </div>\r\n        <div hljs language=\"javascript\">\r\n            import './style/directive-demo.css'\r\n            import template from './directive-demo.html';\r\n            import {Directive} from 'annotations/directive-decorator';\r\n\r\n            @Directive()\r\n            class NgDirectiveDemo {\r\n            constructor($window) {\r\n            this.restrict = 'EA';\r\n            this.template = template;\r\n            this.scope = {\r\n            items: '='\r\n            };\r\n            this.$window = $window; // service injected\r\n            }\r\n\r\n            link(scope, element, attrs){\r\n\r\n            }\r\n\r\n            }\r\n            export default NgDirectiveDemo\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Template Sample (not using vm syntax here):\r\n        </div>\r\n        <div hljs>\r\n            <div class=\"container-fluid\">\r\n                <div class=\"row margin-top-10\">\r\n                    <table class=\"table\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th><span class=\"contact-label\">Title one</span></th>\r\n                            <th><span class=\"contact-label\">Title two</span></th>\r\n                            <th><span class=\"contact-label\">Title three</span></th>\r\n                        </tr>\r\n                        </thead>\r\n                        <tbody>\r\n                        <tr ng-repeat=\"item in items\">\r\n                            <td>{{item}}</td>\r\n                            <td>{{item}}</td>\r\n                            <td>{{item}}</td>\r\n                        </tr>\r\n                        </tbody>\r\n                    </table>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Rendered Directive:\r\n        </div>\r\n        <pre>\r\n           <table class=\"table\">\r\n               <thead>\r\n               <tr>\r\n                   <th><span class=\"contact-label\">Title one</span></th>\r\n                   <th><span class=\"contact-label\">Title two</span></th>\r\n                   <th><span class=\"contact-label\">Title three</span></th>\r\n               </tr>\r\n               </thead>\r\n               <tbody>\r\n               <tr ng-repeat=\"item in items\">\r\n                   <td>{{item}}</td>\r\n                   <td>{{item}}</td>\r\n                   <td>{{item}}</td>\r\n               </tr>\r\n               </tbody>\r\n           </table>\r\n         </pre>\r\n    </div>\r\n</div>\r\n"
+	module.exports = "<div class=\"container-fluid\">\r\n    <div class=\"row margin-top-10\">\r\n        <h2>\r\n            Angular Directive simple example.\r\n        </h2>\r\n        <hr>\r\n    </div>\r\n    <div class=\"row\">\r\n        This is regular angular directive that using: <span class=\"color-text\">@Directive </span>annotation\r\n        <br>\r\n        You can specify link/compile/controller functions\r\n        <hr>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Create View directive. by default using Class name as Directive name : 'ng-directive-demo'\r\n            <br>\r\n            Or you can specify selector in View options\r\n        </div>\r\n        <div hljs language=\"javascript\">\r\nimport './style/directive-demo.css'\r\nimport template from './directive-demo.html';\r\nimport {Directive} from 'annotations/directive-decorator';\r\n\r\n@Directive()\r\nclass NgDirectiveDemo {\r\n    constructor($window) {\r\n        this.restrict = 'EA';\r\n        this.template = template;\r\n        this.scope = {\r\n            items: '='\r\n        };\r\n    this.$window = $window; // service injected\r\n    }\r\n\r\n    link(scope, element, attrs){\r\n\r\n    }\r\n\r\n}\r\nexport default NgDirectiveDemo\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Template Sample (not using vm syntax here):\r\n        </div>\r\n        <div hljs>\r\n            <div class=\"container-fluid\">\r\n                <div class=\"row margin-top-10\">\r\n                    <table class=\"table\">\r\n                        <thead>\r\n                        <tr>\r\n                            <th><span class=\"contact-label\">Title one</span></th>\r\n                            <th><span class=\"contact-label\">Title two</span></th>\r\n                            <th><span class=\"contact-label\">Title three</span></th>\r\n                        </tr>\r\n                        </thead>\r\n                        <tbody>\r\n                        <tr ng-repeat=\"item in items\">\r\n                            <td>{{item}}</td>\r\n                            <td>{{item}}</td>\r\n                            <td>{{item}}</td>\r\n                        </tr>\r\n                        </tbody>\r\n                    </table>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div>\r\n            Rendered Directive:\r\n        </div>\r\n        <pre>\r\n           <table class=\"table\">\r\n               <thead>\r\n               <tr>\r\n                   <th><span class=\"contact-label\">Title one</span></th>\r\n                   <th><span class=\"contact-label\">Title two</span></th>\r\n                   <th><span class=\"contact-label\">Title three</span></th>\r\n               </tr>\r\n               </thead>\r\n               <tbody>\r\n               <tr ng-repeat=\"item in items\">\r\n                   <td>{{item}}</td>\r\n                   <td>{{item}}</td>\r\n                   <td>{{item}}</td>\r\n               </tr>\r\n               </tbody>\r\n           </table>\r\n         </pre>\r\n    </div>\r\n</div>\r\n"
 
 /***/ }
 /******/ ]);
