@@ -4,7 +4,7 @@ class Configuration {
     @Config()
     @Inject('localStorageServiceProvider', '$compileProvider', '$httpProvider', '$urlRouterProvider', 'hljsServiceProvider')
     static configFactory(localStorageServiceProvider, $compileProvider, $httpProvider, $urlRouterProvider, hljsServiceProvider) {
-        localStorageServiceProvider.setPrefix('crm-plugins');
+        localStorageServiceProvider.setPrefix('demo-app');
         $compileProvider.debugInfoEnabled(false);
         $httpProvider.useApplyAsync(true);
         $urlRouterProvider.otherwise('/rtdemo');
