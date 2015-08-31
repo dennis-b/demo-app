@@ -19,27 +19,27 @@
             Or you can specify selector in View options
         </div>
         <div hljs language="javascript">
-            import './style/directive-demo.css'
-            import template from './directive-demo.html';
-            import {Directive} from 'annotations/directive-decorator';
+import './style/directive-demo.css'
+import template from './directive-demo.html';
+import {Directive} from 'annotations/directive-decorator';
 
-            @Directive()
-            class NgDirectiveDemo {
-            constructor($window) {
-            this.restrict = 'EA';
-            this.template = template;
-            this.scope = {
+@Directive()
+class NgDirectiveDemo {
+    constructor($window) {
+        this.restrict = 'EA';
+        this.template = template;
+        this.scope = {
             items: '='
-            };
-            this.$window = $window; // service injected
-            }
+        };
+    this.$window = $window; // service injected
+    }
 
-            link(scope, element, attrs){
+    link(scope, element, attrs){
 
-            }
+    }
 
-            }
-            export default NgDirectiveDemo
+}
+export default NgDirectiveDemo
         </div>
     </div>
 

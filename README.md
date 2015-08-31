@@ -13,7 +13,7 @@ $ run on local server # you may use gulp webserver task
 ```
 
 # usage :
- [documentation](http://dennis-b.github.io/demo-app/ "documentation")
+ [example](http://dennis-b.github.io/demo-app/ "example")
 ```
 import './style/rt-demo.css'
 import {ReactView} from 'annotations/directive-decorator';
